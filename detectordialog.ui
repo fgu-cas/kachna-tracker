@@ -20,10 +20,10 @@
    <item row="1" column="0">
     <widget class="QSpinBox" name="betaBox">
      <property name="minimum">
-      <number>-999</number>
+      <number>-9999</number>
      </property>
      <property name="maximum">
-      <number>999</number>
+      <number>9999</number>
      </property>
     </widget>
    </item>
