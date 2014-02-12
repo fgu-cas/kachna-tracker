@@ -53,6 +53,10 @@ void kachnatracker::updateFrame(){
     Mat frame;
     capture >> frame;
 
+    if (frame.empty()){
+        return;
+    }
+
     if (settings.blur == 0){
         frame.convertTo(frame, -1, settings.alpha, settings.beta);
     } else {
