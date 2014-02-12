@@ -58,10 +58,12 @@ void kachnatracker::updateFrame(){
     capture >> frame;
 
     if (frame.empty()){
-        this->timer->stop();
-        QMessageBox alert;
-        alert.setText("Bad frames: " + QString::number(this->badFrames));
-        alert.exec();
+        if (timer->isActive()){
+            this->timer->stop();
+            QMessageBox alert;
+            alert.setText("Bad frames: " + QString::number(this->badFrames));
+            alert.exec();
+        }
         return;
     }
 
