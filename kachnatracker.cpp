@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QFileDialog>
 #include <QTimer>
+#include <cmath>
 
 using namespace cv;
 
@@ -16,6 +17,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui(new Ui::kachnatracker)
 {
     ui->setupUi(this);
+    ui->distanceLabel->setTextFormat(Qt::RichText);
     image_label = ui->imageLabel;
     detectorDialog = new DetectorDialog(this);
 
@@ -79,6 +81,17 @@ void kachnatracker::updateFrame(){
         std::string tmp = std::string(ss.str());
         ui->pointsList->addItem(QString(tmp.data()));
     }
+
+    QString distanceString = "<html><head/><body><p align=\"center\"><span style=\"font-size:24pt; color:";
+    if (keypoints.size() == 2){
+        double distance = cv::norm(keypoints[0].pt-keypoints[1].pt);
+        distanceString += "#00ff00;\">" + QString::number(distance);
+    } else {
+        distanceString += "#ff0000;\">BAD FRAME";
+    }
+    distanceString += "</span></p></body></html>";
+
+    ui->distanceLabel->setText(distanceString);
 
     drawKeypoints(frame, keypoints, frame, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
 
