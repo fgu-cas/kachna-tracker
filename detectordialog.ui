@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>177</width>
-    <height>194</height>
+    <width>238</width>
+    <height>261</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,23 @@
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
+   <item row="0" column="0">
+    <widget class="QDoubleSpinBox" name="alphaBox">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Alpha</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QSpinBox" name="betaBox">
      <property name="minimum">
@@ -24,6 +41,13 @@
      </property>
      <property name="maximum">
       <number>9999</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Beta</string>
      </property>
     </widget>
    </item>
@@ -38,6 +62,23 @@
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Blur</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QSpinBox" name="threshBox">
+     <property name="maximum">
+      <number>1024</number>
+     </property>
+     <property name="value">
+      <number>137</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Threshold</string>
      </property>
     </widget>
    </item>
@@ -82,51 +123,31 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="10" column="0" colspan="2">
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Apply</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QDoubleSpinBox" name="alphaBox">
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
+   <item row="8" column="0" colspan="2">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_4">
+   <item row="9" column="1">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Alpha</string>
+      <string>Pause on bad frame</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_5">
+   <item row="9" column="0">
+    <widget class="QCheckBox" name="pauseBox">
      <property name="text">
-      <string>Beta</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QSpinBox" name="threshBox">
-     <property name="maximum">
-      <number>1024</number>
-     </property>
-     <property name="value">
-      <number>137</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Threshold</string>
+      <string/>
      </property>
     </widget>
    </item>

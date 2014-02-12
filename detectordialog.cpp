@@ -23,5 +23,6 @@ Settings DetectorDialog::getSettings()
     result.threshold = ui->threshBox->value();
     result.minSize = ui->minBox->value();
     result.maxSize = ui->maxBox->value();
+    result.pause = ui->pauseBox->isChecked();
     return result;
 }

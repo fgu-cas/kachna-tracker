@@ -8,6 +8,7 @@ typedef struct {
     int threshold;
     int minSize;
     int maxSize;
+    bool pause;
 } Settings;
 
 #endif

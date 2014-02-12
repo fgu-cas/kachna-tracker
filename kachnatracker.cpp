@@ -97,6 +97,9 @@ void kachnatracker::updateFrame(){
     } else {
         distanceString += "#ff0000;\">BAD FRAME";
         this->badFrames++;
+        if (settings.pause){
+            timer->stop();
+        }
     }
     distanceString += "</span></p></body></html>";
 
