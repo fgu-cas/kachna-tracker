@@ -45,6 +45,8 @@ private:
     unsigned int milliseconds;
     int interval;
 
+    int badFrames;
+
     QTimer *timer;
     SimpleBlobDetector detector;
     Settings settings;

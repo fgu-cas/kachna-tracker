@@ -7,6 +7,7 @@
 #include "detectordialog.h"
 #include <iostream>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QTimer>
 #include <cmath>
 
@@ -20,6 +21,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui->distanceLabel->setTextFormat(Qt::RichText);
     image_label = ui->imageLabel;
     detectorDialog = new DetectorDialog(this);
+    badFrames = 0;
 
 
     timer = new QTimer(this);
@@ -56,6 +58,10 @@ void kachnatracker::updateFrame(){
     capture >> frame;
 
     if (frame.empty()){
+        this->timer->stop();
+        QMessageBox alert;
+        alert.setText("Bad frames: " + QString::number(this->badFrames));
+        alert.exec();
         return;
     }
 
@@ -88,6 +94,7 @@ void kachnatracker::updateFrame(){
         distanceString += "#00ff00;\">" + QString::number(distance);
     } else {
         distanceString += "#ff0000;\">BAD FRAME";
+        this->badFrames++;
     }
     distanceString += "</span></p></body></html>";
 
