@@ -50,27 +50,23 @@ void kachnatracker::updateSettings(){
 }
 
 void kachnatracker::updateFrame(){
-    Mat cap_frame;
-    capture >> cap_frame;
+    Mat frame;
+    capture >> frame;
 
-    Mat pre_result;
     if (settings.blur == 0){
-        cap_frame.convertTo(pre_result, -1, settings.alpha, settings.beta);
+        frame.convertTo(frame, -1, settings.alpha, settings.beta);
     } else {
-        Mat blurred;
-        blur(cap_frame, blurred, Size(settings.blur, settings.blur));
-        blurred.convertTo(pre_result, -1, settings.alpha, settings.beta);
+        blur(frame, frame, Size(settings.blur, settings.blur));
+        frame.convertTo(frame, -1, settings.alpha, settings.beta);
     }
 
-    Mat result;
-    threshold(pre_result, result, settings.threshold, 255, THRESH_TOZERO);
+    threshold(frame, frame, settings.threshold, 255, THRESH_TOZERO);
 
 
-    std::vector<KeyPoint> keypoints_1;
-    detector.detect(result, keypoints_1);
+    std::vector<KeyPoint> keypoints;
+    detector.detect(frame, keypoints);
 
-    Mat frame;
-    drawKeypoints(result, keypoints_1, frame, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+    drawKeypoints(frame, keypoints, frame, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
 
     QImage qt_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
     this->image_label->setPixmap(QPixmap::fromImage(qt_image));
