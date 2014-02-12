@@ -70,6 +70,16 @@ void kachnatracker::updateFrame(){
     std::vector<KeyPoint> keypoints;
     detector.detect(frame, keypoints);
 
+    ui->pointsList->clear();
+    for(std::vector<KeyPoint>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
+        std::stringstream ss;
+        ss << "Point #" << (it - keypoints.begin());
+        ss << ", X: " << (it->pt.x);
+        ss << "Y: " << (it->pt.y);
+        std::string tmp = std::string(ss.str());
+        ui->pointsList->addItem(QString(tmp.data()));
+    }
+
     drawKeypoints(frame, keypoints, frame, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
 
     QImage qt_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
