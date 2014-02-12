@@ -39,8 +39,10 @@ private:
     Ui::kachnatracker *ui;
     QLabel *image_label;
     QString fileName;
-    VideoCapture capture;
     DetectorDialog* detectorDialog;
+
+    VideoCapture capture;
+    Mat frame;
 
     unsigned int milliseconds;
     int interval;

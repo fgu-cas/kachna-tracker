@@ -54,9 +54,10 @@ void kachnatracker::updateSettings(){
 }
 
 void kachnatracker::updateFrame(){
-    Mat frame;
-    capture >> frame;
-
+    Mat displayFrame;
+    if (timer->isActive()){
+        capture >> frame;
+    }
     if (frame.empty()){
         if (timer->isActive()){
             this->timer->stop();
@@ -68,17 +69,17 @@ void kachnatracker::updateFrame(){
     }
 
     if (settings.blur == 0){
-        frame.convertTo(frame, -1, settings.alpha, settings.beta);
+        frame.convertTo(displayFrame, -1, settings.alpha, settings.beta);
     } else {
-        blur(frame, frame, Size(settings.blur, settings.blur));
-        frame.convertTo(frame, -1, settings.alpha, settings.beta);
+        blur(frame, displayFrame, Size(settings.blur, settings.blur));
+        displayFrame.convertTo(displayFrame, -1, settings.alpha, settings.beta);
     }
 
-    threshold(frame, frame, settings.threshold, 255, THRESH_TOZERO);
+    threshold(displayFrame, displayFrame, settings.threshold, 255, THRESH_TOZERO);
 
 
     std::vector<KeyPoint> keypoints;
-    detector.detect(frame, keypoints);
+    detector.detect(displayFrame, keypoints);
 
     ui->pointsList->clear();
     for(std::vector<KeyPoint>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
@@ -102,12 +103,11 @@ void kachnatracker::updateFrame(){
         }
     }
     distanceString += "</span></p></body></html>";
-
     ui->distanceLabel->setText(distanceString);
 
-    drawKeypoints(frame, keypoints, frame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+    drawKeypoints(displayFrame, keypoints, displayFrame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 
-    QImage qt_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+    QImage qt_image = QImage((uchar*) displayFrame.data, displayFrame.cols, displayFrame.rows, displayFrame.step, QImage::Format_RGB888);
     this->image_label->setPixmap(QPixmap::fromImage(qt_image));
 
     milliseconds += interval;
