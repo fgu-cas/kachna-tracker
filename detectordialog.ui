@@ -41,14 +41,14 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QSpinBox" name="minBox">
      <property name="maximum">
       <number>1000</number>
@@ -58,14 +58,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>MinSize</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QSpinBox" name="maxBox">
      <property name="maximum">
       <number>1000</number>
@@ -75,14 +75,14 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>MaxSize</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="7" column="0" colspan="2">
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Apply</string>
@@ -110,6 +110,23 @@
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Beta</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QSpinBox" name="threshBox">
+     <property name="maximum">
+      <number>1024</number>
+     </property>
+     <property name="value">
+      <number>128</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Threshold</string>
      </property>
     </widget>
    </item>

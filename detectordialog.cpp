@@ -20,6 +20,7 @@ Settings DetectorDialog::getSettings()
     result.alpha = ui->alphaBox->value();
     result.beta = ui->betaBox->value();
     result.blur = ui->blurBox->value();
+    result.threshold = ui->threshBox->value();
     result.minSize = ui->minBox->value();
     result.maxSize = ui->maxBox->value();
     return result;
