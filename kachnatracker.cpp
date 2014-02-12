@@ -100,7 +100,7 @@ void kachnatracker::updateFrame(){
 
     ui->distanceLabel->setText(distanceString);
 
-    drawKeypoints(frame, keypoints, frame, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+    drawKeypoints(frame, keypoints, frame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 
     QImage qt_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
     this->image_label->setPixmap(QPixmap::fromImage(qt_image));
