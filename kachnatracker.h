@@ -37,7 +37,6 @@ private slots:
 
 private:
     Ui::kachnatracker *ui;
-    QLabel *image_label;
     QString fileName;
     DetectorDialog* detectorDialog;
 

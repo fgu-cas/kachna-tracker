@@ -19,7 +19,8 @@ kachnatracker::kachnatracker(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->distanceLabel->setTextFormat(Qt::RichText);
-    image_label = ui->imageLabel;
+    ui->imageLabel->setScaledContents(true);
+    ui->originalLabel->setScaledContents(true);
     detectorDialog = new DetectorDialog(this);
     badFrames = 0;
 
@@ -108,7 +109,10 @@ void kachnatracker::updateFrame(){
     drawKeypoints(displayFrame, keypoints, displayFrame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 
     QImage qt_image = QImage((uchar*) displayFrame.data, displayFrame.cols, displayFrame.rows, displayFrame.step, QImage::Format_RGB888);
-    this->image_label->setPixmap(QPixmap::fromImage(qt_image));
+    ui->imageLabel->setPixmap(QPixmap::fromImage(qt_image));
+
+    QImage qt_orig_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+    ui->originalLabel->setPixmap(QPixmap::fromImage(qt_orig_image));
 
     milliseconds += interval;
 }
