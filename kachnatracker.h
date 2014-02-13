@@ -42,6 +42,9 @@ private:
 
     VideoCapture capture;
     Mat frame;
+    Mat* outputMat;
+
+    Point2f prevPoint;
 
     unsigned int milliseconds;
     int interval;

@@ -24,6 +24,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     detectorDialog = new DetectorDialog(this);
     badFrames = 0;
 
+    outputMat = new Mat();
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
@@ -90,6 +91,15 @@ void kachnatracker::updateFrame(){
         ss << "Y: " << (it->pt.y);
         std::string tmp = std::string(ss.str());
         ui->pointsList->addItem(QString(tmp.data()));
+
+        if (prevPoint.x){
+            if (keypoints.size() == 2){
+                line(*outputMat, prevPoint, keypoints[1].pt, Scalar(0, 0, 255));
+            }
+        }
+        if (keypoints.size() == 2){
+            prevPoint = keypoints[1].pt;
+        }
     }
 
     QString distanceString = "<html><head/><body><p align=\"center\"><span style=\"font-size:24pt; color:";
@@ -106,13 +116,13 @@ void kachnatracker::updateFrame(){
     distanceString += "</span></p></body></html>";
     ui->distanceLabel->setText(distanceString);
 
-    drawKeypoints(displayFrame, keypoints, displayFrame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+    drawKeypoints(frame, keypoints, displayFrame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 
     QImage qt_image = QImage((uchar*) displayFrame.data, displayFrame.cols, displayFrame.rows, displayFrame.step, QImage::Format_RGB888);
-    ui->imageLabel->setPixmap(QPixmap::fromImage(qt_image));
+    ui->originalLabel->setPixmap(QPixmap::fromImage(qt_image));
 
-    QImage qt_orig_image = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
-    ui->originalLabel->setPixmap(QPixmap::fromImage(qt_orig_image));
+    QImage qt_orig_image = QImage((uchar*) outputMat->data, outputMat->cols, outputMat->rows, outputMat->step, QImage::Format_RGB888);
+    ui->imageLabel->setPixmap(QPixmap::fromImage(qt_orig_image));
 
     milliseconds += interval;
 }
@@ -128,6 +138,10 @@ void kachnatracker::on_actionOpen_triggered()
     if (capture.isOpened()){
         double fps = capture.get(CV_CAP_PROP_FPS);
         interval = 1000/fps;
+        Mat tempFrame;
+        capture >> tempFrame;
+        outputMat->create(tempFrame.size(),tempFrame.type());
+        outputMat->setTo(Scalar(255, 255, 255));
         updateSettings();
         timer->start(interval);
     }
