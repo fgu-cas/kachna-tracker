@@ -23,6 +23,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui->originalLabel->setScaledContents(true);
     detectorDialog = new DetectorDialog(this);
     badFrames = 0;
+    counter = 0;
 
     outputMat = new Mat();
 
@@ -41,7 +42,7 @@ void kachnatracker::updateSettings(){
     settings = detectorDialog->getSettings();
 
     cv::SimpleBlobDetector::Params params;
-    params.minDistBetweenBlobs = 50.0f;
+    params.minDistBetweenBlobs = 10.0f;
     params.filterByInertia = false;
     params.filterByConvexity = false;
     params.filterByColor = true;
@@ -94,7 +95,13 @@ void kachnatracker::updateFrame(){
 
         if (prevPoint.x){
             if (keypoints.size() == 2){
-                line(*outputMat, prevPoint, keypoints[1].pt, Scalar(0, 0, 255));
+                counter++;
+                if (counter < 37 ){
+                    line(*outputMat, prevPoint, keypoints[1].pt, Scalar(0, 0, 255));
+                } else {
+                    circle(*outputMat, keypoints[1].pt, 4, Scalar(0, 0, 255), -1);
+                    counter = 0;
+                }
             }
         }
         if (keypoints.size() == 2){

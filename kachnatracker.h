@@ -48,6 +48,7 @@ private:
 
     unsigned int milliseconds;
     int interval;
+    int counter;
 
     int badFrames;
 
