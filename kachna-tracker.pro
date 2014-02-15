@@ -22,5 +22,3 @@ HEADERS  += kachnatracker.h \
 
 FORMS    += kachnatracker.ui \
     detectordialog.ui
-
-LIBS += `pkg-config opencv --libs`
