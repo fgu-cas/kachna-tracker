@@ -4,11 +4,13 @@
 #include <opencv2/features2d/features2d.hpp>
 #include "kachnatracker.h"
 #include "ui_kachnatracker.h"
-#include "detectordialog.h"
 #include <iostream>
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 #include <QMessageBox>
 #include <QTimer>
+#include <QPainter>
 #include <cmath>
 
 using namespace cv;
@@ -18,19 +20,27 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui(new Ui::kachnatracker)
 {
     ui->setupUi(this);
-    ui->distanceLabel->setTextFormat(Qt::RichText);
-    ui->imageLabel->setScaledContents(true);
-    ui->originalLabel->setScaledContents(true);
-    detectorDialog = new DetectorDialog(this);
-    badFrames = 0;
-    counter = 0;
 
-    outputMat = new Mat();
+    QPixmap black(500, 400);
+    black.fill(Qt::black);
+    ui->displayLabel->setPixmap(black);
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
+    appSettings = new QSettings("FGU AV", "Kachna Tracker", this);
+    QString fileName = appSettings->value("lastUsedSettings",
+                                          QCoreApplication::applicationDirPath()+"experiment.ini").toString();
+    QSettings experimentIni(fileName, QSettings::IniFormat, this);
+    QMap<QString, QVariant> experimentSettings;
 
-    milliseconds = 0;
+    QStringList keys = experimentIni.allKeys();
+    for (int i = 0; i<keys.size();i++){
+        QString key = keys.value(i);
+        experimentSettings.insert(key, experimentIni.value(key));
+    }
+
+    configWin.setSettings(experimentSettings);
+
+    experiment = 0;
+    experimentTimer.setSingleShot(true);
 }
 
 kachnatracker::~kachnatracker()
@@ -38,138 +48,136 @@ kachnatracker::~kachnatracker()
     delete ui;
 }
 
-void kachnatracker::updateSettings(){
-    settings = detectorDialog->getSettings();
 
-    cv::SimpleBlobDetector::Params params;
-    params.minDistBetweenBlobs = 10.0f;
-    params.filterByInertia = false;
-    params.filterByConvexity = false;
-    params.filterByColor = true;
-    params.blobColor = 255;
-    params.filterByCircularity = false;
-    params.filterByArea = true;
-    params.minArea = settings.minSize;
-    params.maxArea = settings.maxSize;
-
-    detector = SimpleBlobDetector(params);
-    this->updateFrame();
-}
-
-void kachnatracker::updateFrame(){
-    Mat displayFrame;
-    if (timer->isActive()){
-        capture >> frame;
-    }
-    if (frame.empty()){
-        if (timer->isActive()){
-            this->timer->stop();
-            QMessageBox alert;
-            alert.setText("Bad frames: " + QString::number(this->badFrames));
-            alert.exec();
-        }
-        return;
-    }
-
-    if (settings.blur == 0){
-        frame.convertTo(displayFrame, -1, settings.alpha, settings.beta);
-    } else {
-        blur(frame, displayFrame, Size(settings.blur, settings.blur));
-        displayFrame.convertTo(displayFrame, -1, settings.alpha, settings.beta);
-    }
-
-    threshold(displayFrame, displayFrame, settings.threshold, 255, THRESH_TOZERO);
-
-
-    std::vector<KeyPoint> keypoints;
-    detector.detect(displayFrame, keypoints);
-
-    ui->pointsList->clear();
-    for(std::vector<KeyPoint>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
-        std::stringstream ss;
-        ss << "Point #" << (it - keypoints.begin());
-        ss << ", X: " << (it->pt.x);
-        ss << "Y: " << (it->pt.y);
-        std::string tmp = std::string(ss.str());
-        ui->pointsList->addItem(QString(tmp.data()));
-
-        if (prevPoint.x){
-            if (keypoints.size() == 2){
-                counter++;
-                if (counter < 37 ){
-                    line(*outputMat, prevPoint, keypoints[1].pt, Scalar(0, 0, 255));
-                } else {
-                    circle(*outputMat, keypoints[1].pt, 4, Scalar(0, 0, 255), -1);
-                    counter = 0;
-                }
-            }
-        }
-        if (keypoints.size() == 2){
-            prevPoint = keypoints[1].pt;
-        }
-    }
-
-    QString distanceString = "<html><head/><body><p align=\"center\"><span style=\"font-size:24pt; color:";
-    if (keypoints.size() == 2){
-        double distance = cv::norm(keypoints[0].pt-keypoints[1].pt);
-        distanceString += "#00ff00;\">" + QString::number(distance);
-    } else {
-        distanceString += "#ff0000;\">BAD FRAME";
-        this->badFrames++;
-        if (settings.pause){
-            timer->stop();
-        }
-    }
-    distanceString += "</span></p></body></html>";
-    ui->distanceLabel->setText(distanceString);
-
-    drawKeypoints(frame, keypoints, displayFrame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-
-    QImage qt_image = QImage((uchar*) displayFrame.data, displayFrame.cols, displayFrame.rows, displayFrame.step, QImage::Format_RGB888);
-    ui->originalLabel->setPixmap(QPixmap::fromImage(qt_image));
-
-    QImage qt_orig_image = QImage((uchar*) outputMat->data, outputMat->cols, outputMat->rows, outputMat->step, QImage::Format_RGB888);
-    ui->imageLabel->setPixmap(QPixmap::fromImage(qt_orig_image));
-
-    milliseconds += interval;
-}
-
-void kachnatracker::on_actionOpen_triggered()
+void kachnatracker::on_actionConfigure_triggered()
 {
+    configWin.show();
+}
+
+void kachnatracker::on_actionImportConfig_triggered()
+{
+
+
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                      "",
-                                                     tr("Files (*.*)"));
+                                                     tr("Files (*.ini)"));
+    if (fileName.isEmpty()){
+        return;
+    }
+    // TODO: Error checking
+    QMap<QString, QVariant> experimentSettings;
+    QSettings experimentIni(fileName, QSettings::IniFormat);
 
-    this->fileName = fileName;
-    capture = VideoCapture(fileName.toStdString());
-    if (capture.isOpened()){
-        double fps = capture.get(CV_CAP_PROP_FPS);
-        interval = 1000/fps;
-        Mat tempFrame;
-        capture >> tempFrame;
-        outputMat->create(tempFrame.size(),tempFrame.type());
-        outputMat->setTo(Scalar(255, 255, 255));
-        updateSettings();
-        timer->start(interval);
+    QStringList keys = experimentIni.allKeys();
+    for (int i = 0; i<keys.size();i++){
+        QString key = keys.value(i);
+        experimentSettings.insert(key, experimentIni.value(key));
     }
 
+    appSettings->setValue("lastUsedSettings", fileName);
+
+    configWin.setSettings(experimentSettings);
 }
 
 
-void kachnatracker::on_pauseButton_clicked()
+void kachnatracker::on_actionExportConfig_triggered()
 {
-   if (timer->isActive()){
-     timer->stop();
-   } else {
-       capture = VideoCapture(fileName.toStdString());
-       if (capture.isOpened()){
-           capture.set(CV_CAP_PROP_POS_MSEC, milliseconds);
-           timer->start(interval);
-       }
-   }
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                                     "",
+                                                     tr("Files (*.ini)"));
+    if (!fileName.isEmpty()){
+        if (!fileName.endsWith(".ini")){
+            fileName += ".ini";
+        }
+        QSettings settings(fileName, QSettings::IniFormat, this);
+        QMap<QString, QVariant> experimentSettings = configWin.getSettings();
+        QList<QString> keys = experimentSettings.keys();
+        for (int i = 0; i < keys.size(); i++){
+            QString key = keys[i];
+            settings.setValue(key, experimentSettings.value(key));
+        }
+        appSettings->setValue("lastUsedSettings", fileName);
+    }
 }
 
-void kachnatracker::on_settingsButton_clicked()
+void kachnatracker::experimentEnded(){
+    QMessageBox alert;
+    alert.setText("Experiment ended!");
+    alert.exec();
+    //TODO: Experiment possibly continuing after time-out
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                                     "",
+                                                     tr("Files (*.log)"));
+    if (!fileName.isEmpty()){
+        if (!fileName.endsWith(".log")){
+            fileName += ".log";
+        }
+        QFile file(fileName);
+        if (file.open(QFile::WriteOnly)){
+            QString log = experiment->getLog();
+            QTextStream out(&file);
+            out << log;
+        }
+        file.close();
+    }
+
+    delete experiment;
+    experiment = 0;
+}
+
+
+void kachnatracker::on_startButton_clicked()
 {
-    detectorDialog->show();
+    if (experiment != 0){
+        experiment->stop();
+        experimentTimer.stop();
+    } else {
+        QMap<QString, QVariant> experimentSettings = configWin.getSettings();
+
+        VideoCapture *capture;
+        if (experimentSettings.value("deviceId").toInt() != 7){
+            capture = new VideoCapture(experimentSettings.value("deviceId", 0).toInt());
+        } else {
+            capture = new VideoCapture("/tmp/video.avi");
+        }
+        Mat tempFrame;
+        *capture >> tempFrame;
+
+        pixmap = QPixmap(tempFrame.cols, tempFrame.rows);
+        pixmap.fill(Qt::white);
+        delete capture;
+
+        experiment = new Experiment(this, &experimentSettings);
+        connect(&experimentTimer, SIGNAL(timeout()), experiment, SLOT(stop()));
+        experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*1000);
+        experiment->start();
+    }
+}
+
+void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
+    QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
+    QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
+
+    QPainter painter(&pixmap);
+
+    painter.setPen(Qt::red);
+    painter.drawEllipse(rat, 3, 3);
+
+    painter.setPen(Qt::blue);
+    painter.drawEllipse(robot, 3, 3);
+
+    painter.end();
+
+    ui->displayLabel->setPixmap(pixmap);
+}
+
+void kachnatracker::closeEvent(QCloseEvent *event){
+    configWin.close();
+    event->accept();
+}
+
+void kachnatracker::on_actionDebug_triggered()
+{
+
 }

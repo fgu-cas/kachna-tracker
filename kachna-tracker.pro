@@ -14,11 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         kachnatracker.cpp \
-    detectordialog.cpp \
-    util.cpp
+    configwindow.cpp \
+    experiment.cpp \
+    blobdetector.cpp
 
 HEADERS  += kachnatracker.h \
-    detectordialog.h
+    configwindow.h \
+    experiment.h \
+    blobdetector.h
 
-FORMS    += kachnatracker.ui \
-    detectordialog.ui
+FORMS    += configwindow.ui \
+    kachnatracker.ui

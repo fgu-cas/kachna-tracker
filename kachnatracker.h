@@ -2,11 +2,11 @@
 #define KACHNATRACKER_H
 
 #include <QMainWindow>
-#include <QLabel>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include "util.cpp"
-#include "detectordialog.h"
+#include <QSettings>
+#include <QCloseEvent>
+#include "configwindow.h"
+#include "experiment.h"
+#include "blobdetector.h"
 
 namespace Ui {
 class kachnatracker;
@@ -22,39 +22,30 @@ public:
     explicit kachnatracker(QWidget *parent = 0);
     ~kachnatracker();
 
-    void setOptions(int, int, int);
-
 public slots:
-    void updateFrame();
-    void updateSettings();
+    void renderKeypoints(BlobDetector::keyPoints keypoints);
+    void experimentEnded();
 
 private slots:
-    void on_actionOpen_triggered();
+    void on_actionConfigure_triggered();
+    void on_actionImportConfig_triggered();
 
-    void on_pauseButton_clicked();
+    void on_actionExportConfig_triggered();
 
-    void on_settingsButton_clicked();
+    void on_actionDebug_triggered();
+
+    void on_startButton_clicked();
 
 private:
+    void closeEvent(QCloseEvent *);
+
     Ui::kachnatracker *ui;
-    QString fileName;
-    DetectorDialog* detectorDialog;
+    QSettings *appSettings;
+    Experiment *experiment;
+    QPixmap pixmap;
 
-    VideoCapture capture;
-    Mat frame;
-    Mat* outputMat;
-
-    Point2f prevPoint;
-
-    unsigned int milliseconds;
-    int interval;
-    int counter;
-
-    int badFrames;
-
-    QTimer *timer;
-    SimpleBlobDetector detector;
-    Settings settings;
+    configWindow configWin;
+    QTimer experimentTimer;
 };
 
 #endif // KACHNATRACKER_H
