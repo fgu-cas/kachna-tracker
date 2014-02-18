@@ -28,6 +28,7 @@ public slots:
 
 private slots:
     void on_actionConfigure_triggered();
+
     void on_actionImportConfig_triggered();
 
     void on_actionExportConfig_triggered();
@@ -35,6 +36,8 @@ private slots:
     void on_actionDebug_triggered();
 
     void on_startButton_clicked();
+
+    void updateTick();
 
 private:
     void closeEvent(QCloseEvent *);

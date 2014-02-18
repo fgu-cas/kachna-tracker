@@ -39,8 +39,9 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
     configWin.setSettings(experimentSettings);
 
+    connect(&experimentTimer, SIGNAL(timeout()), this, SLOT(updateTick()));
+
     experiment = 0;
-    experimentTimer.setSingleShot(true);
 }
 
 kachnatracker::~kachnatracker()
@@ -148,10 +149,14 @@ void kachnatracker::on_startButton_clicked()
         pixmap.fill(Qt::white);
         delete capture;
 
-        experiment = new Experiment(this, &experimentSettings);
-        connect(&experimentTimer, SIGNAL(timeout()), experiment, SLOT(stop()));
-        experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*1000);
+
+        ui->progressBar->setValue(0);
+
+        experiment = new Experiment(this, &experimentSettings);        
         experiment->start();
+
+        // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
+        experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
     }
 }
 
@@ -170,6 +175,14 @@ void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
     painter.end();
 
     ui->displayLabel->setPixmap(pixmap);
+}
+
+void kachnatracker::updateTick(){
+    ui->progressBar->setValue(ui->progressBar->value()+1);
+    if (ui->progressBar->value() == 100){
+        experiment->stop();
+        experimentTimer.stop();
+    }
 }
 
 void kachnatracker::closeEvent(QCloseEvent *event){
