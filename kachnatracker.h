@@ -49,6 +49,8 @@ private:
 
     configWindow configWin;
     QTimer experimentTimer;
+
+    BlobDetector::keyPoints lastKeypoints;
 };
 
 #endif // KACHNATRACKER_H

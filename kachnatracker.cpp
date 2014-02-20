@@ -149,6 +149,8 @@ void kachnatracker::on_startButton_clicked()
         pixmap.fill(Qt::white);
         delete capture;
 
+        lastKeypoints.rat = KeyPoint(0, 0, 0);
+        lastKeypoints.robot = KeyPoint(0, 0, 0);
 
         ui->progressBar->setValue(0);
 
@@ -162,19 +164,39 @@ void kachnatracker::on_startButton_clicked()
 
 void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
+    QPoint lastRat;
+    if (lastKeypoints.rat.size != 0){
+        lastRat = QPoint(lastKeypoints.rat.pt.x, lastKeypoints.rat.pt.y);
+    }
     QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
+    QPoint lastRobot;
+    if (lastKeypoints.robot.size != 0){
+        lastRobot = QPoint(lastKeypoints.robot.pt.x, lastKeypoints.robot.pt.y);
+    }
 
     QPainter painter(&pixmap);
 
     painter.setPen(Qt::red);
+    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+
     painter.drawEllipse(rat, 3, 3);
+    if (lastRat.x() != 0){
+        painter.drawLine(lastRat, rat);
+    }
 
     painter.setPen(Qt::blue);
+    painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
+
     painter.drawEllipse(robot, 3, 3);
+    if (lastRobot.x() != 0){
+        painter.drawLine(lastRobot, robot);
+    }
 
     painter.end();
 
     ui->displayLabel->setPixmap(pixmap);
+
+    lastKeypoints = keypoints;
 }
 
 void kachnatracker::updateTick(){
