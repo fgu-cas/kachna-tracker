@@ -23,8 +23,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
                             settings->value("robotMaxSize", 300).toDouble(),
                             settings->value("robotMinSize", 30).toDouble());
 
-    interval = settings->value("frameInterval", 40).toInt();
-    timer.setInterval(interval);
+    timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 }
 

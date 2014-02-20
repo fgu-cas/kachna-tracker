@@ -32,8 +32,6 @@ private:
 
     QTimer timer;
     QElapsedTimer elapsedTimer;
-    int interval;
-    unsigned counter;
 
 signals:
     void renderKeypoints(BlobDetector::keyPoints keyPoints);
