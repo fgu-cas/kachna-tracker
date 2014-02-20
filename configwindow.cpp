@@ -28,6 +28,7 @@ void configWindow::on_testButton_clicked()
         capture = VideoCapture(ui->deviceBox->value());
     } else {
         capture = VideoCapture("/tmp/video.avi");
+        capture.set(CV_CAP_PROP_POS_MSEC, rand() % 5000);
     }
 
     capture >> capturedFrame;
