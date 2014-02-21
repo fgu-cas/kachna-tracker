@@ -52,7 +52,7 @@
            </date>
           </property>
           <property name="currentSection">
-           <enum>QDateTimeEdit::MinuteSection</enum>
+           <enum>QDateTimeEdit::HourSection</enum>
           </property>
           <property name="displayFormat">
            <string notr="true">H:mm:ss</string>
@@ -264,6 +264,9 @@
        <string/>
       </property>
      </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="keypointList"/>
     </item>
    </layout>
   </widget>

@@ -94,11 +94,17 @@ void configWindow::on_refreshTrackingButton_clicked()
 
     BlobDetector::keyPoints keypoints = detector.detect(&capturedFrame);
 
-    std::cout << keypoints.rat.pt.x << ", " << keypoints.rat.pt.y << std::endl << std::flush;
-    std::cout << keypoints.robot.pt.x << ", " << keypoints.robot.pt.y << std::endl << std::flush;
-
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
     QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
+
+    std::vector<KeyPoint> allKeypoints = detector.allKeypoints(&capturedFrame);
+    ui->keypointList->clear();
+    for (unsigned i = 0; i < allKeypoints.size(); i++){
+        KeyPoint keypoint = allKeypoints[i];
+        ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
+                                  + ", " + QString::number(keypoint.pt.y) + " (" +
+                                  QString::number(keypoint.size) + ")");
+    }
 
 
     QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) capturedFrame.data,
