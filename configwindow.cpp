@@ -80,13 +80,13 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->deviceBox->setValue(settings.value("deviceId").toInt());
     ui->threshSpin->setValue(settings.value("threshold").toInt());
 
-    ui->maxAreaBox->setValue(settings.value("maxArea").toInt());
-    ui->minAreaBox->setValue(settings.value("minArea").toInt());
+    ui->maxAreaBox->setValue(settings.value("maxArea").toDouble());
+    ui->minAreaBox->setValue(settings.value("minArea").toDouble());
 
-    ui->ratMinSize->setValue(settings.value("ratMinSize").toInt());
-    ui->ratMaxSize->setValue(settings.value("ratMaxSize").toInt());
-    ui->robotMinSize->setValue(settings.value("robotMinSize").toInt());
-    ui->robotMaxSize->setValue(settings.value("robotMaxSize").toInt());
+    ui->ratMinSize->setValue(settings.value("ratMinSize").toDouble());
+    ui->ratMaxSize->setValue(settings.value("ratMaxSize").toDouble());
+    ui->robotMinSize->setValue(settings.value("robotMinSize").toDouble());
+    ui->robotMaxSize->setValue(settings.value("robotMaxSize").toDouble());
 }
 
 void configWindow::on_refreshTrackingButton_clicked()
