@@ -142,12 +142,10 @@ void kachnatracker::on_startButton_clicked()
         } else {
             capture = new VideoCapture("/tmp/video.avi");
         }
-        Mat tempFrame;
-        *capture >> tempFrame;
 
-        pixmap = QPixmap(tempFrame.cols, tempFrame.rows);
+        pixmap = QPixmap(capture->get(CV_CAP_PROP_FRAME_WIDTH),
+                         capture->get(CV_CAP_PROP_FRAME_HEIGHT));
         pixmap.fill(Qt::white);
-        delete capture;
 
         reset();
 
