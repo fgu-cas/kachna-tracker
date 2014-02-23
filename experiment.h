@@ -33,7 +33,6 @@ private:
     std::vector<Point2f> ratFrame;
     std::vector<Point2f> robotFrame;
 
-
     QTimer timer;
     QElapsedTimer elapsedTimer;
 

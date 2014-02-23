@@ -113,13 +113,7 @@ void configWindow::on_refreshTrackingButton_clicked()
     if (capturedFrame.empty()){
         on_testButton_clicked();
     }
-    BlobDetector detector(ui->threshSpin->value(),
-                          ui->maxAreaBox->value(),
-                          ui->minAreaBox->value(),
-                          ui->ratMaxSize->value(),
-                          ui->ratMinSize->value(),
-                          ui->robotMaxSize->value(),
-                          ui->robotMinSize->value());
+    BlobDetector detector(getSettings());
 
     BlobDetector::keyPoints keypoints = detector.detect(&capturedFrame);
 

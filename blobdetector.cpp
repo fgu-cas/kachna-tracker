@@ -4,16 +4,10 @@
 
 #include <iostream>
 
-BlobDetector::BlobDetector(int threshold,
-                           double maxArea,
-                           double minArea,
-                           double maxRatSize,
-                           double minRatSize,
-                           double maxRobotSize,
-                           double minRobotSize){
+BlobDetector::BlobDetector(QMap<QString, QVariant> settings){
     cv::SimpleBlobDetector::Params params;
 
-    params.minThreshold = threshold;
+    params.minThreshold = settings.value("threshold").toDouble();
     params.maxThreshold = 255;
     params.thresholdStep = 10;
     params.minDistBetweenBlobs = 10.0f;
@@ -23,13 +17,13 @@ BlobDetector::BlobDetector(int threshold,
     params.blobColor = 255;
     params.filterByCircularity = false;
     params.filterByArea = true;
-    params.minArea = minArea;
-    params.maxArea = maxArea;
+    params.minArea = settings.value("minArea").toDouble();
+    params.maxArea = settings.value("maxArea").toDouble();
 
-    maxRat = maxRatSize;
-    minRat = minRatSize;
-    maxRobot = maxRobotSize;
-    minRobot = minRobotSize;
+    maxRat = settings.value("maxRatSize").toDouble();
+    minRat = settings.value("minRatSize").toDouble();
+    maxRobot = settings.value("maxRobotSize").toDouble();
+    minRobot = settings.value("minRobotSize").toDouble();
 
     detector = new SimpleBlobDetector(params);
 }

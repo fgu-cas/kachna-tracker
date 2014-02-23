@@ -1,6 +1,9 @@
 #ifndef BLOBDETECTOR_H
 #define BLOBDETECTOR_H
 
+#include <QMap>
+#include <QVariant>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
@@ -9,13 +12,7 @@ using namespace cv;
 class BlobDetector
 {
 public:
-    BlobDetector(int threshold,
-                 double maxArea,
-                 double minArea,
-                 double maxRatSize,
-                 double minRatSize,
-                 double maxRobotSize,
-                 double minRobotSize);
+    BlobDetector(QMap<QString, QVariant> settings);
     ~BlobDetector();
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
