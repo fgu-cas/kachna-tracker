@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-BlobDetector::BlobDetector(QMap<QString, QVariant> settings){
+BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     cv::SimpleBlobDetector::Params params;
 
     params.minThreshold = settings.value("threshold").toDouble();
@@ -20,12 +20,18 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings){
     params.minArea = settings.value("minArea").toDouble();
     params.maxArea = settings.value("maxArea").toDouble();
 
-    maxRat = settings.value("maxRatSize").toDouble();
-    minRat = settings.value("minRatSize").toDouble();
-    maxRobot = settings.value("maxRobotSize").toDouble();
-    minRobot = settings.value("minRobotSize").toDouble();
+    maxRat = settings.value("maxRat").toDouble();
+    minRat = settings.value("minRat").toDouble();
+    maxRobot = settings.value("maxRobot").toDouble();
+    minRobot = settings.value("minRobot").toDouble();
 
     detector = new SimpleBlobDetector(params);
+
+    mask = Mat(h, w, CV_8UC1);
+    mask.setTo(Scalar(0));
+    ellipse(mask, Point2f(settings.value("maskX").toFloat(), settings.value("maskY").toFloat()),
+            Size2f(settings.value("maskH").toFloat(), settings.value("maskV").toFloat()), 0, 0, 360,
+            Scalar(255), -1);
 }
 
 BlobDetector::~BlobDetector(){
@@ -35,20 +41,24 @@ BlobDetector::~BlobDetector(){
 
 BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
     std::vector<KeyPoint> keypoints;
+    // Here I would've used the optional Mask parameter of the detect() function...
+    // Except that SimpleBlobDetector doesn't support it! AGH
     detector->detect(*frame, keypoints);
 
     BlobDetector::keyPoints result;
 
     for (unsigned i = 0; i<keypoints.size(); i++){
-           KeyPoint keypoint = keypoints[i];
-           if (keypoint.size > minRat && keypoint.size < maxRat){
-               result.rat = keypoint;
-           }
-           if (keypoint.size > minRobot && keypoint.size < maxRobot){
-               result.robot = keypoint;
-           }
+       KeyPoint keypoint = keypoints[i];
+       if (mask.at<uchar>(keypoint.pt.y, keypoint.pt.x) == 0){
+               continue;
        }
-
+       if (keypoint.size > minRat && keypoint.size < maxRat){
+           result.rat = keypoint;
+       }
+       if (keypoint.size > minRobot && keypoint.size < maxRobot){
+           result.robot = keypoint;
+       }
+    }
     return result;
 }
 

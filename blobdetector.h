@@ -12,7 +12,7 @@ using namespace cv;
 class BlobDetector
 {
 public:
-    BlobDetector(QMap<QString, QVariant> settings);
+    BlobDetector(QMap<QString, QVariant> settings, int h, int w);
     ~BlobDetector();
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
@@ -27,6 +27,8 @@ private:
     double minRat;
     double maxRobot;
     double minRobot;
+
+    Mat mask;
 };
 
 

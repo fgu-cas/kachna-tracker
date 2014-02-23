@@ -18,7 +18,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
         capture = new VideoCapture("/tmp/video.avi");
     }
 
-    detector = new BlobDetector(*settings);
+    detector = new BlobDetector(*settings, capture->get(CV_CAP_PROP_FRAME_HEIGHT), capture->get(CV_CAP_PROP_FRAME_WIDTH));
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));

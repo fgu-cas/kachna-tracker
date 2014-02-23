@@ -44,10 +44,10 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("maskV", ui->maskVBox->value());
     settings.insert("maskH", ui->maskHBox->value());
 
-    settings.insert("ratMinSize", ui->ratMinSize->value());
-    settings.insert("ratMaxSize", ui->ratMaxSize->value());
-    settings.insert("robotMinSize", ui->robotMinSize->value());
-    settings.insert("robotMaxSize", ui->robotMaxSize->value());
+    settings.insert("minRat", ui->ratMinSize->value());
+    settings.insert("maxRat", ui->ratMaxSize->value());
+    settings.insert("minRobot", ui->robotMinSize->value());
+    settings.insert("maxRobot", ui->robotMaxSize->value());
 
     return settings;
 }
@@ -75,10 +75,10 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->maxAreaBox->setValue(settings.value("maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("minArea").toDouble());
 
-    ui->ratMinSize->setValue(settings.value("ratMinSize").toDouble());
-    ui->ratMaxSize->setValue(settings.value("ratMaxSize").toDouble());
-    ui->robotMinSize->setValue(settings.value("robotMinSize").toDouble());
-    ui->robotMaxSize->setValue(settings.value("robotMaxSize").toDouble());
+    ui->ratMinSize->setValue(settings.value("minRat").toDouble());
+    ui->ratMaxSize->setValue(settings.value("maxRat").toDouble());
+    ui->robotMinSize->setValue(settings.value("minRobot").toDouble());
+    ui->robotMaxSize->setValue(settings.value("maxRobot").toDouble());
 }
 
 void configWindow::on_testButton_clicked()
@@ -113,7 +113,7 @@ void configWindow::on_refreshTrackingButton_clicked()
     if (capturedFrame.empty()){
         on_testButton_clicked();
     }
-    BlobDetector detector(getSettings());
+    BlobDetector detector(getSettings(), capturedFrame.rows, capturedFrame.cols);
 
     BlobDetector::keyPoints keypoints = detector.detect(&capturedFrame);
 
