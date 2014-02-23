@@ -14,7 +14,7 @@
    <string>Configuration Window</string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>2</number>
   </property>
   <widget class="QWidget" name="tab_2">
    <attribute name="title">
@@ -157,29 +157,29 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QFormLayout" name="formLayout_5">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>MinArea</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="minAreaBox">
+          <property name="maximum">
+           <double>999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
          <widget class="QLabel" name="label_11">
           <property name="text">
            <string>MaxArea</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="maxAreaBox">
-          <property name="maximum">
-           <double>999.000000000000000</double>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="minAreaBox">
+         <widget class="QDoubleSpinBox" name="maxAreaBox">
           <property name="maximum">
            <double>999.000000000000000</double>
           </property>
