@@ -13,6 +13,11 @@ configWindow::configWindow(QWidget *parent) :
     ui(new Ui::configWindow)
 {
     ui->setupUi(this);
+
+    connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
+    connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
+    connect(ui->maskVBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
+    connect(ui->maskHBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
 }
 
 configWindow::~configWindow()
@@ -32,6 +37,12 @@ QMap<QString, QVariant> configWindow::getSettings()
 
     settings.insert("maxArea", ui->maxAreaBox->value());
     settings.insert("minArea", ui->minAreaBox->value());
+
+    settings.insert("maskEnabled", ui->maskEnabledBox->isChecked());
+    settings.insert("maskX", ui->maskXBox->value());
+    settings.insert("maskY", ui->maskYBox->value());
+    settings.insert("maskV", ui->maskVBox->value());
+    settings.insert("maskH", ui->maskHBox->value());
 
     settings.insert("ratMinSize", ui->ratMinSize->value());
     settings.insert("ratMaxSize", ui->ratMaxSize->value());
@@ -54,6 +65,12 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
     ui->deviceBox->setValue(settings.value("deviceId").toInt());
     ui->threshSpin->setValue(settings.value("threshold").toInt());
+
+    ui->maskEnabledBox->setChecked(settings.value("maskEnabled").toBool());
+    ui->maskXBox->setValue(settings.value("maskX").toDouble());
+    ui->maskYBox->setValue(settings.value("maskY").toDouble());
+    ui->maskVBox->setValue(settings.value("maskV").toDouble());
+    ui->maskHBox->setValue(settings.value("maskH").toDouble());
 
     ui->maxAreaBox->setValue(settings.value("maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("minArea").toDouble());
@@ -80,6 +97,8 @@ void configWindow::on_testButton_clicked()
     if (!capturedFrame.empty()){
         QImage image = QImage((uchar*) capturedFrame.data, capturedFrame.cols, capturedFrame.rows, capturedFrame.step, QImage::Format_RGB888);
         ui->videoLabel->setPixmap(QPixmap::fromImage(image));
+
+        valueMaskChanged();
     } else {
         QMessageBox result;
         result.setText("Error! Couldn't retrieve frame.");
@@ -135,4 +154,22 @@ void configWindow::on_refreshTrackingButton_clicked()
     painter.end();
 
     ui->trackingLabel->setPixmap(pixmap);
+}
+
+void configWindow::valueMaskChanged(){
+    QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
+
+    QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) capturedFrame.data,
+                                               capturedFrame.cols,
+                                               capturedFrame.rows,
+                                               QImage::Format_RGB888));
+    QPainter painter(&pixmap);
+    painter.setPen(Qt::magenta);
+    painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
+    painter.drawLine(QPoint(center.x()-5, center.y()+5), QPoint(center.x()+5, center.y()-5));
+    painter.drawEllipse(center, ui->maskHBox->value(), ui->maskVBox->value());
+    painter.end();
+
+    ui->maskLabel->setPixmap(pixmap);
+
 }

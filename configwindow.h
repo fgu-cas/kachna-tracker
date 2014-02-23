@@ -31,6 +31,7 @@ signals:
     void configurationUpdated();
 
 private slots:
+    void valueMaskChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
 
