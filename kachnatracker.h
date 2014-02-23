@@ -40,6 +40,8 @@ private slots:
     void updateTick();
 
 private:
+    void reset();
+
     void closeEvent(QCloseEvent *);
 
     Ui::kachnatracker *ui;

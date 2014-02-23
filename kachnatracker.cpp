@@ -149,10 +149,7 @@ void kachnatracker::on_startButton_clicked()
         pixmap.fill(Qt::white);
         delete capture;
 
-        lastKeypoints.rat = KeyPoint(0, 0, 0);
-        lastKeypoints.robot = KeyPoint(0, 0, 0);
-
-        ui->progressBar->setValue(0);
+        reset();
 
         experiment = new Experiment(this, &experimentSettings);        
         experiment->start();
@@ -210,6 +207,13 @@ void kachnatracker::updateTick(){
 void kachnatracker::closeEvent(QCloseEvent *event){
     configWin.close();
     event->accept();
+}
+
+void kachnatracker::reset(){
+    lastKeypoints.rat = KeyPoint(0, 0, 0);
+    lastKeypoints.robot = KeyPoint(0, 0, 0);
+
+    ui->progressBar->setValue(0);
 }
 
 void kachnatracker::on_actionDebug_triggered()
