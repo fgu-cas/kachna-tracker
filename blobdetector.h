@@ -9,7 +9,13 @@ using namespace cv;
 class BlobDetector
 {
 public:
-    BlobDetector(int threshold, double maxRatSize, double minRatSize, double maxRobotSize, double minRobotSize);
+    BlobDetector(int threshold,
+                 double maxArea,
+                 double minArea,
+                 double maxRatSize,
+                 double minRatSize,
+                 double maxRobotSize,
+                 double minRobotSize);
     ~BlobDetector();
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
@@ -19,6 +25,11 @@ public:
 
 private:
     SimpleBlobDetector *detector;
+
+    double maxRat;
+    double minRat;
+    double maxRobot;
+    double minRobot;
 };
 
 

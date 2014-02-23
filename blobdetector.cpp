@@ -4,7 +4,13 @@
 
 #include <iostream>
 
-BlobDetector::BlobDetector(int threshold, double maxRatSize, double minRatSize, double maxRobotSize, double minRobotSize){
+BlobDetector::BlobDetector(int threshold,
+                           double maxArea,
+                           double minArea,
+                           double maxRatSize,
+                           double minRatSize,
+                           double maxRobotSize,
+                           double minRobotSize){
     cv::SimpleBlobDetector::Params params;
 
     params.minThreshold = threshold;
@@ -17,10 +23,13 @@ BlobDetector::BlobDetector(int threshold, double maxRatSize, double minRatSize, 
     params.blobColor = 255;
     params.filterByCircularity = false;
     params.filterByArea = true;
-    double minSize = std::min(minRobotSize, minRatSize);
-    double maxSize = std::max(maxRobotSize, maxRatSize);
-    params.minArea = minSize;
-    params.maxArea = maxSize;
+    params.minArea = minArea;
+    params.maxArea = maxArea;
+
+    maxRat = maxRatSize;
+    minRat = minRatSize;
+    maxRobot = maxRobotSize;
+    minRobot = minRobotSize;
 
     detector = new SimpleBlobDetector(params);
 }
@@ -36,15 +45,16 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
 
     BlobDetector::keyPoints result;
 
-    if (keypoints.size() > 1){
-        if (keypoints.at(0).size > keypoints.at(1).size){
-            result.rat = keypoints[0];
-            result.robot = keypoints[1];
-        } else {
-            result.robot = keypoints[0];
-            result.rat = keypoints[1];
-        }
-    }
+    for (unsigned i = 0; i<keypoints.size(); i++){
+           KeyPoint keypoint = keypoints[i];
+           std::cout << "# " << keypoint.size << std::endl << std::flush;
+           if (keypoint.size > minRat && keypoint.size < maxRat){
+               result.rat = keypoint;
+           }
+           if (keypoint.size > minRobot && keypoint.size < maxRobot){
+               result.robot = keypoint;
+           }
+       }
 
     return result;
 }

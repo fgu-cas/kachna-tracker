@@ -55,6 +55,8 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("deviceId", ui->deviceBox->value());
     settings.insert("threshold", ui->threshSpin->value());
 
+    settings.insert("maxArea", ui->maxAreaBox->value());
+    settings.insert("minArea", ui->minAreaBox->value());
 
     settings.insert("ratMinSize", ui->ratMinSize->value());
     settings.insert("ratMaxSize", ui->ratMaxSize->value());
@@ -78,6 +80,9 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->deviceBox->setValue(settings.value("deviceId").toInt());
     ui->threshSpin->setValue(settings.value("threshold").toInt());
 
+    ui->maxAreaBox->setValue(settings.value("maxArea").toInt());
+    ui->minAreaBox->setValue(settings.value("minArea").toInt());
+
     ui->ratMinSize->setValue(settings.value("ratMinSize").toInt());
     ui->ratMaxSize->setValue(settings.value("ratMaxSize").toInt());
     ui->robotMinSize->setValue(settings.value("robotMinSize").toInt());
@@ -87,6 +92,8 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 void configWindow::on_refreshTrackingButton_clicked()
 {
     BlobDetector detector(ui->threshSpin->value(),
+                          ui->maxAreaBox->value(),
+                          ui->minAreaBox->value(),
                           ui->ratMaxSize->value(),
                           ui->ratMinSize->value(),
                           ui->robotMaxSize->value(),

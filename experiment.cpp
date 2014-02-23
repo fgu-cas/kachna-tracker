@@ -18,10 +18,12 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     }
 
     detector = new BlobDetector(settings->value("threshold", 160).toInt(),
-                            settings->value("ratMaxSize", 300).toDouble(),
-                            settings->value("ratMinSize", 20).toDouble(),
-                            settings->value("robotMaxSize", 300).toDouble(),
-                            settings->value("robotMinSize", 30).toDouble());
+                                settings->value("maxArea", 300).toDouble(),
+                                settings->value("minArea", 20).toDouble(),
+                                settings->value("ratMaxSize", 300).toDouble(),
+                                settings->value("ratMinSize", 20).toDouble(),
+                                settings->value("robotMaxSize", 300).toDouble(),
+                                settings->value("robotMinSize", 30).toDouble());
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
