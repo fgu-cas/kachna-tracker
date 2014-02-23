@@ -20,31 +20,6 @@ configWindow::~configWindow()
     delete ui;
 }
 
-void configWindow::on_testButton_clicked()
-{
-    //TODO: remove this.
-    VideoCapture capture;
-    if (ui->deviceBox->value() != 7){
-        capture = VideoCapture(ui->deviceBox->value());
-    } else {
-        capture = VideoCapture("/tmp/video.avi");
-        capture.set(CV_CAP_PROP_POS_MSEC, rand() % 5000);
-    }
-
-    capture >> capturedFrame;
-
-    if (!capturedFrame.empty()){
-        QImage image = QImage((uchar*) capturedFrame.data, capturedFrame.cols, capturedFrame.rows, capturedFrame.step, QImage::Format_RGB888);
-        ui->videoLabel->setPixmap(QPixmap::fromImage(image));
-    } else {
-        QMessageBox result;
-        result.setText("Error! Couldn't retrieve frame.");
-        result.exec();
-    }
-
-    capture.release();
-}
-
 QMap<QString, QVariant> configWindow::getSettings()
 {
     QMap<QString, QVariant> settings;
@@ -89,8 +64,36 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->robotMaxSize->setValue(settings.value("robotMaxSize").toDouble());
 }
 
+void configWindow::on_testButton_clicked()
+{
+    //TODO: remove this.
+    VideoCapture capture;
+    if (ui->deviceBox->value() != 7){
+        capture = VideoCapture(ui->deviceBox->value());
+    } else {
+        capture = VideoCapture("/tmp/video.avi");
+        capture.set(CV_CAP_PROP_POS_MSEC, rand() % 5000);
+    }
+
+    capture >> capturedFrame;
+
+    if (!capturedFrame.empty()){
+        QImage image = QImage((uchar*) capturedFrame.data, capturedFrame.cols, capturedFrame.rows, capturedFrame.step, QImage::Format_RGB888);
+        ui->videoLabel->setPixmap(QPixmap::fromImage(image));
+    } else {
+        QMessageBox result;
+        result.setText("Error! Couldn't retrieve frame.");
+        result.exec();
+    }
+
+    capture.release();
+}
+
 void configWindow::on_refreshTrackingButton_clicked()
 {
+    if (capturedFrame.empty()){
+        on_testButton_clicked();
+    }
     BlobDetector detector(ui->threshSpin->value(),
                           ui->maxAreaBox->value(),
                           ui->minAreaBox->value(),
