@@ -147,6 +147,12 @@ void kachnatracker::on_startButton_clicked()
                          capture->get(CV_CAP_PROP_FRAME_HEIGHT));
         pixmap.fill(Qt::white);
 
+        QPainter painter(&pixmap);
+        painter.setPen(Qt::black);
+        painter.drawEllipse(QPoint(experimentSettings.value("maskX").toInt(), experimentSettings.value("maskY").toInt()),
+                            experimentSettings.value("maskH").toInt(), experimentSettings.value("maskV").toInt());
+        painter.end();
+
         reset();
 
         experiment = new Experiment(this, &experimentSettings);        
