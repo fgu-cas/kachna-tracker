@@ -131,8 +131,8 @@ void kachnatracker::experimentEnded(){
 void kachnatracker::on_startButton_clicked()
 {
     if (experiment != 0){
-        experiment->stop();
         experimentTimer.stop();
+        experiment->stop();
     } else {
         QMap<QString, QVariant> experimentSettings = configWin.getSettings();
 
@@ -210,8 +210,8 @@ void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
 void kachnatracker::updateTick(){
     ui->progressBar->setValue(ui->progressBar->value()+1);
     if (ui->progressBar->value() == 100){
-        experiment->stop();
         experimentTimer.stop();
+        experiment->stop();
     }
 }
 
