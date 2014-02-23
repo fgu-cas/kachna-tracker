@@ -21,6 +21,11 @@ public:
     ~Experiment();
     QString getLog();
 
+    enum Update {
+        GOOD_FRAME,
+        BAD_FRAME
+    };
+
 private:
     VideoCapture *capture;
     BlobDetector *detector;
@@ -34,6 +39,7 @@ private:
     QElapsedTimer elapsedTimer;
 
 signals:
+    void update(Experiment::Update);
     void renderKeypoints(BlobDetector::keyPoints keyPoints);
     void experimentEnd();
 

@@ -7,6 +7,7 @@
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
+    connect(this, SIGNAL(update(Experiment::Update)), parent, SLOT(processUpdate(Experiment::Update)));
     connect(this, SIGNAL(renderKeypoints(BlobDetector::keyPoints)), parent, SLOT(renderKeypoints(BlobDetector::keyPoints)));
     connect(this, SIGNAL(experimentEnd()), parent, SLOT(experimentEnded()));
 
@@ -51,12 +52,32 @@ void Experiment::processFrame(){
 
     BlobDetector::keyPoints points = detector->detect(&frame);
 
-    ratFrame.push_back(points.rat.pt);
-    robotFrame.push_back(points.robot.pt);
+    bool badFrame = false;
 
-    if (elapsedTimer.elapsed() > 500){
+    if (points.rat.size == 0){
+        emit update(BAD_FRAME);
+        badFrame = true;
+    } else {
+        ratFrame.push_back(points.rat.pt);
+    }
+
+    if (points.rat.size == 0){
+        if (!badFrame){
+            emit update(BAD_FRAME);
+            badFrame = true;
+        }
+    } else {
+        robotFrame.push_back(points.robot.pt);
+    }
+
+
+    if (elapsedTimer.elapsed() > 500 && !badFrame){
         emit(renderKeypoints(points));
         elapsedTimer.start();
+    }
+
+    if (!badFrame){
+        emit update(GOOD_FRAME);
     }
 }
 

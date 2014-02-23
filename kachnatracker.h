@@ -23,6 +23,7 @@ public:
     ~kachnatracker();
 
 public slots:
+    void processUpdate(Experiment::Update);
     void renderKeypoints(BlobDetector::keyPoints keypoints);
     void experimentEnded();
 

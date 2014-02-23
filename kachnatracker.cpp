@@ -159,6 +159,17 @@ void kachnatracker::on_startButton_clicked()
     }
 }
 
+void kachnatracker::processUpdate(Experiment::Update update){
+    switch (update){
+        case Experiment::GOOD_FRAME:
+            ui->goodFramesLCD->display(ui->goodFramesLCD->value()+1);
+            break;
+        case Experiment::BAD_FRAME:
+            ui->badFramesLCD->display(ui->badFramesLCD->value()+1);
+            break;
+    }
+}
+
 void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
     QPoint lastRat;
@@ -214,6 +225,9 @@ void kachnatracker::reset(){
     lastKeypoints.robot = KeyPoint(0, 0, 0);
 
     ui->progressBar->setValue(0);
+
+    ui->badFramesLCD->display(0);
+    ui->badFramesLCD->display(0);
 }
 
 void kachnatracker::on_actionDebug_triggered()
