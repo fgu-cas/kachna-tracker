@@ -55,7 +55,7 @@ void Experiment::processFrame(){
         ratFrame.push_back(points.rat.pt);
     }
 
-    if (points.rat.size == 0){
+    if (points.robot.size == 0){
         if (!badFrame){
             emit update(BAD_FRAME);
             badFrame = true;
