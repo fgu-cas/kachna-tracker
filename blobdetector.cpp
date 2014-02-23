@@ -47,7 +47,6 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
 
     for (unsigned i = 0; i<keypoints.size(); i++){
            KeyPoint keypoint = keypoints[i];
-           std::cout << "# " << keypoint.size << std::endl << std::flush;
            if (keypoint.size > minRat && keypoint.size < maxRat){
                result.rat = keypoint;
            }
