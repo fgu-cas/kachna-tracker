@@ -46,32 +46,17 @@ void Experiment::processFrame(){
 
     BlobDetector::keyPoints points = detector->detect(&frame);
 
-    bool badFrame = false;
+    ratFrame.push_back(points.rat.pt);
+    robotFrame.push_back(points.robot.pt);
 
-    if (points.rat.size == 0){
+    bool badFrame = false;
+    if (points.rat.size == 0 || points.robot.size == 0){
         emit update(BAD_FRAME);
         badFrame = true;
     } else {
-        ratFrame.push_back(points.rat.pt);
-    }
-
-    if (points.robot.size == 0){
-        if (!badFrame){
-            emit update(BAD_FRAME);
-            badFrame = true;
-        }
-    } else {
-        robotFrame.push_back(points.robot.pt);
-    }
-
-
-    if (elapsedTimer.elapsed() > 500 && !badFrame){
-        emit(renderKeypoints(points));
-        elapsedTimer.start();
-    }
-
-    if (!badFrame){
         emit update(GOOD_FRAME);
+    }
+
     }
 }
 
