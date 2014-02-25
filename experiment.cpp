@@ -2,6 +2,10 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#ifdef _WIN32
+#include "../cbw.h"
+#endif
+
 #include <iostream>
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
@@ -22,9 +26,21 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
+
+    triggerDistance = settings->value("triggerDistance", 50).toDouble();
+#ifdef _WIN32
+    float revision = (float) CURRENTREVNUM;
+    cbDeclareRevision(&revision);
+    cbErrHandling (PRINTALL, DONTSTOP);
+    cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
+#endif
+    lastFrame = 0;
+
+    shockActive = false;
 }
 
 Experiment::~Experiment(){
+    setShock(0);
     delete capture;
     delete detector;
 }
@@ -35,6 +51,7 @@ void Experiment::start(){
 }
 
 void Experiment::stop(){
+    setShock(0);
     this->timer.stop();
     capture->release();
     emit experimentEnd();
@@ -57,7 +74,36 @@ void Experiment::processFrame(){
         emit update(GOOD_FRAME);
     }
 
+    if (!badFrame){
+        double distance = norm(points.rat.pt - points.robot.pt);
+
+        if (distance < triggerDistance){
+            setShock(0.4);
+            shockActive = true;
+        } else {
+            if (shockActive){
+                setShock(0);
+                shockActive = false;
+            }
+        }
+
+        if (elapsedTimer.elapsed() > lastFrame + 500){
+            emit(renderKeypoints(points));
+            lastFrame = elapsedTimer.elapsed();
+        }
     }
+
+}
+
+void Experiment::setShock(double mA){
+#ifdef _WIN32
+    if (mA > 0.7){
+        mA = 0.7;
+    }
+    cbDOut(0, FIRSTPORTC, (int)mA*10);
+#else
+    std::cout << "Shock set to " << mA << " @ " << elapsedTimer.elapsed() << std::endl;
+#endif
 }
 
 

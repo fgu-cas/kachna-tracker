@@ -27,6 +27,8 @@ public:
     };
 
 private:
+    void setShock(double mA);
+
     VideoCapture *capture;
     BlobDetector *detector;
 
@@ -35,6 +37,13 @@ private:
 
     QTimer timer;
     QElapsedTimer elapsedTimer;
+
+    double triggerDistance;
+
+    bool shockActive;
+    qint64 lastFrame;
+    qint64 lastShock;
+    qint64 exitedZone;
 
 signals:
     void update(Experiment::Update);
