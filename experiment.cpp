@@ -65,10 +65,10 @@ void Experiment::processFrame(){
     double distance = -1;
     bool badFrame = false;
     if (points.rat.size == 0 || points.robot.size == 0){
-        badFrames++;
+        stats.badFrames++;
         badFrame = true;
     } else {
-        goodFrames++;
+        stats.goodFrames++;
         distance = cv::norm(points.rat.pt - points.robot.pt);
     }
 
@@ -78,6 +78,7 @@ void Experiment::processFrame(){
             if (!badFrame && distance < triggerDistance
                     && elapsedTimer.elapsed() > lastChange+shock.refractory){
                 shockState = DELAYING;
+                stats.entryCount++;
                 lastChange = elapsedTimer.elapsed();
             }
             break;
@@ -86,6 +87,10 @@ void Experiment::processFrame(){
                 if (distance < triggerDistance){
                     if (elapsedTimer.elapsed() > lastChange+shock.delay){
                         shockState = SHOCKING;
+                        stats.shockCount++;
+                        if (stats.initialShock == 0){
+                            stats.initialShock = elapsedTimer.elapsed();
+                        }
                         lastChange = elapsedTimer.elapsed();
                         setShock(shock.level);
                     }
@@ -112,6 +117,7 @@ void Experiment::processFrame(){
                 if (distance < triggerDistance){
                     if (elapsedTimer.elapsed() > lastChange+shock.in_delay){
                         shockState = SHOCKING;
+                        stats.shockCount++;
                         lastChange = elapsedTimer.elapsed();
                         setShock(shock.level);
                     }
@@ -137,8 +143,7 @@ Experiment::Update Experiment::getUpdate(){
 
     update.keypoints.rat = ratPoints.at(ratPoints.size()-1);
     update.keypoints.robot = robotPoints.at(robotPoints.size()-1);
-    update.goodFrames = goodFrames;
-    update.badFrames = badFrames;
+    update.stats = stats;
 
     return update;
 }

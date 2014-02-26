@@ -16,7 +16,7 @@
 * ~~thresholds, masks~~
 
 * ~~online display of robot and rat position~~
-* current rat "score" (distance travelled, shock count, entry count, initial time without shock)
+* ~~current rat "score" (distance travelled, shock count, entry count, initial time without shock)~~
 * continual saving during the experiment (in case of a crash)
 
 * ~~session end alert (pop-up,~~ sound?)

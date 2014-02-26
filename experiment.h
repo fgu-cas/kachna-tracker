@@ -21,11 +21,19 @@ public:
     ~Experiment();
     QString getLog();
 
-    struct Update {
-        BlobDetector::keyPoints keypoints;
+    struct Stats {
         int goodFrames;
         int badFrames;
+        int shockCount;
+        int entryCount;
+        qint64 initialShock;
     };
+
+    struct Update {
+        BlobDetector::keyPoints keypoints;
+        Stats stats;
+    };
+
     Update getUpdate();
 
 
@@ -41,8 +49,7 @@ private:
     QTimer timer;
     QElapsedTimer elapsedTimer;
 
-    int goodFrames;
-    int badFrames;
+    Stats stats;
 
     double triggerDistance;
 

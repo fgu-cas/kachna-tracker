@@ -212,8 +212,11 @@ void kachnatracker::requestUpdate(){
     painter.end();
     ui->displayLabel->setPixmap(pixmap);
 
-    ui->goodFramesLCD->display(update.goodFrames);
-    ui->badFramesLCD->display(update.badFrames);
+    ui->goodFramesLCD->display(update.stats.goodFrames);
+    ui->badFramesLCD->display(update.stats.badFrames);
+    ui->encounterLabel->setText(QString::number(update.stats.entryCount));
+    ui->shockLabel->setText(QString::number(update.stats.shockCount));
+    //todo: initial shock time display
 }
 
 void kachnatracker::updateTick(){
