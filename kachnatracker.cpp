@@ -40,6 +40,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     configWin.setSettings(experimentSettings);
 
     connect(&experimentTimer, SIGNAL(timeout()), this, SLOT(updateTick()));
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(requestUpdate()));
 
     experiment = 0;
 }
@@ -103,6 +104,7 @@ void kachnatracker::on_actionExportConfig_triggered()
 
 void kachnatracker::experimentEnded(){
     experimentTimer.stop();
+    updateTimer.stop();
 
     QMessageBox alert;
     alert.setText("Experiment ended!");
@@ -162,27 +164,20 @@ void kachnatracker::on_startButton_clicked()
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
         experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
+
+        updateTimer.start(100);
     }
 }
 
-void kachnatracker::processUpdate(Experiment::Update update){
-    switch (update){
-        case Experiment::GOOD_FRAME:
-            ui->goodFramesLCD->display(ui->goodFramesLCD->value()+1);
-            break;
-        case Experiment::BAD_FRAME:
-            ui->badFramesLCD->display(ui->badFramesLCD->value()+1);
-            break;
-    }
-}
+void kachnatracker::requestUpdate(){
+    Experiment::Update update = experiment->getUpdate();
 
-void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
-    QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
+    QPoint rat(update.keypoints.rat.pt.x, update.keypoints.rat.pt.y);
     QPoint lastRat;
     if (lastKeypoints.rat.size != 0){
         lastRat = QPoint(lastKeypoints.rat.pt.x, lastKeypoints.rat.pt.y);
     }
-    QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
+    QPoint robot(update.keypoints.robot.pt.x, update.keypoints.robot.pt.y);
     QPoint lastRobot;
     if (lastKeypoints.robot.size != 0){
         lastRobot = QPoint(lastKeypoints.robot.pt.x, lastKeypoints.robot.pt.y);
@@ -190,27 +185,35 @@ void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
 
     QPainter painter(&pixmap);
 
-    painter.setPen(Qt::red);
-    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+    if (rat.x() != 0 || rat.y() != 0){
+        painter.setPen(Qt::red);
+        painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
 
-    painter.drawEllipse(rat, 2, 2);
-    if (lastRat.x() != 0){
-        painter.drawLine(lastRat, rat);
+        painter.drawEllipse(rat, 2, 2);
+        if (lastRat.x() != 0){
+            painter.drawLine(lastRat, rat);
+        }
+
+        lastKeypoints.rat = update.keypoints.rat;
     }
 
-    painter.setPen(Qt::blue);
-    painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
+    if (robot.x() != 0 || robot.y() != 0){
+        painter.setPen(Qt::blue);
+        painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
 
-    painter.drawEllipse(robot, 2, 2);
-    if (lastRobot.x() != 0){
-        painter.drawLine(lastRobot, robot);
+        painter.drawEllipse(robot, 2, 2);
+        if (lastRobot.x() != 0){
+            painter.drawLine(lastRobot, robot);
+        }
+
+        lastKeypoints.robot = update.keypoints.robot;
     }
 
     painter.end();
-
     ui->displayLabel->setPixmap(pixmap);
 
-    lastKeypoints = keypoints;
+    ui->goodFramesLCD->display(update.goodFrames);
+    ui->badFramesLCD->display(update.badFrames);
 }
 
 void kachnatracker::updateTick(){

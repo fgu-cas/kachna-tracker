@@ -11,8 +11,6 @@
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
-    connect(this, SIGNAL(update(Experiment::Update)), parent, SLOT(processUpdate(Experiment::Update)));
-    connect(this, SIGNAL(renderKeypoints(BlobDetector::keyPoints)), parent, SLOT(renderKeypoints(BlobDetector::keyPoints)));
     connect(this, SIGNAL(experimentEnd()), parent, SLOT(experimentEnded()));
 
     capture.open(settings->value("deviceId", 0).toInt());
@@ -29,7 +27,6 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     cbErrHandling (PRINTALL, DONTSTOP);
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
 #endif
-    lastFrame = 0;
 
     shockActive = false;
 }
@@ -57,15 +54,15 @@ void Experiment::processFrame(){
 
     BlobDetector::keyPoints points = detector->detect(&frame);
 
-    ratFrame.push_back(points.rat.pt);
-    robotFrame.push_back(points.robot.pt);
+    ratFrame.push_back(points.rat);
+    robotFrame.push_back(points.robot);
 
     bool badFrame = false;
     if (points.rat.size == 0 || points.robot.size == 0){
-        emit update(BAD_FRAME);
+        badFrames++;
         badFrame = true;
     } else {
-        emit update(GOOD_FRAME);
+        goodFrames++;
     }
 
     if (!badFrame){
@@ -80,13 +77,18 @@ void Experiment::processFrame(){
                 shockActive = false;
             }
         }
-
-        if (elapsedTimer.elapsed() > lastFrame + 100){
-            emit(renderKeypoints(points));
-            lastFrame = elapsedTimer.elapsed();
-        }
     }
+}
 
+Experiment::Update Experiment::getUpdate(){
+    Update update;
+
+    update.keypoints.rat = ratFrame.at(ratFrame.size()-1);
+    update.keypoints.robot = robotFrame.at(robotFrame.size()-1);
+    update.goodFrames = goodFrames;
+    update.badFrames = badFrames;
+
+    return update;
 }
 
 void Experiment::setShock(double mA){
@@ -104,7 +106,7 @@ void Experiment::setShock(double mA){
 QString Experiment::getLog(){
     QString log;
     for (unsigned i = 0;i < ratFrame.size(); i++){
-        log += QString::number(ratFrame[i].x) + ", " + QString::number(ratFrame[i].y) + "\n";
+        log += QString::number(ratFrame[i].pt.x) + ", " + QString::number(ratFrame[i].pt.y) + "\n";
     }
     return log;
 }

@@ -21,10 +21,13 @@ public:
     ~Experiment();
     QString getLog();
 
-    enum Update {
-        GOOD_FRAME,
-        BAD_FRAME
+    struct Update {
+        BlobDetector::keyPoints keypoints;
+        int goodFrames;
+        int badFrames;
     };
+    Update getUpdate();
+
 
 private:
     void setShock(double mA);
@@ -32,22 +35,20 @@ private:
     VideoCapture capture;
     BlobDetector *detector;
 
-    std::vector<Point2f> ratFrame;
-    std::vector<Point2f> robotFrame;
+    std::vector<KeyPoint> ratFrame;
+    std::vector<KeyPoint> robotFrame;
 
     QTimer timer;
     QElapsedTimer elapsedTimer;
 
+    bool shockActive;
+
+    int goodFrames;
+    int badFrames;
+
     double triggerDistance;
 
-    bool shockActive;
-    qint64 lastFrame;
-    qint64 lastShock;
-    qint64 exitedZone;
-
 signals:
-    void update(Experiment::Update);
-    void renderKeypoints(BlobDetector::keyPoints keyPoints);
     void experimentEnd();
 
 public slots:

@@ -39,7 +39,6 @@ private:
     Ui::configWindow *ui;
 
     QPixmap capturedFrame;
-    Mat *fraame;
 };
 
 #endif // CONFIGWINDOW_H

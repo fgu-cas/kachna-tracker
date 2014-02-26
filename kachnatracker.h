@@ -23,8 +23,6 @@ public:
     ~kachnatracker();
 
 public slots:
-    void processUpdate(Experiment::Update);
-    void renderKeypoints(BlobDetector::keyPoints keypoints);
     void experimentEnded();
 
 private slots:
@@ -39,6 +37,7 @@ private slots:
     void on_startButton_clicked();
 
     void updateTick();
+    void requestUpdate();
 
 private:
     void reset();
@@ -51,7 +50,9 @@ private:
     QPixmap pixmap;
 
     configWindow configWin;
+
     QTimer experimentTimer;
+    QTimer updateTimer;
 
     BlobDetector::keyPoints lastKeypoints;
 };
