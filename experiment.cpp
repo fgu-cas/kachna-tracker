@@ -59,8 +59,8 @@ void Experiment::processFrame(){
     capture >> frame;
 
     BlobDetector::keyPoints points = detector->detect(&frame);
-    ratFrame.push_back(points.rat);
-    robotFrame.push_back(points.robot);
+    ratPoints.push_back(points.rat);
+    robotPoints.push_back(points.robot);
 
     double distance = -1;
     bool badFrame = false;
@@ -135,8 +135,8 @@ void Experiment::changeShock(double shockLevel){
 Experiment::Update Experiment::getUpdate(){
     Update update;
 
-    update.keypoints.rat = ratFrame.at(ratFrame.size()-1);
-    update.keypoints.robot = robotFrame.at(robotFrame.size()-1);
+    update.keypoints.rat = ratPoints.at(ratPoints.size()-1);
+    update.keypoints.robot = robotPoints.at(robotPoints.size()-1);
     update.goodFrames = goodFrames;
     update.badFrames = badFrames;
 
@@ -157,8 +157,8 @@ void Experiment::setShock(double mA){
 
 QString Experiment::getLog(){
     QString log;
-    for (unsigned i = 0;i < ratFrame.size(); i++){
-        log += QString::number(ratFrame[i].pt.x) + ", " + QString::number(ratFrame[i].pt.y) + "\n";
+    for (unsigned i = 0;i < ratPoints.size(); i++){
+        log += QString::number(ratPoints[i].pt.x) + ", " + QString::number(ratPoints[i].pt.y) + "\n";
     }
     return log;
 }

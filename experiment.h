@@ -35,8 +35,8 @@ private:
     VideoCapture capture;
     BlobDetector *detector;
 
-    std::vector<KeyPoint> ratFrame;
-    std::vector<KeyPoint> robotFrame;
+    std::vector<KeyPoint> ratPoints;
+    std::vector<KeyPoint> robotPoints;
 
     QTimer timer;
     QElapsedTimer elapsedTimer;
