@@ -15,14 +15,9 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     connect(this, SIGNAL(renderKeypoints(BlobDetector::keyPoints)), parent, SLOT(renderKeypoints(BlobDetector::keyPoints)));
     connect(this, SIGNAL(experimentEnd()), parent, SLOT(experimentEnded()));
 
-    //TODO: remove this.
-    if (settings->value("deviceId").toInt() != 7){
-        capture = new VideoCapture(settings->value("deviceId", 0).toInt());
-    } else {
-        capture = new VideoCapture("/tmp/video.avi");
-    }
+    capture.open(settings->value("deviceId", 0).toInt());
 
-    detector = new BlobDetector(*settings, capture->get(CV_CAP_PROP_FRAME_HEIGHT), capture->get(CV_CAP_PROP_FRAME_WIDTH));
+    detector = new BlobDetector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
@@ -41,7 +36,6 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
 Experiment::~Experiment(){
     setShock(0);
-    delete capture;
     delete detector;
 }
 
@@ -53,13 +47,13 @@ void Experiment::start(){
 void Experiment::stop(){
     setShock(0);
     this->timer.stop();
-    capture->release();
+    capture.release();
     emit experimentEnd();
 }
 
 void Experiment::processFrame(){
     Mat frame;
-    *capture >> frame;
+    capture >> frame;
 
     BlobDetector::keyPoints points = detector->detect(&frame);
 

@@ -29,7 +29,7 @@ public:
 private:
     void setShock(double mA);
 
-    VideoCapture *capture;
+    VideoCapture capture;
     BlobDetector *detector;
 
     std::vector<Point2f> ratFrame;

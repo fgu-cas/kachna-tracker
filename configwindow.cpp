@@ -83,14 +83,8 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
 void configWindow::on_testButton_clicked()
 {
-    //TODO: remove this.
     VideoCapture capture;
-    if (ui->deviceBox->value() != 7){
-        capture = VideoCapture(ui->deviceBox->value());
-    } else {
-        capture = VideoCapture("/tmp/video.avi");
-        capture.set(CV_CAP_PROP_POS_MSEC, rand() % 5000);
-    }
+    capture.open(ui->deviceBox->value());
 
     capture >> capturedFrame;
 
