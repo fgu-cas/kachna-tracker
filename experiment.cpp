@@ -28,7 +28,13 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
 #endif
 
-    shockActive = false;
+    shock.delay = settings->value("shockDelay").toInt();
+    shock.level = settings->value("shockLevel").toDouble();
+    shock.in_delay = settings->value("shockInterDelay").toInt();
+    shock.length = settings->value("shockLength").toInt();
+    shock.refractory = settings->value("shockRefractoryPeriod").toInt();
+
+    shockState = OUT;
 }
 
 Experiment::~Experiment(){
@@ -53,30 +59,79 @@ void Experiment::processFrame(){
     capture >> frame;
 
     BlobDetector::keyPoints points = detector->detect(&frame);
-
     ratFrame.push_back(points.rat);
     robotFrame.push_back(points.robot);
 
+    double distance = -1;
     bool badFrame = false;
     if (points.rat.size == 0 || points.robot.size == 0){
         badFrames++;
         badFrame = true;
     } else {
         goodFrames++;
+        distance = cv::norm(points.rat.pt - points.robot.pt);
     }
 
-    if (!badFrame){
-        double distance = norm(points.rat.pt - points.robot.pt);
 
-        if (distance < triggerDistance){
-            setShock(0.4);
-            shockActive = true;
-        } else {
-            if (shockActive){
-                setShock(0);
-                shockActive = false;
+    switch (shockState){
+        case OUT:
+            if (!badFrame && distance < triggerDistance){
+                shockState = DELAYING;
+                lastChange = elapsedTimer.elapsed();
             }
-        }
+            break;
+        case DELAYING:
+            if (!badFrame){
+                if (distance < triggerDistance){
+                    if (elapsedTimer.elapsed() > lastChange+shock.delay){
+                        shockState = SHOCKING;
+                        lastChange = elapsedTimer.elapsed();
+                        setShock(shock.level);
+                    }
+                } else {
+                    shockState=OUT;
+                }
+            }
+            break;
+        case SHOCKING:
+            if (elapsedTimer.elapsed() > lastChange+shock.length){
+                setShock(0);
+                if (!badFrame){
+                    if (distance < triggerDistance){
+                        shockState = PAUSE;
+                    } else {
+                        shockState = REFRACTORY;
+                    }
+                    lastChange = elapsedTimer.elapsed();
+                }
+            }
+            break;
+        case PAUSE:
+            if (!badFrame){
+                if (distance < triggerDistance){
+                    if (elapsedTimer.elapsed() > lastChange+shock.in_delay){
+                        shockState = SHOCKING;
+                        lastChange = elapsedTimer.elapsed();
+                        setShock(shock.level);
+                    }
+                } else {
+                    shockState = REFRACTORY;
+                    lastChange = elapsedTimer.elapsed();
+                }
+            }
+            break;
+        case REFRACTORY:
+            if (elapsedTimer.elapsed() > lastChange+shock.refractory){
+                shockState = OUT;
+            }
+    }
+}
+
+void Experiment::changeShock(double shockLevel){
+    if (shockLevel < 0.2){
+        shock.level = 0.2;
+    } else if (shockLevel > 0.7){
+        shock.level = 0.7;
     }
 }
 

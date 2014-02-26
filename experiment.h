@@ -41,20 +41,37 @@ private:
     QTimer timer;
     QElapsedTimer elapsedTimer;
 
-    bool shockActive;
-
     int goodFrames;
     int badFrames;
 
     double triggerDistance;
 
+    enum {
+        OUT,
+        DELAYING,
+        SHOCKING,
+        PAUSE,
+        REFRACTORY
+    } shockState;
+    struct {
+        double level;
+        int length;
+        int delay;
+        int in_delay;
+        int refractory;
+    } shock;
+    qint64 lastChange;
+
 signals:
     void experimentEnd();
 
 public slots:
-    void processFrame();
     void start();
     void stop();
+    void changeShock(double shock);
+
+private slots:
+    void processFrame();
 
 };
 
