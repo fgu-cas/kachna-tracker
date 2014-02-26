@@ -38,7 +38,8 @@ private slots:
 private:
     Ui::configWindow *ui;
 
-    Mat capturedFrame;
+    QPixmap capturedFrame;
+    Mat *fraame;
 };
 
 #endif // CONFIGWINDOW_H

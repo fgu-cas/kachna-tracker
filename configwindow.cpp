@@ -86,12 +86,16 @@ void configWindow::on_testButton_clicked()
     VideoCapture capture;
     capture.open(ui->deviceBox->value());
 
-    capture >> capturedFrame;
+    Mat frame;
+    capture >> frame;
 
-    if (!capturedFrame.empty()){
-        QImage image = QImage((uchar*) capturedFrame.data, capturedFrame.cols, capturedFrame.rows, capturedFrame.step, QImage::Format_RGB888);
-        ui->videoLabel->setPixmap(QPixmap::fromImage(image));
-
+    if (!frame.empty()){
+        capturedFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                  frame.cols,
+                                                  frame.rows,
+                                                  frame.step,
+                                                  QImage::Format_RGB888));
+        ui->videoLabel->setPixmap(capturedFrame);
         valueMaskChanged();
     } else {
         QMessageBox result;
@@ -104,17 +108,20 @@ void configWindow::on_testButton_clicked()
 
 void configWindow::on_refreshTrackingButton_clicked()
 {
-    if (capturedFrame.empty()){
-        on_testButton_clicked();
-    }
-    BlobDetector detector(getSettings(), capturedFrame.rows, capturedFrame.cols);
+    VideoCapture capture;
+    capture.open(ui->deviceBox->value());
 
-    BlobDetector::keyPoints keypoints = detector.detect(&capturedFrame);
+    Mat frame;
+    capture >> frame;
+
+    BlobDetector detector(getSettings(), frame.rows, frame.cols);
+
+    BlobDetector::keyPoints keypoints = detector.detect(&frame);
 
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
     QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
 
-    std::vector<KeyPoint> allKeypoints = detector.allKeypoints(&capturedFrame);
+    std::vector<KeyPoint> allKeypoints = detector.allKeypoints(&frame);
     ui->keypointList->clear();
     for (unsigned i = 0; i < allKeypoints.size(); i++){
         KeyPoint keypoint = allKeypoints[i];
@@ -124,9 +131,10 @@ void configWindow::on_refreshTrackingButton_clicked()
     }
 
 
-    QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) capturedFrame.data,
-                                               capturedFrame.cols,
-                                               capturedFrame.rows,
+    QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                               frame.cols,
+                                               frame.rows,
+                                               frame.step,
                                                QImage::Format_RGB888));
 
     QPainter painter(&pixmap);
@@ -147,10 +155,7 @@ void configWindow::on_refreshTrackingButton_clicked()
 void configWindow::valueMaskChanged(){
     QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
 
-    QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) capturedFrame.data,
-                                               capturedFrame.cols,
-                                               capturedFrame.rows,
-                                               QImage::Format_RGB888));
+    QPixmap pixmap = QPixmap(capturedFrame);
     QPainter painter(&pixmap);
     painter.setPen(Qt::magenta);
     painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
