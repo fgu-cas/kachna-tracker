@@ -35,6 +35,13 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     shock.refractory = settings->value("shockRefractoryPeriod").toInt();
 
     shockState = OUT;
+
+    stats.goodFrames = 0;
+    stats.badFrames = 0;
+    stats.entryCount = 0;
+    stats.shockCount = 0;
+    stats.initialShock = 0;
+    lastChange = 0;
 }
 
 Experiment::~Experiment(){
