@@ -193,7 +193,7 @@ void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
     painter.setPen(Qt::red);
     painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
 
-    painter.drawEllipse(rat, 3, 3);
+    painter.drawEllipse(rat, 2, 2);
     if (lastRat.x() != 0){
         painter.drawLine(lastRat, rat);
     }
@@ -201,7 +201,7 @@ void kachnatracker::renderKeypoints(BlobDetector::keyPoints keypoints){
     painter.setPen(Qt::blue);
     painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
 
-    painter.drawEllipse(robot, 3, 3);
+    painter.drawEllipse(robot, 2, 2);
     if (lastRobot.x() != 0){
         painter.drawLine(lastRobot, robot);
     }

@@ -74,7 +74,6 @@ void Experiment::processFrame(){
         if (distance < triggerDistance){
             setShock(0.4);
             shockActive = true;
-            emit(renderKeypoints(points));
         } else {
             if (shockActive){
                 setShock(0);
@@ -82,7 +81,7 @@ void Experiment::processFrame(){
             }
         }
 
-        if (elapsedTimer.elapsed() > lastFrame + 750){
+        if (elapsedTimer.elapsed() > lastFrame + 100){
             emit(renderKeypoints(points));
             lastFrame = elapsedTimer.elapsed();
         }

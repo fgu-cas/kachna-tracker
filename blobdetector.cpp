@@ -9,7 +9,7 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
 
     params.minThreshold = settings.value("threshold").toDouble();
     params.maxThreshold = 255;
-    params.thresholdStep = 10;
+    params.thresholdStep = 5;
     params.minDistBetweenBlobs = 10.0f;
     params.filterByInertia = false;
     params.filterByConvexity = false;
