@@ -102,6 +102,8 @@ void kachnatracker::on_actionExportConfig_triggered()
 }
 
 void kachnatracker::experimentEnded(){
+    experimentTimer.stop();
+
     QMessageBox alert;
     alert.setText("Experiment ended!");
     alert.exec();
