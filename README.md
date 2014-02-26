@@ -7,8 +7,8 @@ Tracker for AAPA tasks
 
 * PCI-DIO24 by *Measurement Computing* 
   * For dealing out shocks
-* Sony XCDX710CR
-  * Firewire camera for arena monitoring
+* AVerMedia DVD EZMaker
+  * For grabbing frames from the analog camera
 
 ## Build instructions
 
@@ -34,5 +34,5 @@ Prerequisites:
 (Assuming $MXE contains the path to your MXE install)
 
     cd kachna-tracker
-    $MXE/usr/i686-pc-mingw32.static/qt5/bin/qmake . LIBS+="`$MXE/usr/bin/i686-pc-mingw32.static-pkg-config opencv --libs`" LIBS+="-L . -lcbw32 -lstdc++"
+    $MXE/usr/i686-pc-mingw32.static/qt5/bin/qmake . LIBS+="`$MXE/usr/bin/i686-pc-mingw32.static-pkg-config opencv --libs`" LIBS+="-L . -lcbw32"
     PATH=$MXE/usr/bin:$PATH make
