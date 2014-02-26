@@ -161,7 +161,7 @@ void configWindow::valueMaskChanged(){
     painter.setPen(Qt::magenta);
     painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
     painter.drawLine(QPoint(center.x()-5, center.y()+5), QPoint(center.x()+5, center.y()-5));
-    painter.drawEllipse(center, ui->maskHBox->value(), ui->maskVBox->value());
+    painter.drawEllipse(center, (int) ui->maskHBox->value(), (int) ui->maskVBox->value());
     painter.end();
 
     ui->maskLabel->setPixmap(pixmap);
