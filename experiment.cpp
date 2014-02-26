@@ -28,8 +28,8 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
 #endif
 
+    shock.level = 0.4;
     shock.delay = settings->value("shockDelay").toInt();
-    shock.level = settings->value("shockLevel").toDouble();
     shock.in_delay = settings->value("shockInterDelay").toInt();
     shock.length = settings->value("shockLength").toInt();
     shock.refractory = settings->value("shockRefractoryPeriod").toInt();

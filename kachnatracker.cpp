@@ -156,15 +156,15 @@ void kachnatracker::on_startButton_clicked()
         painter.drawEllipse(QPoint(experimentSettings.value("maskX").toInt(), experimentSettings.value("maskY").toInt()),
                             experimentSettings.value("maskH").toInt(), experimentSettings.value("maskV").toInt());
         painter.end();
-
         reset();
 
         experiment = new Experiment(this, &experimentSettings);        
         experiment->start();
 
+        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double));
+
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
         experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
-
         updateTimer.start(100);
     }
 }
@@ -237,6 +237,8 @@ void kachnatracker::reset(){
 
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
+
+    ui->shockBox->setValue(0.4);
 }
 
 void kachnatracker::on_actionDebug_triggered()
