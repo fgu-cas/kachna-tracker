@@ -63,7 +63,15 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
 }
 
 std::vector<KeyPoint> BlobDetector::allKeypoints(Mat *frame){
-    std::vector<KeyPoint> keypoints;
-    detector->detect(*frame, keypoints);
-    return keypoints;
+    std::vector<KeyPoint> keypoints_pre;
+    detector->detect(*frame, keypoints_pre);
+    std::vector<KeyPoint> keypoints_post;
+    for (unsigned i = 0; i<keypoints_pre.size(); i++){
+        KeyPoint keypoint = keypoints_pre[i];
+        if (mask.at<uchar>(keypoint.pt.y, keypoint.pt.x) != 0){
+            keypoints_post.push_back(keypoint);
+        }
+
+    }
+    return keypoints_post;
 }
