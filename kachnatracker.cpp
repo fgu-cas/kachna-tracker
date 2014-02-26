@@ -161,7 +161,7 @@ void kachnatracker::on_startButton_clicked()
         experiment = new Experiment(this, &experimentSettings);        
         experiment->start();
 
-        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double));
+        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
         experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
