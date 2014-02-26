@@ -49,6 +49,11 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("minRobot", ui->robotMinSize->value());
     settings.insert("maxRobot", ui->robotMaxSize->value());
 
+    settings.insert("shockDelay", ui->entryBox->value());
+    settings.insert("shockInterDelay", ui->interBox->value());
+    settings.insert("shockLength", ui->durationBox->value());
+    settings.insert("shockRefractoryPeriod", ui->refractoryBox->value());
+
     return settings;
 }
 
@@ -79,6 +84,11 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->ratMaxSize->setValue(settings.value("maxRat").toDouble());
     ui->robotMinSize->setValue(settings.value("minRobot").toDouble());
     ui->robotMaxSize->setValue(settings.value("maxRobot").toDouble());
+
+    ui->entryBox->setValue(settings.value("shockDelay").toInt());
+    ui->interBox->setValue(settings.value("shockInterDelay").toInt());
+    ui->durationBox->setValue(settings.value("shockLength").toInt());
+    ui->refractoryBox->setValue(settings.value("shockRefractoryPeriod").toInt());
 }
 
 void configWindow::on_testButton_clicked()
