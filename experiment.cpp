@@ -101,7 +101,7 @@ void Experiment::setShock(double mA){
     if (mA > 0.7){
         mA = 0.7;
     }
-    cbDOut(0, FIRSTPORTC, (int)mA*10);
+    cbDOut(0, FIRSTPORTC, (int) (mA*10));
 #else
     std::cout << "Shock set to " << mA << " @ " << elapsedTimer.elapsed() << std::endl;
 #endif
