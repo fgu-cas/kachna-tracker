@@ -142,6 +142,8 @@ void Experiment::changeShock(double shockLevel){
         shock.level = 0.2;
     } else if (shockLevel > 0.7){
         shock.level = 0.7;
+    } else {
+        shock.level = shockLevel;
     }
 }
 
