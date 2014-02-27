@@ -25,3 +25,6 @@ HEADERS  += kachnatracker.h \
 
 FORMS    += configwindow.ui \
     kachnatracker.ui
+
+OTHER_FILES += \
+    log.txt

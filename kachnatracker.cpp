@@ -123,7 +123,7 @@ void kachnatracker::experimentEnded(){
 
     QMap<QString, QVariant> settings = configWin.getSettings();
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
                                                     settings.value("system/defaultDirectory").toString()+'/'+
                                                     settings.value("system/defaultFilename").toString(),
                                                     tr("Files (*.log)"));
@@ -133,12 +133,31 @@ void kachnatracker::experimentEnded(){
         }
         QFile file(fileName);
         if (file.open(QFile::WriteOnly)){
-            QString log = experiment->getLog();
+            QString log = experiment->getLog(true);
             QTextStream out(&file);
             out << log;
         }
         file.close();
     }
+
+    fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
+                                                settings.value("system/defaultDirectory").toString()+'/'+
+                                                settings.value("system/defaultFilename").toString(),
+                                                tr("Files (*.log)"));
+    if (!fileName.isEmpty()){
+        if (!fileName.endsWith(".log")){
+            fileName += ".log";
+        }
+        QFile file(fileName);
+        if (file.open(QFile::WriteOnly)){
+            QString log = experiment->getLog(false);
+            QTextStream out(&file);
+            out << log;
+        }
+        file.close();
+    }
+
+
 }
 
 

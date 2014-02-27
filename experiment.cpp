@@ -2,6 +2,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <QDateTime>
+
 #ifdef _WIN32
 #include "../cbw.h"
 #endif
@@ -56,15 +58,15 @@ void Experiment::stop(){
     setShock(0);
     this->timer.stop();
     capture.release();
+    elapsedTime = elapsedTimer.elapsed();
 }
 
 void Experiment::processFrame(){
+
     Mat frame;
     capture >> frame;
 
     BlobDetector::keyPoints points = detector->detect(&frame);
-    ratPoints.push_back(points.rat);
-    robotPoints.push_back(points.robot);
 
     double distance = -1;
     bool badFrame = false;
@@ -74,6 +76,15 @@ void Experiment::processFrame(){
     } else {
         stats.goodFrames++;
         distance = cv::norm(points.rat.pt - points.robot.pt);
+    }
+
+    capFrame capframe;
+    capframe.keypoints = points;
+    capframe.state = shockState;
+    capframe.currentLevel = currentLevel;
+    capframe.sectors = 0;
+    if (distance < triggerDistance && distance != -1){
+        capframe.sectors = 1;
     }
 
 
@@ -150,11 +161,8 @@ void Experiment::changeShock(double shockLevel){
 Experiment::Update Experiment::getUpdate(){
     Update update;
 
-    if (ratPoints.size() > 0){
-        update.keypoints.rat = ratPoints.at(ratPoints.size()-1);
-    }
-    if (robotPoints.size() > 0){
-        update.keypoints.robot = robotPoints.at(robotPoints.size()-1);
+    if (frames.size() > 0){
+        update.keypoints = frames.at(frames.size()-1).keypoints;
     }
     update.stats = stats;
 
@@ -163,21 +171,73 @@ Experiment::Update Experiment::getUpdate(){
 
 void Experiment::setShock(double mA){
 #ifdef _WIN32
-    if (mA > 0.7){
-        mA = 0.7;
+    int level = (int) (mA*10);
+    if (level > 7){
+        level = 7;
     }
-    cbDOut(0, FIRSTPORTC, (int) (mA*10));
+    cbDOut(0, FIRSTPORTC, level);
+    currentLevel = level;
 #else
     std::cout << "Shock set to " << mA << " @ " << elapsedTimer.elapsed() << std::endl;
 #endif
 }
 
 
-QString Experiment::getLog(){
+QString Experiment::getLog(bool rat){
     QString log;
+    log += "%%BEGIN_HEADER\n";
+    log += "        %%BEGIN DATABASE_INFORMATION\n";
+    log += "                %Date.0 ( "+QDate::currentDate().toString("d.M.yyyy")+" )\n";
+    log += "                %Time.0 ( "+QTime::currentTime().toString("h:mm")+" )\n";
+    log += "        %%END DATABASE_INFORMATION\n";
+    log += "        %%BEGIN SETUP_INFORMATION\n";
+    log += "                %TrackerVersion.0 ( Kachna Tracker v1.0 release 04/2014 )\n";
+    log += "                %ElapsedTime_ms.0 ( "+QString::number(elapsedTime)+" )\n";
+    log += "                %Paradigm.0 ( RobotAvoidance )\n";
+    log += QString("                %ShockParameters.0 ( %1 %2 %3 %4 )").arg(QString::number(shock.delay),
+                                                                             QString::number(shock.length),
+                                                                             QString::number(shock.in_delay),
+                                                                             QString::number(shock.refractory));
+    log += "                        // %ShockParameters.0 ( EntranceLatency ShockDuration InterShockLatency OutsideRefractory )\n";
+/*    log += "                %ArenaDiameter_m.0 ( 0.82 )\n";
+    log += "                %TrackerResolution_PixPerCM.0 ( 3.1220 )\n";
+    log += "                %ArenaCenterXY.0 ( 127.5 127.5 )\n";*/
+    log += "                %Frame.0 ( RoomFrame )\n";
+    log += "                %ReinforcedSector.0 ( "+QString::number(triggerDistance)+" )\n";
+    log += "                        //%ReinforcedSector.0 ( Radius )\n";
+    log += "        %%END SETUP_INFORMATION\n";
+    log += "        %%BEGIN RECORD_FORMAT\n";
+    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo )\n";
+    log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\n";
+    log += "                        //State indicates the Avoidance state: OutsideSector = 0, EntranceLatency = 1, Shock = 2, InterShockLatency = 3, OutsideRefractory = 4, BadSpot = 5\n";
+    log += "                        //MotorState indicates: NoMove = 0, MoveCW = positive, MoveCCW = negative\n";
+    log += "                        //ShockLevel indicates the level of shock current: NoShock = 0, CurrentLevel = other_values\n";
+    log += "                        //FrameInfo indicates succesfuly tracked spots: ReferencePoint * 2^0 + Spot0 * 2^(1+0) + Spot1 * 2^(1+1) + Spot2 * 2^(1+2) .... \n";
+    log += "        %%END RECORD_FORMAT\n";
+    log += "%%END_HEADER\n";
 
-    for (unsigned i = 0;i < ratPoints.size(); i++){
-        log += QString::number(ratPoints[i].pt.x) + ", " + QString::number(ratPoints[i].pt.y) + "\n";
+    for (unsigned i = 0;i < frames.size(); i++){
+        log += QString::number(i);
+        log += "      ";
+        log += QString::number(i*25);
+        log += "      ";
+        if (rat){
+            log += QString::number(frames[i].keypoints.rat.pt.x);
+            log += "      ";
+            log += QString::number(frames[i].keypoints.rat.pt.y);
+        } else {
+            log += QString::number(frames[i].keypoints.robot.pt.x);
+            log += "      ";
+            log += QString::number(frames[i].keypoints.robot.pt.y);
+        }
+        log += "      ";
+        log += QString::number(frames[i].sectors);
+        log += "      ";
+        log += QString::number(frames[i].state);
+        log += "      ";
+        log += QString::number(frames[i].currentLevel);
+        log += "      *      *      *\n";
     }
+
     return log;
 }

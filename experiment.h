@@ -19,7 +19,7 @@ class Experiment : public QObject
 public:
     explicit Experiment(QObject *parent = 0, QMap<QString, QVariant> *settings = 0);
     ~Experiment();
-    QString getLog();
+    QString getLog(bool rat);
 
     struct Stats {
         int goodFrames;
@@ -40,26 +40,34 @@ public:
 private:
     void setShock(double mA);
 
+    struct capFrame {
+        BlobDetector::keyPoints keypoints;
+        int sectors;
+        int state;
+        int currentLevel;
+    };
+
     VideoCapture capture;
     BlobDetector *detector;
 
-    std::vector<KeyPoint> ratPoints;
-    std::vector<KeyPoint> robotPoints;
-
+    std::vector<capFrame> frames;
     QTimer timer;
     QElapsedTimer elapsedTimer;
+    qint64 elapsedTime;
 
     Stats stats;
 
     double triggerDistance;
 
-    enum {
+    enum shockStates {
         OUTSIDE,
         DELAYING,
         SHOCKING,
         PAUSE,
         REFRACTORY
     } shockState;
+    int currentLevel;
+
     struct {
         double level;
         int length;
