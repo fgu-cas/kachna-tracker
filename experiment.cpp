@@ -79,8 +79,7 @@ void Experiment::processFrame(){
 
     switch (shockState){
         case OUTSIDE:
-            if (!badFrame && distance < triggerDistance
-                    && elapsedTimer.elapsed() > lastChange+shock.refractory){
+            if (!badFrame && distance < triggerDistance){
                 shockState = DELAYING;
                 stats.entryCount++;
                 lastChange = elapsedTimer.elapsed();
@@ -110,7 +109,7 @@ void Experiment::processFrame(){
                     if (distance < triggerDistance){
                         shockState = PAUSE;
                     } else {
-                        shockState = OUTSIDE;
+                        shockState = REFRACTORY;
                     }
                     lastChange = elapsedTimer.elapsed();
                 }
@@ -126,11 +125,15 @@ void Experiment::processFrame(){
                         setShock(shock.level);
                     }
                 } else {
-                    shockState = OUTSIDE;
+                    shockState = REFRACTORY;
                     lastChange = elapsedTimer.elapsed();
                 }
             }
             break;
+        case REFRACTORY:
+            if (elapsedTimer.elapsed() > lastChange+shock.refractory){
+                shockState = OUTSIDE;
+            }
     }
 }
 

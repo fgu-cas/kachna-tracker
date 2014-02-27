@@ -57,7 +57,8 @@ private:
         OUTSIDE,
         DELAYING,
         SHOCKING,
-        PAUSE
+        PAUSE,
+        REFRACTORY
     } shockState;
     struct {
         double level;
