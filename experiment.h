@@ -68,9 +68,6 @@ private:
     } shock;
     qint64 lastChange;
 
-signals:
-    void experimentEnd();
-
 public slots:
     void start();
     void stop();

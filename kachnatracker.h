@@ -21,10 +21,6 @@ class kachnatracker : public QMainWindow
 public:
     explicit kachnatracker(QWidget *parent = 0);
     ~kachnatracker();
-
-public slots:
-    void experimentEnded();
-
 private slots:
     void on_actionConfigure_triggered();
 
@@ -41,6 +37,7 @@ private slots:
 
 private:
     void reset();
+    void experimentEnded();
 
     void closeEvent(QCloseEvent *);
 

@@ -11,8 +11,6 @@
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
-    connect(this, SIGNAL(experimentEnd()), parent, SLOT(experimentEnded()));
-
     capture.open(settings->value("video/device", 0).toInt());
 
     detector = new BlobDetector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
@@ -58,7 +56,6 @@ void Experiment::stop(){
     setShock(0);
     this->timer.stop();
     capture.release();
-    emit experimentEnd();
 }
 
 void Experiment::processFrame(){

@@ -109,7 +109,6 @@ void kachnatracker::experimentEnded(){
     QMessageBox alert;
     alert.setText("Experiment ended!");
     alert.exec();
-    //TODO: Experiment possibly continuing after time-out
 
     QMap<QString, QVariant> settings = configWin.getSettings();
 
@@ -129,17 +128,14 @@ void kachnatracker::experimentEnded(){
         }
         file.close();
     }
-
-    delete experiment;
-    experiment = 0;
 }
 
 
 void kachnatracker::on_startButton_clicked()
 {
     if (experiment != 0){
-        experimentTimer.stop();
         experiment->stop();
+        experimentEnded();
     } else {
         QMap<QString, QVariant> experimentSettings = configWin.getSettings();
 
@@ -161,6 +157,7 @@ void kachnatracker::on_startButton_clicked()
         painter.end();
         reset();
 
+        delete experiment;
         experiment = new Experiment(this, &experimentSettings);        
         experiment->start();
 
@@ -225,8 +222,7 @@ void kachnatracker::requestUpdate(){
 void kachnatracker::updateTick(){
     ui->progressBar->setValue(ui->progressBar->value()+1);
     if (ui->progressBar->value() == 100){
-        experimentTimer.stop();
-        experiment->stop();
+        experimentEnded();
     }
 }
 
