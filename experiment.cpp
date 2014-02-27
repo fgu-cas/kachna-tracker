@@ -171,6 +171,7 @@ void Experiment::setShock(double mA){
 
 QString Experiment::getLog(){
     QString log;
+
     for (unsigned i = 0;i < ratPoints.size(); i++){
         log += QString::number(ratPoints[i].pt.x) + ", " + QString::number(ratPoints[i].pt.y) + "\n";
     }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>636</width>
-    <height>380</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -223,7 +223,7 @@
    <attribute name="title">
     <string>Video</string>
    </attribute>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -248,65 +248,6 @@
        </layout>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="threshSpin">
-          <property name="maximum">
-           <number>512</number>
-          </property>
-          <property name="value">
-           <number>160</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Threshold</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="videoLabel">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="tab_4">
-   <attribute name="title">
-    <string>Mask</string>
-   </attribute>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
-      <item>
-       <widget class="QCheckBox" name="maskEnabledBox">
-        <property name="text">
-         <string>Enabled</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -314,26 +255,33 @@
        </widget>
       </item>
       <item>
-       <layout class="QFormLayout" name="formLayout_6">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Mask</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QFormLayout" name="formLayout_7">
         <property name="fieldGrowthPolicy">
          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
         </property>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_12">
+         <widget class="QLabel" name="label_24">
           <property name="text">
            <string>Position</string>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_13">
+         <widget class="QLabel" name="label_25">
           <property name="text">
            <string>X:</string>
           </property>
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_14">
+         <widget class="QLabel" name="label_26">
           <property name="text">
            <string>Y:</string>
           </property>
@@ -356,23 +304,16 @@
        </layout>
       </item>
       <item>
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QFormLayout" name="formLayout_8">
+       <layout class="QFormLayout" name="formLayout_9">
         <item row="0" column="0">
-         <widget class="QLabel" name="label_15">
+         <widget class="QLabel" name="label_27">
           <property name="text">
            <string>Size</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_16">
+         <widget class="QLabel" name="label_28">
           <property name="text">
            <string>Vertical</string>
           </property>
@@ -386,7 +327,7 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_17">
+         <widget class="QLabel" name="label_29">
           <property name="text">
            <string>Horizontal</string>
           </property>
@@ -401,10 +342,36 @@
         </item>
        </layout>
       </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="maskLabel">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QLabel" name="videoLabel">
       <property name="text">
        <string/>
       </property>
@@ -416,9 +383,37 @@
    <attribute name="title">
     <string>Tracking</string>
    </attribute>
-   <layout class="QHBoxLayout" name="horizontalLayout_5">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Threshold</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="threshSpin">
+          <property name="maximum">
+           <number>512</number>
+          </property>
+          <property name="value">
+           <number>160</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QFormLayout" name="formLayout_5">
         <item row="1" column="0">

@@ -18,6 +18,7 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
     connect(ui->maskVBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
     connect(ui->maskHBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
+
 }
 
 configWindow::~configWindow()
@@ -38,7 +39,6 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("maxArea", ui->maxAreaBox->value());
     settings.insert("minArea", ui->minAreaBox->value());
 
-    settings.insert("maskEnabled", ui->maskEnabledBox->isChecked());
     settings.insert("maskX", ui->maskXBox->value());
     settings.insert("maskY", ui->maskYBox->value());
     settings.insert("maskV", ui->maskVBox->value());
@@ -71,7 +71,6 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->deviceBox->setValue(settings.value("deviceId").toInt());
     ui->threshSpin->setValue(settings.value("threshold").toInt());
 
-    ui->maskEnabledBox->setChecked(settings.value("maskEnabled").toBool());
     ui->maskXBox->setValue(settings.value("maskX").toDouble());
     ui->maskYBox->setValue(settings.value("maskY").toDouble());
     ui->maskVBox->setValue(settings.value("maskV").toDouble());
@@ -105,8 +104,6 @@ void configWindow::on_testButton_clicked()
                                                   frame.rows,
                                                   frame.step,
                                                   QImage::Format_RGB888));
-        ui->videoLabel->setPixmap(capturedFrame);
-        resize(minimumSizeHint());
         valueMaskChanged();
     } else {
         QMessageBox result;
@@ -115,6 +112,23 @@ void configWindow::on_testButton_clicked()
     }
 
     capture.release();
+}
+
+void configWindow::valueMaskChanged(){
+    if (capturedFrame.height() > 0){
+        QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
+
+        QPixmap pixmap = QPixmap(capturedFrame);
+        QPainter painter(&pixmap);
+        painter.setPen(Qt::magenta);
+        painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
+        painter.drawLine(QPoint(center.x()-5, center.y()+5), QPoint(center.x()+5, center.y()-5));
+        painter.drawEllipse(center, (int) ui->maskHBox->value(), (int) ui->maskVBox->value());
+        painter.end();
+
+        ui->videoLabel->setPixmap(pixmap);
+        resize(minimumSizeHint());
+    }
 }
 
 void configWindow::on_refreshTrackingButton_clicked()
@@ -161,20 +175,4 @@ void configWindow::on_refreshTrackingButton_clicked()
     painter.end();
 
     ui->trackingLabel->setPixmap(pixmap);
-    resize(minimumSizeHint());
-}
-
-void configWindow::valueMaskChanged(){
-    QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
-
-    QPixmap pixmap = QPixmap(capturedFrame);
-    QPainter painter(&pixmap);
-    painter.setPen(Qt::magenta);
-    painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
-    painter.drawLine(QPoint(center.x()-5, center.y()+5), QPoint(center.x()+5, center.y()-5));
-    painter.drawEllipse(center, (int) ui->maskHBox->value(), (int) ui->maskVBox->value());
-    painter.end();
-
-    ui->maskLabel->setPixmap(pixmap);
-    resize(minimumSizeHint());
 }
