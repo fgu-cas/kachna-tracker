@@ -106,6 +106,7 @@ void configWindow::on_testButton_clicked()
                                                   frame.step,
                                                   QImage::Format_RGB888));
         ui->videoLabel->setPixmap(capturedFrame);
+        resize(minimumSizeHint());
         valueMaskChanged();
     } else {
         QMessageBox result;
@@ -160,6 +161,7 @@ void configWindow::on_refreshTrackingButton_clicked()
     painter.end();
 
     ui->trackingLabel->setPixmap(pixmap);
+    resize(minimumSizeHint());
 }
 
 void configWindow::valueMaskChanged(){
@@ -174,5 +176,5 @@ void configWindow::valueMaskChanged(){
     painter.end();
 
     ui->maskLabel->setPixmap(pixmap);
-
+    resize(minimumSizeHint());
 }
