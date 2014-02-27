@@ -66,7 +66,6 @@ void kachnatracker::on_actionImportConfig_triggered()
     if (fileName.isEmpty()){
         return;
     }
-    // TODO: Error checking
     QMap<QString, QVariant> experimentSettings;
     QSettings experimentIni(fileName, QSettings::IniFormat);
 
@@ -102,13 +101,25 @@ void kachnatracker::on_actionExportConfig_triggered()
     }
 }
 
+void kachnatracker::experimentTimeout(){
+    experimentTimer.stop();
+    QMessageBox *alert = new QMessageBox(this);
+    alert->setAttribute(Qt::WA_DeleteOnClose);
+    alert->setStandardButtons(QMessageBox::Ok);
+    alert->setText("Experiment ended!");
+    if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
+        experiment->stop();
+        alert->exec();
+        experimentEnded();
+    } else {
+        alert->setModal(false);
+        alert->show();
+    }
+}
+
 void kachnatracker::experimentEnded(){
     experimentTimer.stop();
     updateTimer.stop();
-
-    QMessageBox alert;
-    alert.setText("Experiment ended!");
-    alert.exec();
 
     QMap<QString, QVariant> settings = configWin.getSettings();
 
@@ -133,8 +144,9 @@ void kachnatracker::experimentEnded(){
 
 void kachnatracker::on_startButton_clicked()
 {
-    if (experimentTimer.isActive()){
+    if (updateTimer.isActive()){
         experiment->stop();
+//        experimentTimeout();
         experimentEnded();
     } else {
         QMap<QString, QVariant> experimentSettings = configWin.getSettings();
@@ -218,7 +230,7 @@ void kachnatracker::requestUpdate(){
 void kachnatracker::updateTick(){
     ui->progressBar->setValue(ui->progressBar->value()+1);
     if (ui->progressBar->value() == 100){
-        experimentEnded();
+        experimentTimeout();
     }
 }
 

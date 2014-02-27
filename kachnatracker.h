@@ -37,6 +37,7 @@ private slots:
 
 private:
     void reset();
+    void experimentTimeout();
     void experimentEnded();
 
     void closeEvent(QCloseEvent *);

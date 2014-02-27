@@ -35,6 +35,7 @@ QMap<QString, QVariant> configWindow::getSettings()
 
     QTime time = ui->lengthEdit->time();
     settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
+    settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
 
     settings.insert("system/defaultDirectory", ui->directoryEdit->text());
     settings.insert("system/defaultFilename", ui->filenameEdit->text());
@@ -75,6 +76,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     int h = length % 24;
 
     ui->lengthEdit->setTime(QTime(h, m, s));
+    ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
     ui->deviceBox->setValue(settings.value("video/device").toInt());
     ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
