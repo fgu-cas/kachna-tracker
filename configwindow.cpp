@@ -1,6 +1,7 @@
 #include "configwindow.h"
 #include "ui_configwindow.h"
 #include <QMessageBox>
+#include <QFileDialog>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -54,6 +55,11 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("shockLength", ui->durationBox->value());
     settings.insert("shockRefractoryPeriod", ui->refractoryBox->value());
 
+    settings.insert("defaultDirectory", ui->directoryEdit->text());
+    settings.insert("defaultFilename", ui->filenameEdit->text());
+
+    settings.insert("updateInterval", ui->updateBox->value());
+
     return settings;
 }
 
@@ -88,6 +94,11 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->interBox->setValue(settings.value("shockInterDelay").toInt());
     ui->durationBox->setValue(settings.value("shockLength").toInt());
     ui->refractoryBox->setValue(settings.value("shockRefractoryPeriod").toInt());
+
+    ui->directoryEdit->setText(settings.value("defaultDirectory").toString());
+    ui->filenameEdit->setText(settings.value("defaultFilename").toString());
+
+    ui->updateBox->setValue(settings.value("updateInterval").toInt());
 }
 
 void configWindow::on_testButton_clicked()
@@ -175,4 +186,12 @@ void configWindow::on_refreshTrackingButton_clicked()
     painter.end();
 
     ui->trackingLabel->setPixmap(pixmap);
+}
+
+void configWindow::on_browseButton_clicked()
+{
+    QString directoryPath = QFileDialog::getExistingDirectory(this);
+    if (!directoryPath.isEmpty()){
+        ui->directoryEdit->setText(directoryPath);
+    }
 }

@@ -35,6 +35,8 @@ private slots:
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
 
+    void on_browseButton_clicked();
+
 private:
     Ui::configWindow *ui;
 

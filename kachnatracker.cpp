@@ -111,9 +111,12 @@ void kachnatracker::experimentEnded(){
     alert.exec();
     //TODO: Experiment possibly continuing after time-out
 
+    QMap<QString, QVariant> settings = configWin.getSettings();
+
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                                                     "",
-                                                     tr("Files (*.log)"));
+                                                    settings.value("defaultDirectory").toString()+'/'+
+                                                    settings.value("defaultFilename").toString(),
+                                                    tr("Files (*.log)"));
     if (!fileName.isEmpty()){
         if (!fileName.endsWith(".log")){
             fileName += ".log";
@@ -165,7 +168,7 @@ void kachnatracker::on_startButton_clicked()
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
         experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
-        updateTimer.start(100);
+        updateTimer.start(experimentSettings.value("updateInterval").toInt());
     }
 }
 
