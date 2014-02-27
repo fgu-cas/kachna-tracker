@@ -13,7 +13,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 {
     connect(this, SIGNAL(experimentEnd()), parent, SLOT(experimentEnded()));
 
-    capture.open(settings->value("deviceId", 0).toInt());
+    capture.open(settings->value("video/device", 0).toInt());
 
     detector = new BlobDetector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
 
@@ -29,10 +29,10 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 #endif
 
     shock.level = 0.4;
-    shock.delay = settings->value("shockDelay").toInt();
-    shock.in_delay = settings->value("shockInterDelay").toInt();
-    shock.length = settings->value("shockLength").toInt();
-    shock.refractory = settings->value("shockRefractoryPeriod").toInt();
+    shock.delay = settings->value("shock/EntranceLatency").toInt();
+    shock.in_delay = settings->value("shock/InterShockLatency").toInt();
+    shock.length = settings->value("shock/ShockDuration").toInt();
+    shock.refractory = settings->value("shock/OutsideRefractory").toInt();
 
     shockState = OUTSIDE;
 

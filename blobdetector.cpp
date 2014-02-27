@@ -7,7 +7,7 @@
 BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     cv::SimpleBlobDetector::Params params;
 
-    params.minThreshold = settings.value("threshold").toDouble();
+    params.minThreshold = settings.value("tracking/threshold").toDouble();
     params.maxThreshold = 255;
     params.thresholdStep = 5;
     params.minDistBetweenBlobs = 10.0f;
@@ -17,20 +17,20 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     params.blobColor = 255;
     params.filterByCircularity = false;
     params.filterByArea = true;
-    params.minArea = settings.value("minArea").toDouble();
-    params.maxArea = settings.value("maxArea").toDouble();
+    params.minArea = settings.value("tracking/minArea").toDouble();
+    params.maxArea = settings.value("tracking/maxArea").toDouble();
 
-    maxRat = settings.value("maxRat").toDouble();
-    minRat = settings.value("minRat").toDouble();
-    maxRobot = settings.value("maxRobot").toDouble();
-    minRobot = settings.value("minRobot").toDouble();
+    maxRat = settings.value("tracking/rat/max").toDouble();
+    minRat = settings.value("tracking/rat/min").toDouble();
+    maxRobot = settings.value("tracking/maxRobot").toDouble();
+    minRobot = settings.value("tracking/minRobot").toDouble();
 
     detector = new SimpleBlobDetector(params);
 
     mask = Mat(h, w, CV_8UC1);
     mask.setTo(Scalar(0));
-    ellipse(mask, Point2f(settings.value("maskX").toFloat(), settings.value("maskY").toFloat()),
-            Size2f(settings.value("maskH").toFloat(), settings.value("maskV").toFloat()), 0, 0, 360,
+    ellipse(mask, Point2f(settings.value("mask/X").toFloat(), settings.value("mask/Y").toFloat()),
+            Size2f(settings.value("mask/H").toFloat(), settings.value("mask/V").toFloat()), 0, 0, 360,
             Scalar(255), -1);
 }
 

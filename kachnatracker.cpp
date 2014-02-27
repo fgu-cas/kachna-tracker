@@ -114,8 +114,8 @@ void kachnatracker::experimentEnded(){
     QMap<QString, QVariant> settings = configWin.getSettings();
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                                                    settings.value("defaultDirectory").toString()+'/'+
-                                                    settings.value("defaultFilename").toString(),
+                                                    settings.value("system/defaultDirectory").toString()+'/'+
+                                                    settings.value("system/defaultFilename").toString(),
                                                     tr("Files (*.log)"));
     if (!fileName.isEmpty()){
         if (!fileName.endsWith(".log")){
@@ -144,8 +144,8 @@ void kachnatracker::on_startButton_clicked()
         QMap<QString, QVariant> experimentSettings = configWin.getSettings();
 
         VideoCapture *capture;
-        if (experimentSettings.value("deviceId").toInt() != 7){
-            capture = new VideoCapture(experimentSettings.value("deviceId", 0).toInt());
+        if (experimentSettings.value("video/device").toInt() != 7){
+            capture = new VideoCapture(experimentSettings.value("video/device", 0).toInt());
         } else {
             capture = new VideoCapture("/tmp/video.avi");
         }
@@ -156,8 +156,8 @@ void kachnatracker::on_startButton_clicked()
 
         QPainter painter(&pixmap);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(experimentSettings.value("maskX").toInt(), experimentSettings.value("maskY").toInt()),
-                            experimentSettings.value("maskH").toInt(), experimentSettings.value("maskV").toInt());
+        painter.drawEllipse(QPoint(experimentSettings.value("mask/X").toInt(), experimentSettings.value("mask/Y").toInt()),
+                            experimentSettings.value("mask/H").toInt(), experimentSettings.value("mask/V").toInt());
         painter.end();
         reset();
 
@@ -167,8 +167,8 @@ void kachnatracker::on_startButton_clicked()
         connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
-        experimentTimer.start(experimentSettings.value("experimentLength", 15*60).toInt()*10);
-        updateTimer.start(experimentSettings.value("updateInterval").toInt());
+        experimentTimer.start(experimentSettings.value("experiment/duration", 15*60).toInt()*10);
+        updateTimer.start(experimentSettings.value("system/system/updateInterval").toInt());
     }
 }
 

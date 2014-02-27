@@ -31,41 +31,43 @@ QMap<QString, QVariant> configWindow::getSettings()
 {
     QMap<QString, QVariant> settings;
 
+    settings.insert("version", "0.1");
+
     QTime time = ui->lengthEdit->time();
-    settings.insert("experimentLength", time.hour()*60*60+time.minute()*60+time.second());
+    settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
 
-    settings.insert("deviceId", ui->deviceBox->value());
-    settings.insert("threshold", ui->threshSpin->value());
+    settings.insert("system/defaultDirectory", ui->directoryEdit->text());
+    settings.insert("system/defaultFilename", ui->filenameEdit->text());
+    settings.insert("system/updateInterval", ui->updateBox->value());
 
-    settings.insert("maxArea", ui->maxAreaBox->value());
-    settings.insert("minArea", ui->minAreaBox->value());
 
-    settings.insert("maskX", ui->maskXBox->value());
-    settings.insert("maskY", ui->maskYBox->value());
-    settings.insert("maskV", ui->maskVBox->value());
-    settings.insert("maskH", ui->maskHBox->value());
+    settings.insert("video/device", ui->deviceBox->value());
 
-    settings.insert("minRat", ui->ratMinSize->value());
-    settings.insert("maxRat", ui->ratMaxSize->value());
-    settings.insert("minRobot", ui->robotMinSize->value());
-    settings.insert("maxRobot", ui->robotMaxSize->value());
+    settings.insert("tracking/threshold", ui->threshSpin->value());
+    settings.insert("tracking/maxArea", ui->maxAreaBox->value());
+    settings.insert("tracking/minArea", ui->minAreaBox->value());
 
-    settings.insert("shockDelay", ui->entryBox->value());
-    settings.insert("shockInterDelay", ui->interBox->value());
-    settings.insert("shockLength", ui->durationBox->value());
-    settings.insert("shockRefractoryPeriod", ui->refractoryBox->value());
+    settings.insert("mask/X", ui->maskXBox->value());
+    settings.insert("mask/Y", ui->maskYBox->value());
+    settings.insert("mask/V", ui->maskVBox->value());
+    settings.insert("mask/H", ui->maskHBox->value());
 
-    settings.insert("defaultDirectory", ui->directoryEdit->text());
-    settings.insert("defaultFilename", ui->filenameEdit->text());
+    settings.insert("tracking/minRat", ui->ratMinSize->value());
+    settings.insert("tracking/maxRat", ui->ratMaxSize->value());
+    settings.insert("tracking/minRobot", ui->robotMinSize->value());
+    settings.insert("tracking/maxRobot", ui->robotMaxSize->value());
 
-    settings.insert("updateInterval", ui->updateBox->value());
+    settings.insert("shock/EntranceLatency", ui->entryBox->value());
+    settings.insert("shock/InterShockLatency", ui->interBox->value());
+    settings.insert("shock/ShockDuration", ui->durationBox->value());
+    settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
 
     return settings;
 }
 
 
 void configWindow::setSettings(QMap<QString, QVariant> settings){
-    int length = settings.value("experimentLength").toInt();
+    int length = settings.value("experiment/duration").toInt();
     int s = length%60;
     length /= 60;
     int m = length % 60;
@@ -74,31 +76,31 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
     ui->lengthEdit->setTime(QTime(h, m, s));
 
-    ui->deviceBox->setValue(settings.value("deviceId").toInt());
-    ui->threshSpin->setValue(settings.value("threshold").toInt());
+    ui->deviceBox->setValue(settings.value("video/device").toInt());
+    ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
 
-    ui->maskXBox->setValue(settings.value("maskX").toDouble());
-    ui->maskYBox->setValue(settings.value("maskY").toDouble());
-    ui->maskVBox->setValue(settings.value("maskV").toDouble());
-    ui->maskHBox->setValue(settings.value("maskH").toDouble());
+    ui->maskXBox->setValue(settings.value("mask/X").toDouble());
+    ui->maskYBox->setValue(settings.value("mask/Y").toDouble());
+    ui->maskVBox->setValue(settings.value("mask/V").toDouble());
+    ui->maskHBox->setValue(settings.value("mask/H").toDouble());
 
-    ui->maxAreaBox->setValue(settings.value("maxArea").toDouble());
-    ui->minAreaBox->setValue(settings.value("minArea").toDouble());
+    ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
+    ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
 
-    ui->ratMinSize->setValue(settings.value("minRat").toDouble());
-    ui->ratMaxSize->setValue(settings.value("maxRat").toDouble());
-    ui->robotMinSize->setValue(settings.value("minRobot").toDouble());
-    ui->robotMaxSize->setValue(settings.value("maxRobot").toDouble());
+    ui->ratMinSize->setValue(settings.value("tracking/minRat").toDouble());
+    ui->ratMaxSize->setValue(settings.value("tracking/maxRat").toDouble());
+    ui->robotMinSize->setValue(settings.value("tracking/minRobot").toDouble());
+    ui->robotMaxSize->setValue(settings.value("tracking/maxRobot").toDouble());
 
-    ui->entryBox->setValue(settings.value("shockDelay").toInt());
-    ui->interBox->setValue(settings.value("shockInterDelay").toInt());
-    ui->durationBox->setValue(settings.value("shockLength").toInt());
-    ui->refractoryBox->setValue(settings.value("shockRefractoryPeriod").toInt());
+    ui->entryBox->setValue(settings.value("shock/EntranceLatency").toInt());
+    ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
+    ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
+    ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
 
-    ui->directoryEdit->setText(settings.value("defaultDirectory").toString());
-    ui->filenameEdit->setText(settings.value("defaultFilename").toString());
+    ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
+    ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
 
-    ui->updateBox->setValue(settings.value("updateInterval").toInt());
+    ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
 }
 
 void configWindow::on_testButton_clicked()
