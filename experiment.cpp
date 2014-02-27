@@ -147,8 +147,12 @@ void Experiment::changeShock(double shockLevel){
 Experiment::Update Experiment::getUpdate(){
     Update update;
 
-    update.keypoints.rat = ratPoints.at(ratPoints.size()-1);
-    update.keypoints.robot = robotPoints.at(robotPoints.size()-1);
+    if (ratPoints.size() > 0){
+        update.keypoints.rat = ratPoints.at(ratPoints.size()-1);
+    }
+    if (robotPoints.size() > 0){
+        update.keypoints.robot = robotPoints.at(robotPoints.size()-1);
+    }
     update.stats = stats;
 
     return update;

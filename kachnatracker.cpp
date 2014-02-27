@@ -133,21 +133,17 @@ void kachnatracker::experimentEnded(){
 
 void kachnatracker::on_startButton_clicked()
 {
-    if (experiment != 0){
+    if (experimentTimer.isActive()){
         experiment->stop();
         experimentEnded();
     } else {
         QMap<QString, QVariant> experimentSettings = configWin.getSettings();
 
-        VideoCapture *capture;
-        if (experimentSettings.value("video/device").toInt() != 7){
-            capture = new VideoCapture(experimentSettings.value("video/device", 0).toInt());
-        } else {
-            capture = new VideoCapture("/tmp/video.avi");
-        }
+        VideoCapture capture = VideoCapture(experimentSettings.value("video/device").toInt());
 
-        pixmap = QPixmap(capture->get(CV_CAP_PROP_FRAME_WIDTH),
-                         capture->get(CV_CAP_PROP_FRAME_HEIGHT));
+        pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
+                         capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+        capture.release();
         pixmap.fill(Qt::white);
 
         QPainter painter(&pixmap);
