@@ -34,7 +34,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     shock.length = settings->value("shockLength").toInt();
     shock.refractory = settings->value("shockRefractoryPeriod").toInt();
 
-    shockState = OUT;
+    shockState = OUTSIDE;
 
     stats.goodFrames = 0;
     stats.badFrames = 0;
@@ -81,7 +81,7 @@ void Experiment::processFrame(){
 
 
     switch (shockState){
-        case OUT:
+        case OUTSIDE:
             if (!badFrame && distance < triggerDistance
                     && elapsedTimer.elapsed() > lastChange+shock.refractory){
                 shockState = DELAYING;
@@ -102,7 +102,7 @@ void Experiment::processFrame(){
                         setShock(shock.level);
                     }
                 } else {
-                    shockState=OUT;
+                    shockState=OUTSIDE;
                 }
             }
             break;
@@ -113,7 +113,7 @@ void Experiment::processFrame(){
                     if (distance < triggerDistance){
                         shockState = PAUSE;
                     } else {
-                        shockState = OUT;
+                        shockState = OUTSIDE;
                     }
                     lastChange = elapsedTimer.elapsed();
                 }
@@ -129,7 +129,7 @@ void Experiment::processFrame(){
                         setShock(shock.level);
                     }
                 } else {
-                    shockState = OUT;
+                    shockState = OUTSIDE;
                     lastChange = elapsedTimer.elapsed();
                 }
             }

@@ -54,7 +54,7 @@ private:
     double triggerDistance;
 
     enum {
-        OUT,
+        OUTSIDE,
         DELAYING,
         SHOCKING,
         PAUSE
