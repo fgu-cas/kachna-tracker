@@ -612,12 +612,18 @@
           <property name="maximum">
            <double>999.990000000000009</double>
           </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
          </widget>
         </item>
         <item row="2" column="1">
          <widget class="QDoubleSpinBox" name="ratMinSize">
           <property name="maximum">
            <double>999.990000000000009</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
@@ -651,12 +657,18 @@
           <property name="maximum">
            <double>999.990000000000009</double>
           </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
          </widget>
         </item>
         <item row="2" column="1">
          <widget class="QDoubleSpinBox" name="robotMinSize">
           <property name="maximum">
            <double>999.990000000000009</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>

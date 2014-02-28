@@ -267,7 +267,7 @@ void kachnatracker::reset(){
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
 
-    ui->shockBox->setValue(0.4);
+    ui->shockBox->setValue(0.2);
 }
 
 void kachnatracker::on_actionDebug_triggered()
