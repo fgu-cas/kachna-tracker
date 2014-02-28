@@ -32,6 +32,8 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     ellipse(mask, Point2f(settings.value("mask/X").toFloat(), settings.value("mask/Y").toFloat()),
             Size2f(settings.value("mask/H").toFloat(), settings.value("mask/V").toFloat()), 0, 0, 360,
             Scalar(255), -1);
+
+    hardMask = (settings.value("mask/type").toInt() == 1);
 }
 
 BlobDetector::~BlobDetector(){
@@ -41,15 +43,22 @@ BlobDetector::~BlobDetector(){
 
 BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
     std::vector<KeyPoint> keypoints;
+
+    Mat detectMat;
+    if (hardMask){
+        frame->copyTo(detectMat, mask);
+    } else {
+        detectMat = *frame;
+    }
     // Here I would've used the optional Mask parameter of the detect() function...
     // Except that SimpleBlobDetector doesn't support it! AGH
-    detector->detect(*frame, keypoints);
+    detector->detect(detectMat, keypoints);
 
     BlobDetector::keyPoints result;
 
     for (unsigned i = 0; i<keypoints.size(); i++){
        KeyPoint keypoint = keypoints[i];
-       if (mask.at<uchar>(keypoint.pt.y, keypoint.pt.x) == 0){
+       if ( !hardMask && mask.at<uchar>(keypoint.pt.y, keypoint.pt.x) == 0){
                continue;
        }
        if (keypoint.size > minRat && keypoint.size < maxRat){

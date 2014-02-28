@@ -29,6 +29,8 @@ private:
     double minRobot;
 
     Mat mask;
+
+    bool hardMask;
 };
 
 

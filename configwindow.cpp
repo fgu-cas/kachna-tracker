@@ -48,6 +48,8 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("tracking/maxArea", ui->maxAreaBox->value());
     settings.insert("tracking/minArea", ui->minAreaBox->value());
 
+    settings.insert("mask/type", ui->typeBox->currentIndex());
+
     settings.insert("mask/X", ui->maskXBox->value());
     settings.insert("mask/Y", ui->maskYBox->value());
     settings.insert("mask/V", ui->maskVBox->value());
@@ -80,6 +82,8 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
     ui->deviceBox->setValue(settings.value("video/device").toInt());
     ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
+
+    ui->typeBox->setCurrentIndex(settings.value("mask/type").toInt());
 
     ui->maskXBox->setValue(settings.value("mask/X").toDouble());
     ui->maskYBox->setValue(settings.value("mask/Y").toDouble());
