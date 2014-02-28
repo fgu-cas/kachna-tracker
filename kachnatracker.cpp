@@ -21,6 +21,8 @@ kachnatracker::kachnatracker(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
+
     QPixmap black(500, 400);
     black.fill(Qt::black);
     ui->displayLabel->setPixmap(black);
@@ -108,65 +110,64 @@ void kachnatracker::experimentTimeout(){
     alert->setStandardButtons(QMessageBox::Ok);
     alert->setText("Experiment ended!");
     if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
+        updateTimer.stop();
         experiment->stop();
         alert->exec();
-        experimentEnded();
+        saveTracks();
     } else {
         alert->setModal(false);
         alert->show();
     }
 }
 
-void kachnatracker::experimentEnded(){
-    experimentTimer.stop();
-    updateTimer.stop();
+void kachnatracker::saveTracks(){
+    if (experiment != 0){
+        QMap<QString, QVariant> settings = configWin.getSettings();
 
-    QMap<QString, QVariant> settings = configWin.getSettings();
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
+                                                        settings.value("system/defaultDirectory").toString()+'/'+
+                                                        settings.value("system/defaultFilename").toString(),
+                                                        tr("Files (*.log)"));
+        if (!fileName.isEmpty()){
+            if (!fileName.endsWith(".log")){
+                fileName += ".log";
+            }
+            QFile file(fileName);
+            if (file.open(QFile::WriteOnly)){
+                QString log = experiment->getLog(true);
+                QTextStream out(&file);
+                out << log;
+            }
+            file.close();
+        }
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
+        fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
                                                     settings.value("system/defaultDirectory").toString()+'/'+
                                                     settings.value("system/defaultFilename").toString(),
                                                     tr("Files (*.log)"));
-    if (!fileName.isEmpty()){
-        if (!fileName.endsWith(".log")){
-            fileName += ".log";
+        if (!fileName.isEmpty()){
+            if (!fileName.endsWith(".log")){
+                fileName += ".log";
+            }
+            QFile file(fileName);
+            if (file.open(QFile::WriteOnly)){
+                QString log = experiment->getLog(false);
+                QTextStream out(&file);
+                out << log;
+            }
+            file.close();
         }
-        QFile file(fileName);
-        if (file.open(QFile::WriteOnly)){
-            QString log = experiment->getLog(true);
-            QTextStream out(&file);
-            out << log;
-        }
-        file.close();
     }
-
-    fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
-                                                settings.value("system/defaultDirectory").toString()+'/'+
-                                                settings.value("system/defaultFilename").toString(),
-                                                tr("Files (*.log)"));
-    if (!fileName.isEmpty()){
-        if (!fileName.endsWith(".log")){
-            fileName += ".log";
-        }
-        QFile file(fileName);
-        if (file.open(QFile::WriteOnly)){
-            QString log = experiment->getLog(false);
-            QTextStream out(&file);
-            out << log;
-        }
-        file.close();
-    }
-
-
 }
 
 
 void kachnatracker::on_startButton_clicked()
 {
     if (updateTimer.isActive()){
+        experimentTimer.stop();
+        updateTimer.stop();
         experiment->stop();
-//        experimentTimeout();
-        experimentEnded();
+        saveTracks();
     } else {
         QMap<QString, QVariant> settings = configWin.getSettings();
 

@@ -190,6 +190,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionSave_tracks"/>
     <addaction name="actionDebug"/>
    </widget>
    <addaction name="menuFile"/>
@@ -216,6 +217,14 @@
   <action name="actionDebug">
    <property name="text">
     <string>Debug</string>
+   </property>
+  </action>
+  <action name="actionSave_tracks">
+   <property name="text">
+    <string>Save tracks</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

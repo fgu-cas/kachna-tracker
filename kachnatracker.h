@@ -32,6 +32,8 @@ private slots:
 
     void on_startButton_clicked();
 
+    void saveTracks();
+
     void updateTick();
     void requestUpdate();
 
