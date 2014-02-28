@@ -168,9 +168,9 @@ void kachnatracker::on_startButton_clicked()
 //        experimentTimeout();
         experimentEnded();
     } else {
-        QMap<QString, QVariant> experimentSettings = configWin.getSettings();
+        QMap<QString, QVariant> settings = configWin.getSettings();
 
-        VideoCapture capture = VideoCapture(experimentSettings.value("video/device").toInt());
+        VideoCapture capture = VideoCapture(settings.value("video/device").toInt());
 
         pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
                          capture.get(CV_CAP_PROP_FRAME_HEIGHT));
@@ -179,20 +179,20 @@ void kachnatracker::on_startButton_clicked()
 
         QPainter painter(&pixmap);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(experimentSettings.value("mask/X").toInt(), experimentSettings.value("mask/Y").toInt()),
-                            experimentSettings.value("mask/H").toInt(), experimentSettings.value("mask/V").toInt());
+        painter.drawEllipse(QPoint(settings.value("mask/X").toInt(), settings.value("mask/Y").toInt()),
+                            settings.value("mask/H").toInt(), settings.value("mask/V").toInt());
         painter.end();
         reset();
 
         delete experiment;
-        experiment = new Experiment(this, &experimentSettings);        
+        experiment = new Experiment(this, &settings);
         experiment->start();
 
         connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
-        experimentTimer.start(experimentSettings.value("experiment/duration", 15*60).toInt()*10);
-        updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
+        experimentTimer.start(settings.value("experiment/duration", 15*60).toInt()*10);
+        updateTimer.start(settings.value("system/updateInterval").toInt());
     }
 }
 
