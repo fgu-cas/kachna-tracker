@@ -20,8 +20,8 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     params.minArea = settings.value("tracking/minArea").toDouble();
     params.maxArea = settings.value("tracking/maxArea").toDouble();
 
-    maxRat = settings.value("tracking/rat/max").toDouble();
-    minRat = settings.value("tracking/rat/min").toDouble();
+    maxRat = settings.value("tracking/maxRat").toDouble();
+    minRat = settings.value("tracking/minRat").toDouble();
     maxRobot = settings.value("tracking/maxRobot").toDouble();
     minRobot = settings.value("tracking/minRobot").toDouble();
 

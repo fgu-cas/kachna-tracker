@@ -87,6 +87,8 @@ void Experiment::processFrame(){
         capframe.sectors = 1;
     }
 
+    frames.push_back(capframe);
+
 
     switch (shockState){
         case OUTSIDE:

@@ -192,7 +192,7 @@ void kachnatracker::on_startButton_clicked()
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
         experimentTimer.start(experimentSettings.value("experiment/duration", 15*60).toInt()*10);
-        updateTimer.start(experimentSettings.value("system/system/updateInterval").toInt());
+        updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
     }
 }
 
