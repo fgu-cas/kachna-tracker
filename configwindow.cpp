@@ -158,6 +158,8 @@ void configWindow::on_refreshTrackingButton_clicked()
     Mat frame;
     capture >> frame;
 
+    capture.release();
+
     BlobDetector detector(getSettings(), frame.rows, frame.cols);
 
     BlobDetector::keyPoints keypoints = detector.detect(&frame);
