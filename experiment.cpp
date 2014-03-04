@@ -221,7 +221,7 @@ QString Experiment::getLog(bool rat){
     for (unsigned i = 0;i < frames.size(); i++){
         log += QString::number(i);
         log += "      ";
-        log += QString::number(i*25);
+        log += QString::number(i*40);
         log += "      ";
         if (rat){
             log += QString::number(frames[i].keypoints.rat.pt.x);
