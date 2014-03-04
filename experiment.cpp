@@ -187,36 +187,36 @@ void Experiment::setShock(double mA){
 
 QString Experiment::getLog(bool rat){
     QString log;
-    log += "%%BEGIN_HEADER\n";
-    log += "        %%BEGIN DATABASE_INFORMATION\n";
-    log += "                %Date.0 ( "+QDate::currentDate().toString("d.M.yyyy")+" )\n";
-    log += "                %Time.0 ( "+QTime::currentTime().toString("h:mm")+" )\n";
-    log += "        %%END DATABASE_INFORMATION\n";
-    log += "        %%BEGIN SETUP_INFORMATION\n";
-    log += "                %TrackerVersion.0 ( Kachna Tracker v1.0 release 04/2014 )\n";
-    log += "                %ElapsedTime_ms.0 ( "+QString::number(elapsedTime)+" )\n";
-    log += "                %Paradigm.0 ( RobotAvoidance )\n";
-    log += QString("                %ShockParameters.0 ( %1 %2 %3 %4 )").arg(QString::number(shock.delay),
+    log += "%%BEGIN_HEADER\r\n";
+    log += "        %%BEGIN DATABASE_INFORMATION\r\n";
+    log += "                %Date.0 ( "+QDate::currentDate().toString("d.M.yyyy")+" )\r\n";
+    log += "                %Time.0 ( "+QTime::currentTime().toString("h:mm")+" )\r\n";
+    log += "        %%END DATABASE_INFORMATION\r\n";
+    log += "        %%BEGIN SETUP_INFORMATION\r\n";
+    log += "                %TrackerVersion.0 ( Kachna Tracker v1.0 release 04/2014 )\r\n";
+    log += "                %ElapsedTime_ms.0 ( "+QString::number(elapsedTime)+" )\r\n";
+    log += "                %Paradigm.0 ( RobotAvoidance )\r\n";
+    log += QString("                %ShockParameters.0 ( %1 %2 %3 %4 )\r\n").arg(QString::number(shock.delay),
                                                                              QString::number(shock.length),
                                                                              QString::number(shock.in_delay),
                                                                              QString::number(shock.refractory));
-    log += "                        // %ShockParameters.0 ( EntranceLatency ShockDuration InterShockLatency OutsideRefractory )\n";
-/*    log += "                %ArenaDiameter_m.0 ( 0.82 )\n";
-    log += "                %TrackerResolution_PixPerCM.0 ( 3.1220 )\n";
-    log += "                %ArenaCenterXY.0 ( 127.5 127.5 )\n";*/
-    log += "                %Frame.0 ( RoomFrame )\n";
-    log += "                %ReinforcedSector.0 ( "+QString::number(triggerDistance)+" )\n";
-    log += "                        //%ReinforcedSector.0 ( Radius )\n";
-    log += "        %%END SETUP_INFORMATION\n";
-    log += "        %%BEGIN RECORD_FORMAT\n";
-    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo )\n";
-    log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\n";
-    log += "                        //State indicates the Avoidance state: OutsideSector = 0, EntranceLatency = 1, Shock = 2, InterShockLatency = 3, OutsideRefractory = 4, BadSpot = 5\n";
-    log += "                        //MotorState indicates: NoMove = 0, MoveCW = positive, MoveCCW = negative\n";
-    log += "                        //ShockLevel indicates the level of shock current: NoShock = 0, CurrentLevel = other_values\n";
-    log += "                        //FrameInfo indicates succesfuly tracked spots: ReferencePoint * 2^0 + Spot0 * 2^(1+0) + Spot1 * 2^(1+1) + Spot2 * 2^(1+2) .... \n";
-    log += "        %%END RECORD_FORMAT\n";
-    log += "%%END_HEADER\n";
+    log += "                        // %ShockParameters.0 ( EntranceLatency ShockDuration InterShockLatency OutsideRefractory )\r\n";
+/*    log += "                %ArenaDiameter_m.0 ( 0.82 )\r\n";
+    log += "                %TrackerResolution_PixPerCM.0 ( 3.1220 )\r\n";
+    log += "                %ArenaCenterXY.0 ( 127.5 127.5 )\r\n";*/
+    log += "                %Frame.0 ( RoomFrame )\r\n";
+    log += "                %ReinforcedSector.0 ( "+QString::number(triggerDistance)+" )\r\n";
+    log += "                        //%ReinforcedSector.0 ( Radius )\r\n";
+    log += "        %%END SETUP_INFORMATION\r\n";
+    log += "        %%BEGIN RECORD_FORMAT\r\n";
+    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo )\r\n";
+    log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\r\n";
+    log += "                        //State indicates the Avoidance state: OutsideSector = 0, EntranceLatency = 1, Shock = 2, InterShockLatency = 3, OutsideRefractory = 4, BadSpot = 5\r\n";
+    log += "                        //MotorState indicates: NoMove = 0, MoveCW = positive, MoveCCW = negative\r\n";
+    log += "                        //ShockLevel indicates the level of shock current: NoShock = 0, CurrentLevel = other_values\r\n";
+    log += "                        //FrameInfo indicates succesfuly tracked spots: ReferencePoint * 2^0 + Spot0 * 2^(1+0) + Spot1 * 2^(1+1) + Spot2 * 2^(1+2) .... \r\n";
+    log += "        %%END RECORD_FORMAT\r\n";
+    log += "%%END_HEADER\r\n";
 
     for (unsigned i = 0;i < frames.size(); i++){
         log += QString::number(i);
@@ -238,7 +238,7 @@ QString Experiment::getLog(bool rat){
         log += QString::number(frames[i].state);
         log += "      ";
         log += QString::number(frames[i].currentLevel);
-        log += "      *      *      *\n";
+        log += "      *      *      *\r\n";
     }
 
     return log;
