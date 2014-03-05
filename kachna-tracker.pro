@@ -26,5 +26,14 @@ HEADERS  += kachnatracker.h \
 FORMS    += configwindow.ui \
     kachnatracker.ui
 
-OTHER_FILES += \
-    log.txt
+INCLUDEPATH += C:\\opencv\\build\\include
+
+LIBS += -LC:\\opencv\\build\\bin \
+    libopencv_core248d \
+    libopencv_highgui248d \
+    libopencv_imgproc248d \
+    libopencv_features2d248d \
+    libopencv_calib3d248d
+
+LIBS += -L .. \
+        -lcbw32
