@@ -745,6 +745,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Live refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="refreshTrackingButton">
         <property name="text">
          <string>Refresh</string>

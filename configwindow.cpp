@@ -22,6 +22,8 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
+
+    connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(on_refreshTrackingButton_clicked()));
 }
 
 configWindow::~configWindow()
@@ -115,7 +117,6 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
 void configWindow::on_testButton_clicked()
 {
-    VideoCapture capture;
     capture.open(ui->deviceBox->value());
 
     Mat frame;
@@ -156,13 +157,14 @@ void configWindow::valueMaskChanged(){
 
 void configWindow::on_refreshTrackingButton_clicked()
 {
-    VideoCapture capture;
-    capture.open(ui->deviceBox->value());
-
     Mat frame;
-    capture >> frame;
-
-    capture.release();
+    if (capture.isOpened()){
+        capture >> frame;
+    } else {
+        capture.open(ui->deviceBox->value());
+        capture >> frame;
+        capture.release();
+    }
 
     BlobDetector detector(getSettings(), frame.rows, frame.cols);
 
@@ -207,5 +209,18 @@ void configWindow::on_browseButton_clicked()
     QString directoryPath = QFileDialog::getExistingDirectory(this);
     if (!directoryPath.isEmpty()){
         ui->directoryEdit->setText(directoryPath);
+    }
+}
+
+void configWindow::on_checkBox_stateChanged(int state)
+{
+    if (state == Qt::Checked){
+        ui->refreshTrackingButton->setDisabled(true);
+        capture.open(ui->deviceBox->value());
+        refreshTimer.start(100);
+    } else {
+        ui->refreshTrackingButton->setDisabled(false);
+        refreshTimer.stop();
+        capture.release();
     }
 }

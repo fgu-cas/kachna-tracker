@@ -2,10 +2,12 @@
 #define CONFIGWINDOW_H
 
 #include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 #include <QTabWidget>
 #include <QMap>
 
+#include <QTimer>
 #include <QPixmap>
 #include <QPainter>
 
@@ -37,10 +39,15 @@ private slots:
 
     void on_browseButton_clicked();
 
+    void on_checkBox_stateChanged(int arg1);
+
 private:
     Ui::configWindow *ui;
 
     QPixmap capturedFrame;
+
+    QTimer refreshTimer;
+    VideoCapture capture;
 };
 
 #endif // CONFIGWINDOW_H
