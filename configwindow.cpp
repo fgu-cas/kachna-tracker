@@ -20,6 +20,8 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->maskVBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
     connect(ui->maskHBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
 
+    connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
+    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
 }
 
 configWindow::~configWindow()
@@ -64,6 +66,7 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
+    settings.insert("shock/triggerDistance", ui->triggerBox->value());
 
     return settings;
 }
@@ -102,6 +105,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
+    ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());

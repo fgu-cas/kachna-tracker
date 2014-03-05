@@ -20,7 +20,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
-    triggerDistance = settings->value("triggerDistance", 50).toDouble();
+    triggerDistance = settings->value("shock/triggerDistance").toInt();
 #ifdef _WIN32
     float revision = (float) CURRENTREVNUM;
     cbDeclareRevision(&revision);
@@ -28,7 +28,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
 #endif
 
-    shock.level = 0.4;
+    shock.level = 0.2;
     shock.delay = settings->value("shock/EntranceLatency").toInt();
     shock.in_delay = settings->value("shock/InterShockLatency").toInt();
     shock.length = settings->value("shock/ShockDuration").toInt();

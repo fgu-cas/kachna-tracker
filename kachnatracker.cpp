@@ -169,9 +169,9 @@ void kachnatracker::on_startButton_clicked()
         experiment->stop();
         saveTracks();
     } else {
-        QMap<QString, QVariant> settings = configWin.getSettings();
+        experimentSettings = QMap<QString, QVariant>(configWin.getSettings());
 
-        VideoCapture capture = VideoCapture(settings.value("video/device").toInt());
+        VideoCapture capture = VideoCapture(experimentSettings.value("video/device").toInt());
 
         pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
                          capture.get(CV_CAP_PROP_FRAME_HEIGHT));
@@ -180,20 +180,21 @@ void kachnatracker::on_startButton_clicked()
 
         QPainter painter(&pixmap);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(settings.value("mask/X").toInt(), settings.value("mask/Y").toInt()),
-                            settings.value("mask/H").toInt(), settings.value("mask/V").toInt());
+        painter.drawEllipse(QPoint(experimentSettings.value("mask/X").toInt(), experimentSettings.value("mask/Y").toInt()),
+                            experimentSettings.value("mask/H").toInt(), experimentSettings.value("mask/V").toInt());
         painter.end();
         reset();
 
+
         delete experiment;
-        experiment = new Experiment(this, &settings);
+        experiment = new Experiment(this, &experimentSettings);
         experiment->start();
 
         connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
 
         // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
-        experimentTimer.start(settings.value("experiment/duration", 15*60).toInt()*10);
-        updateTimer.start(settings.value("system/updateInterval").toInt());
+        experimentTimer.start(experimentSettings.value("experiment/duration", 15*60).toInt()*10);
+        updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
     }
 }
 
@@ -210,6 +211,7 @@ void kachnatracker::requestUpdate(){
     if (lastKeypoints.robot.size != 0){
         lastRobot = QPoint(lastKeypoints.robot.pt.x, lastKeypoints.robot.pt.y);
     }
+
 
     QPainter painter(&pixmap);
 
@@ -238,7 +240,20 @@ void kachnatracker::requestUpdate(){
     }
 
     painter.end();
-    ui->displayLabel->setPixmap(pixmap);
+
+    if (robot.x() != 0 || robot.y() != 0){
+        QPixmap tempPixmap(pixmap);
+        QPainter painter(&tempPixmap);
+        painter.setPen(Qt::yellow);
+        painter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
+
+        int radius = experimentSettings.value("shock/triggerDistance").toInt();
+        painter.drawEllipse(robot, radius, radius);
+        painter.end();
+        ui->displayLabel->setPixmap(tempPixmap);
+    } else {
+        ui->displayLabel->setPixmap(pixmap);
+    }
 
     ui->goodFramesLCD->display(update.stats.goodFrames);
     ui->badFramesLCD->display(update.stats.badFrames);

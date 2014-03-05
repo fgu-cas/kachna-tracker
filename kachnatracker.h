@@ -44,16 +44,17 @@ private:
 
     void closeEvent(QCloseEvent *);
 
-    Ui::kachnatracker *ui;
-    QSettings *appSettings;
-    Experiment *experiment;
-    QPixmap pixmap;
-
     configWindow configWin;
-
     QTimer experimentTimer;
     QTimer updateTimer;
 
+
+    Ui::kachnatracker *ui;
+    QSettings *appSettings;
+    Experiment *experiment;
+    QMap<QString, QVariant> experimentSettings;
+
+    QPixmap pixmap;
     BlobDetector::keyPoints lastKeypoints;
 };
 
