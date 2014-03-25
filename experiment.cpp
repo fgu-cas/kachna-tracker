@@ -28,6 +28,11 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
 #endif
 
+    arena.x = settings->value("arena/X").toInt();
+    arena.y = settings->value("arena/Y").toInt();
+    arena.size = settings->value("arena/size").toDouble();
+    arena.radius = settings->value("arena/radius").toInt();
+
     shock.level = 0.2;
     shock.delay = settings->value("shock/EntranceLatency").toInt();
     shock.in_delay = settings->value("shock/InterShockLatency").toInt();
@@ -201,9 +206,9 @@ QString Experiment::getLog(bool rat){
                                                                              QString::number(shock.in_delay),
                                                                              QString::number(shock.refractory));
     log += "                        // %ShockParameters.0 ( EntranceLatency ShockDuration InterShockLatency OutsideRefractory )\r\n";
-/*    log += "                %ArenaDiameter_m.0 ( 0.82 )\r\n";
-    log += "                %TrackerResolution_PixPerCM.0 ( 3.1220 )\r\n";
-    log += "                %ArenaCenterXY.0 ( 127.5 127.5 )\r\n";*/
+    log += "                %ArenaDiameter_m.0 ( "+QString::number(arena.size)+" )\r\n";
+    log += "                %TrackerResolution_PixPerCM.0 ( "+QString::number((2*arena.radius)/(arena.size*100))+" )\r\n";
+    log += QString("                %ArenaCenterXY.0 ( %1 %2 )\r\n").arg(QString::number(arena.x), QString::number(arena.y));
     log += "                %Frame.0 ( RoomFrame )\r\n";
     log += "                %ReinforcedSector.0 ( "+QString::number(triggerDistance)+" )\r\n";
     log += "                        //%ReinforcedSector.0 ( Radius )\r\n";

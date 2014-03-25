@@ -77,6 +77,13 @@ private:
     } shock;
     qint64 lastChange;
 
+    struct {
+        int x;
+        int y;
+        double size;
+        int radius;
+    } arena;
+
 public slots:
     void start();
     void stop();

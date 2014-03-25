@@ -54,6 +54,7 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("arena/X", ui->maskXBox->value());
     settings.insert("arena/Y", ui->maskYBox->value());
     settings.insert("arena/radius", ui->maskRadiusBox->value());
+    settings.insert("arena/size", ui->arenaSizeBox->value());
 
     settings.insert("tracking/minRat", ui->ratMinSize->value());
     settings.insert("tracking/maxRat", ui->ratMaxSize->value());
@@ -87,6 +88,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->maskXBox->setValue(settings.value("arena/X").toDouble());
     ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
     ui->maskRadiusBox->setValue(settings.value("arena/radius").toInt());
+    ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
     ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
