@@ -26,9 +26,9 @@ HEADERS  += kachnatracker.h \
 FORMS    += configwindow.ui \
     kachnatracker.ui
 
-INCLUDEPATH += C:\\opencv\\build\\include
+INCLUDEPATH += C:\\dev\\opencv\\build\\include
 
-LIBS += -LC:\\opencv\\build\\bin \
+LIBS += -LC:\\dev\\opencv\\build\\bin \
     libopencv_core248d \
     libopencv_highgui248d \
     libopencv_imgproc248d \
@@ -37,3 +37,5 @@ LIBS += -LC:\\opencv\\build\\bin \
 
 LIBS += -L .. \
         -lcbw32
+
+QMAKE_LFLAGS = -static-libgcc -static-libstdc++
