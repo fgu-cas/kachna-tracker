@@ -51,11 +51,9 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("tracking/maxArea", ui->maxAreaBox->value());
     settings.insert("tracking/minArea", ui->minAreaBox->value());
 
-    settings.insert("mask/type", ui->typeBox->currentIndex());
-
-    settings.insert("mask/X", ui->maskXBox->value());
-    settings.insert("mask/Y", ui->maskYBox->value());
-    settings.insert("mask/radius", ui->maskRadiusBox->value());
+    settings.insert("arena/X", ui->maskXBox->value());
+    settings.insert("arena/Y", ui->maskYBox->value());
+    settings.insert("arena/radius", ui->maskRadiusBox->value());
 
     settings.insert("tracking/minRat", ui->ratMinSize->value());
     settings.insert("tracking/maxRat", ui->ratMaxSize->value());
@@ -86,11 +84,9 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->deviceBox->setValue(settings.value("video/device").toInt());
     ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
 
-    ui->typeBox->setCurrentIndex(settings.value("mask/type").toInt());
-
-    ui->maskXBox->setValue(settings.value("mask/X").toDouble());
-    ui->maskYBox->setValue(settings.value("mask/Y").toDouble());
-    ui->maskRadiusBox->setValue(settings.value("mask/radius").toInt());
+    ui->maskXBox->setValue(settings.value("arena/X").toDouble());
+    ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
+    ui->maskRadiusBox->setValue(settings.value("arena/radius").toInt());
 
     ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
