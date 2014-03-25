@@ -29,9 +29,8 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
 
     mask = Mat(h, w, CV_8UC1);
     mask.setTo(Scalar(0));
-    ellipse(mask, Point2f(settings.value("mask/X").toFloat(), settings.value("mask/Y").toFloat()),
-            Size2f(settings.value("mask/H").toFloat(), settings.value("mask/V").toFloat()), 0, 0, 360,
-            Scalar(255), -1);
+    circle(mask, Point2f(settings.value("mask/X").toFloat(), settings.value("mask/Y").toFloat()),
+           settings.value("mask/radius").toInt(), Scalar(255), -1);
 
     hardMask = (settings.value("mask/type").toInt() == 1);
 }

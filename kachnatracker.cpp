@@ -181,7 +181,7 @@ void kachnatracker::on_startButton_clicked()
         QPainter painter(&pixmap);
         painter.setPen(Qt::black);
         painter.drawEllipse(QPoint(experimentSettings.value("mask/X").toInt(), experimentSettings.value("mask/Y").toInt()),
-                            experimentSettings.value("mask/H").toInt(), experimentSettings.value("mask/V").toInt());
+                            experimentSettings.value("mask/radius").toInt(), experimentSettings.value("mask/radius").toInt());
         painter.end();
         reset();
 

@@ -17,8 +17,7 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
     connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
-    connect(ui->maskVBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
-    connect(ui->maskHBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
+    connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(valueMaskChanged()));
 
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
@@ -56,8 +55,7 @@ QMap<QString, QVariant> configWindow::getSettings()
 
     settings.insert("mask/X", ui->maskXBox->value());
     settings.insert("mask/Y", ui->maskYBox->value());
-    settings.insert("mask/V", ui->maskVBox->value());
-    settings.insert("mask/H", ui->maskHBox->value());
+    settings.insert("mask/radius", ui->maskRadiusBox->value());
 
     settings.insert("tracking/minRat", ui->ratMinSize->value());
     settings.insert("tracking/maxRat", ui->ratMaxSize->value());
@@ -92,8 +90,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
     ui->maskXBox->setValue(settings.value("mask/X").toDouble());
     ui->maskYBox->setValue(settings.value("mask/Y").toDouble());
-    ui->maskVBox->setValue(settings.value("mask/V").toDouble());
-    ui->maskHBox->setValue(settings.value("mask/H").toDouble());
+    ui->maskRadiusBox->setValue(settings.value("mask/radius").toInt());
 
     ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
@@ -147,7 +144,7 @@ void configWindow::valueMaskChanged(){
         painter.setPen(Qt::magenta);
         painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
         painter.drawLine(QPoint(center.x()-5, center.y()+5), QPoint(center.x()+5, center.y()-5));
-        painter.drawEllipse(center, (int) ui->maskHBox->value(), (int) ui->maskVBox->value());
+        painter.drawEllipse(center, (int) ui->maskRadiusBox->value(), (int) ui->maskRadiusBox->value());
         painter.end();
 
         ui->videoLabel->setPixmap(pixmap);
