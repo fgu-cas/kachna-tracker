@@ -49,6 +49,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
 kachnatracker::~kachnatracker()
 {
+    delete appSettings;
     delete ui;
 }
 
@@ -118,6 +119,7 @@ void kachnatracker::experimentTimeout(){
         alert->setModal(false);
         alert->show();
     }
+    delete alert;
 }
 
 void kachnatracker::saveTracks(){
