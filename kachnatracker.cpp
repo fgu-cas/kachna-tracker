@@ -126,7 +126,7 @@ void kachnatracker::saveTracks(){
 
         QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
                                                         settings.value("system/defaultDirectory").toString()+'/'+
-                                                        settings.value("system/defaultFilename").toString(),
+                                                        settings.value("system/defaultFilename").toString()+"_rat",
                                                         tr("Files (*.dat)"));
         if (!fileName.isEmpty()){
             if (!fileName.endsWith(".dat")){
@@ -143,7 +143,7 @@ void kachnatracker::saveTracks(){
 
         fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
                                                     settings.value("system/defaultDirectory").toString()+'/'+
-                                                    settings.value("system/defaultFilename").toString(),
+                                                    settings.value("system/defaultFilename").toString()+"_rob",
                                                     tr("Files (*.dat)"));
         if (!fileName.isEmpty()){
             if (!fileName.endsWith(".dat")){
