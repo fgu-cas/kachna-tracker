@@ -115,7 +115,11 @@ void configWindow::on_testButton_clicked()
     capture.open(ui->deviceBox->value());
 
     Mat frame;
-    capture >> frame;
+    int i = 0;
+    do {
+        capture >> frame;
+        i++;
+    } while (frame.empty() && i < 10);
 
     if (!frame.empty()){
         capturedFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
@@ -157,7 +161,11 @@ void configWindow::on_refreshTrackingButton_clicked()
         capture >> frame;
     } else {
         capture.open(ui->deviceBox->value());
-        capture >> frame;
+        int i = 0;
+        do {
+            capture >> frame;
+            i++;
+        } while (frame.empty() && i < 10);
         capture.release();
     }
 
