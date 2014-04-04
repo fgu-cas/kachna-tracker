@@ -224,7 +224,7 @@ QString Experiment::getLog(bool rat){
     log += "%%END_HEADER\r\n";
 
     for (unsigned i = 0;i < frames.size(); i++){
-        log += QString::number(i);
+        log += QString::number(i+1);
         log += "      ";
         log += QString::number(i*40);
         log += "      ";
