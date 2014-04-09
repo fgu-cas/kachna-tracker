@@ -83,13 +83,13 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
     ui->deviceBox->setValue(settings.value("video/device").toInt());
-    ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
 
     ui->maskXBox->setValue(settings.value("arena/X").toDouble());
     ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
     ui->maskRadiusBox->setValue(settings.value("arena/radius").toInt());
     ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
+    ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
     ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
     ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
 

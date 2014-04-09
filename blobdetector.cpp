@@ -1,4 +1,5 @@
 #include "blobdetector.h"
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <stdexcept>
 
@@ -6,10 +7,6 @@
 
 BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     cv::SimpleBlobDetector::Params params;
-
-    params.minThreshold = settings.value("tracking/threshold").toDouble();
-    params.maxThreshold = 255;
-    params.thresholdStep = 5;
     params.minDistBetweenBlobs = 10.0f;
     params.filterByInertia = false;
     params.filterByConvexity = false;
@@ -24,6 +21,8 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
     minRat = settings.value("tracking/minRat").toDouble();
     maxRobot = settings.value("tracking/maxRobot").toDouble();
     minRobot = settings.value("tracking/minRobot").toDouble();
+
+    img_threshold = settings.value("tracking/threshold").toInt();
 
     detector = new SimpleBlobDetector(params);
 
@@ -41,8 +40,12 @@ BlobDetector::~BlobDetector(){
 BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
     std::vector<KeyPoint> keypoints;
 
+    Mat maskedMat;
+    frame->copyTo(maskedMat, mask);
+    Mat gray;
+    cv::cvtColor(maskedMat, gray, CV_RGB2GRAY);
     Mat detectMat;
-    frame->copyTo(detectMat, mask);
+    threshold(gray, detectMat, img_threshold, 255, THRESH_BINARY);
     // Here I would've used the optional Mask parameter of the detect() function...
     // Except that SimpleBlobDetector doesn't support it! AGH
     detector->detect(detectMat, keypoints);
@@ -62,8 +65,14 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
 }
 
 std::vector<KeyPoint> BlobDetector::allKeypoints(Mat *frame){
+    Mat maskedMat;
+    frame->copyTo(maskedMat, mask);
+    Mat gray;
+    cv::cvtColor(maskedMat, gray, CV_RGB2GRAY);
+    Mat detectMat;
+    threshold(gray, detectMat, img_threshold, 255, THRESH_BINARY);
     std::vector<KeyPoint> keypoints_pre;
-    detector->detect(*frame, keypoints_pre);
+    detector->detect(detectMat, keypoints_pre);
     std::vector<KeyPoint> keypoints_post;
     for (unsigned i = 0; i<keypoints_pre.size(); i++){
         KeyPoint keypoint = keypoints_pre[i];

@@ -28,6 +28,8 @@ private:
     double maxRobot;
     double minRobot;
 
+    double img_threshold;
+
     Mat mask;
 };
 
