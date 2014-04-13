@@ -191,7 +191,7 @@
      <string>File</string>
     </property>
     <addaction name="actionSave_tracks"/>
-    <addaction name="actionDebug"/>
+    <addaction name="actionSave_screenshot"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfiguration"/>
@@ -225,6 +225,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_screenshot">
+   <property name="text">
+    <string>Save screenshot</string>
    </property>
   </action>
  </widget>

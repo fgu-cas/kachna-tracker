@@ -37,6 +37,8 @@ private slots:
     void updateTick();
     void requestUpdate();
 
+    void on_actionSave_screenshot_triggered();
+
 private:
     void reset();
     void experimentTimeout();

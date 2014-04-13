@@ -290,3 +290,16 @@ void kachnatracker::on_actionDebug_triggered()
 {
 
 }
+
+void kachnatracker::on_actionSave_screenshot_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                                     "",
+                                                     tr("Images (*.png)"));
+    if (!fileName.isEmpty()){
+        if (!fileName.endsWith(".png")){
+            fileName += ".png";
+        }
+        pixmap.save(fileName);
+    }
+}
