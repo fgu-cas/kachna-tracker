@@ -260,6 +260,7 @@ void kachnatracker::requestUpdate(){
     ui->badFramesLCD->display(update.stats.badFrames);
     ui->encounterLabel->setText(QString::number(update.stats.entryCount));
     ui->shockLabel->setText(QString::number(update.stats.shockCount));
+    ui->firstShockLabel->setText(QString::number(update.stats.initialShock/1000)+" s");
     //todo: initial shock time display
 }
 
