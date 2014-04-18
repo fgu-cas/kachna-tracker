@@ -119,7 +119,6 @@ void kachnatracker::experimentTimeout(){
         alert->setModal(false);
         alert->show();
     }
-    delete alert;
 }
 
 void kachnatracker::saveTracks(){
