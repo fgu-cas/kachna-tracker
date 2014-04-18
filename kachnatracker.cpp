@@ -106,18 +106,20 @@ void kachnatracker::on_actionExportConfig_triggered()
 
 void kachnatracker::experimentTimeout(){
     experimentTimer.stop();
-    QMessageBox alert;
-    alert.setStandardButtons(QMessageBox::Ok);
-    alert.setText("Experiment ended!");
+    QMessageBox *alert = new QMessageBox(this);
+    alert->setAttribute(Qt::WA_DeleteOnClose);
+    alert->setStandardButtons(QMessageBox::Ok);
+    alert->setText("Experiment ended!");
     if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
         updateTimer.stop();
         experiment->stop();
-        alert.exec();
+        alert->exec();
         saveTracks();
     } else {
-        alert.setModal(false);
-        alert.show();
+        alert->setModal(false);
+        alert->show();
     }
+    delete alert;
 }
 
 void kachnatracker::saveTracks(){
