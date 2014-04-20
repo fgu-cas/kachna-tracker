@@ -42,13 +42,13 @@ private slots:
 private:
     void reset();
     void experimentTimeout();
-    void experimentEnded();
 
     void closeEvent(QCloseEvent *);
 
     configWindow configWin;
-    QTimer experimentTimer;
     QTimer updateTimer;
+    QElapsedTimer elapsedTimer;
+    bool experimentEnded;
 
 
     Ui::kachnatracker *ui;

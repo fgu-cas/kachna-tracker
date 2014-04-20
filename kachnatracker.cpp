@@ -41,8 +41,9 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
     configWin.setSettings(experimentSettings);
 
-    connect(&experimentTimer, SIGNAL(timeout()), this, SLOT(updateTick()));
+
     connect(&updateTimer, SIGNAL(timeout()), this, SLOT(requestUpdate()));
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(updateTick()));
 
     experiment = 0;
 }
@@ -105,19 +106,20 @@ void kachnatracker::on_actionExportConfig_triggered()
 }
 
 void kachnatracker::experimentTimeout(){
-    experimentTimer.stop();
-    QMessageBox *alert = new QMessageBox(this);
-    alert->setAttribute(Qt::WA_DeleteOnClose);
-    alert->setStandardButtons(QMessageBox::Ok);
-    alert->setText("Experiment ended!");
-    if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
-        updateTimer.stop();
-        experiment->stop();
-        alert->exec();
-        saveTracks();
-    } else {
-        alert->setModal(false);
-        alert->show();
+    if (!experimentEnded){
+        QMessageBox *alert = new QMessageBox(this);
+        alert->setAttribute(Qt::WA_DeleteOnClose);
+        alert->setStandardButtons(QMessageBox::Ok);
+        alert->setText("Experiment ended!");
+        if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
+            updateTimer.stop();
+            experiment->stop();
+            alert->exec();
+            saveTracks();
+        } else {
+            alert->setModal(false);
+            alert->show();
+        }
     }
 }
 
@@ -165,7 +167,6 @@ void kachnatracker::saveTracks(){
 void kachnatracker::on_startButton_clicked()
 {
     if (updateTimer.isActive()){
-        experimentTimer.stop();
         updateTimer.stop();
         experiment->stop();
         saveTracks();
@@ -193,9 +194,8 @@ void kachnatracker::on_startButton_clicked()
 
         connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
 
-        // Tick every hundredth of the experiment length -> interval=length/100, but the timer is in ms, so *1000 too
-        experimentTimer.start(experimentSettings.value("experiment/duration", 15*60).toInt()*10);
         updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
+        elapsedTimer.start();
     }
 }
 
@@ -261,14 +261,30 @@ void kachnatracker::requestUpdate(){
     ui->encounterLabel->setText(QString::number(update.stats.entryCount));
     ui->shockLabel->setText(QString::number(update.stats.shockCount));
     ui->firstShockLabel->setText(QString::number(update.stats.initialShock/1000)+" s");
-    //todo: initial shock time display
 }
 
 void kachnatracker::updateTick(){
-    ui->progressBar->setValue(ui->progressBar->value()+1);
-    if (ui->progressBar->value() == 100){
+    qint64 duration = experimentSettings.value("experiment/duration").toInt()*1000;
+    qint64 elapsed = elapsedTimer.elapsed();
+    ui->progressBar->setValue((elapsed*1.0/duration)*100);
+
+    QString sign = "-";
+    int time = (duration-elapsed)/1000;
+    if (time <= 0){
         experimentTimeout();
+        experimentEnded = true;
+        time *= -1;
+        sign = "+";
     }
+    int s = time%60;
+    time /= 60;
+    int m = time % 60;
+    time /= 60;
+    int h = time % 24;
+    ui->timeLabel->setText(QString("%1%2:%3:%4").arg(sign)
+                           .arg(h, 2, 10, QChar('0'))
+                           .arg(m, 2, 10, QChar('0'))
+                           .arg(s, 2, 10, QChar('0')));
 }
 
 void kachnatracker::closeEvent(QCloseEvent *event){
@@ -277,6 +293,8 @@ void kachnatracker::closeEvent(QCloseEvent *event){
 }
 
 void kachnatracker::reset(){
+    experimentEnded = false;
+
     lastKeypoints.rat = KeyPoint(0, 0, 0);
     lastKeypoints.robot = KeyPoint(0, 0, 0);
 
