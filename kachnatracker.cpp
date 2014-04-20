@@ -306,11 +306,6 @@ void kachnatracker::reset(){
     ui->shockBox->setValue(0.2);
 }
 
-void kachnatracker::on_actionDebug_triggered()
-{
-
-}
-
 void kachnatracker::on_actionSave_screenshot_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),

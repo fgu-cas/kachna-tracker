@@ -28,8 +28,6 @@ private slots:
 
     void on_actionExportConfig_triggered();
 
-    void on_actionDebug_triggered();
-
     void on_startButton_clicked();
 
     void saveTracks();
