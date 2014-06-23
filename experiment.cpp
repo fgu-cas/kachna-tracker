@@ -33,7 +33,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     arena.size = settings->value("arena/size").toDouble();
     arena.radius = settings->value("arena/radius").toInt();
 
-    shock.level = 0.2;
+    shock.level = 0;
     shock.delay = settings->value("shock/EntranceLatency").toInt();
     shock.in_delay = settings->value("shock/InterShockLatency").toInt();
     shock.length = settings->value("shock/ShockDuration").toInt();
@@ -157,7 +157,7 @@ void Experiment::processFrame(){
 
 void Experiment::changeShock(double shockLevel){
     if (shockLevel < 0.2){
-        shock.level = 0.2;
+        shock.level = 0;
     } else if (shockLevel > 0.7){
         shock.level = 0.7;
     } else {

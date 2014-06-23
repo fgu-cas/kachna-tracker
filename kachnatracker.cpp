@@ -303,7 +303,7 @@ void kachnatracker::reset(){
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
 
-    ui->shockBox->setValue(0.2);
+    ui->shockBox->setValue(0.1);
 }
 
 void kachnatracker::on_actionSave_screenshot_triggered()
