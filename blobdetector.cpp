@@ -69,7 +69,7 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
 std::vector<KeyPoint> BlobDetector::allKeypoints(Mat *frame){
     std::vector<KeyPoint> keypoints_post;
 
-    if (!frame->empty()){
+    if (frame->channels() == 3){
         Mat maskedMat;
         frame->copyTo(maskedMat, mask);
         Mat gray;
