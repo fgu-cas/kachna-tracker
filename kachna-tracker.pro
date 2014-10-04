@@ -31,11 +31,11 @@ FORMS    += configwindow.ui \
 INCLUDEPATH += C:\\dev\\opencv\\build\\include
 
 LIBS += -LC:\\dev\\opencv\\build\\bin \
-    libopencv_core248d \
-    libopencv_highgui248d \
-    libopencv_imgproc248d \
-    libopencv_features2d248d \
-    libopencv_calib3d248d
+    libopencv_core249d \
+    libopencv_highgui249d \
+    libopencv_imgproc249d \
+    libopencv_features2d249d \
+    libopencv_calib3d249d
 
 LIBS += -L .. \
         -lcbw32
