@@ -18,7 +18,7 @@ public:
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
     keyPoints detect(Mat *frame);
-    std::vector<KeyPoint> allKeypoints(Mat *frame);
+    std::vector<KeyPoint> detectAll(Mat *frame);
 
 private:
     SimpleBlobDetector *detector;

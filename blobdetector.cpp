@@ -66,7 +66,7 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
     return result;
 }
 
-std::vector<KeyPoint> BlobDetector::allKeypoints(Mat *frame){
+std::vector<KeyPoint> BlobDetector::detectAll(Mat *frame){
     std::vector<KeyPoint> keypoints_post;
 
     if (frame->channels() == 3){

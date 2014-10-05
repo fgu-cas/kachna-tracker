@@ -176,10 +176,10 @@ void configWindow::on_refreshTrackingButton_clicked()
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
     QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
 
-    std::vector<KeyPoint> allKeypoints = detector.allKeypoints(&frame);
+    std::vector<KeyPoint> detectAll = detector.detectAll(&frame);
     ui->keypointList->clear();
-    for (unsigned i = 0; i < allKeypoints.size(); i++){
-        KeyPoint keypoint = allKeypoints[i];
+    for (unsigned i = 0; i < detectAll.size(); i++){
+        KeyPoint keypoint = detectAll[i];
         ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
                                   + ", " + QString::number(keypoint.pt.y) + " (" +
                                   QString::number(keypoint.size) + ")");
