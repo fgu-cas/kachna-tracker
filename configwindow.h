@@ -11,7 +11,7 @@
 #include <QPixmap>
 #include <QPainter>
 
-#include "blobdetector.h"
+#include "detector.h"
 
 using namespace cv;
 

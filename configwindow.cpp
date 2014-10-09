@@ -7,8 +7,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include <iostream>
-
 configWindow::configWindow(QWidget *parent) :
     QTabWidget(parent),
     ui(new Ui::configWindow)
@@ -169,9 +167,9 @@ void configWindow::on_refreshTrackingButton_clicked()
         capture.release();
     }
 
-    BlobDetector detector(getSettings(), frame.rows, frame.cols);
+   Detector detector(getSettings(), frame.rows, frame.cols);
 
-    BlobDetector::keyPoints keypoints = detector.detect(&frame);
+   Detector::keyPoints keypoints = detector.detect(&frame);
 
     QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
     QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);

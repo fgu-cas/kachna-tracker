@@ -1,5 +1,5 @@
-#ifndef BLOBDETECTOR_H
-#define BLOBDETECTOR_H
+#ifndef DETECTOR_H
+#define DETECTOR_H
 
 #include <QMap>
 #include <QVariant>
@@ -9,11 +9,11 @@
 
 using namespace cv;
 
-class BlobDetector
+class Detector
 {
 public:
-    BlobDetector(QMap<QString, QVariant> settings, int h, int w);
-    ~BlobDetector();
+    Detector(QMap<QString, QVariant> settings, int h, int w);
+    ~Detector();
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
@@ -36,4 +36,4 @@ private:
 
 
 
-#endif // BLOBDETECTOR_H
+#endif // DETECTOR_H

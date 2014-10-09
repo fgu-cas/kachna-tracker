@@ -16,14 +16,14 @@ SOURCES += main.cpp\
         kachnatracker.cpp \
     configwindow.cpp \
     experiment.cpp \
-    blobdetector.cpp \
+    detector.cpp \
     shockspinbox.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
     experiment.h \
-    blobdetector.h \
-    shockspinbox.h
+    shockspinbox.h \
+    detector.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

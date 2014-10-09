@@ -8,25 +8,24 @@
 #include "../cbw.h"
 #endif
 
-#include <iostream>
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
     capture.open(settings->value("video/device", 0).toInt());
 
-    detector = new BlobDetector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
+    detector = new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
     triggerDistance = settings->value("shock/triggerDistance").toInt();
-#ifdef _WIN32
+
+    /* MC library init magic */
     float revision = (float) CURRENTREVNUM;
     cbDeclareRevision(&revision);
     cbErrHandling (PRINTALL, DONTSTOP);
     cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
-#endif
 
     arena.x = settings->value("arena/X").toInt();
     arena.y = settings->value("arena/Y").toInt();
@@ -71,7 +70,7 @@ void Experiment::processFrame(){
     Mat frame;
     capture >> frame;
 
-    BlobDetector::keyPoints points = detector->detect(&frame);
+   Detector::keyPoints points = detector->detect(&frame);
 
     double distance = -1;
     bool badFrame = false;

@@ -6,7 +6,7 @@
 #include <QCloseEvent>
 #include "configwindow.h"
 #include "experiment.h"
-#include "blobdetector.h"
+#include "detector.h"
 
 namespace Ui {
 class kachnatracker;
@@ -55,7 +55,7 @@ private:
     QMap<QString, QVariant> experimentSettings;
 
     QPixmap pixmap;
-    BlobDetector::keyPoints lastKeypoints;
+   Detector::keyPoints lastKeypoints;
 };
 
 #endif // KACHNATRACKER_H

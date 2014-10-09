@@ -8,7 +8,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include "blobdetector.h"
+#include "detector.h"
 
 
 using namespace cv;
@@ -30,7 +30,7 @@ public:
     };
 
     struct Update {
-        BlobDetector::keyPoints keypoints;
+        Detector::keyPoints keypoints;
         Stats stats;
     };
 
@@ -41,14 +41,14 @@ private:
     void setShock(double mA);
 
     struct capFrame {
-        BlobDetector::keyPoints keypoints;
+        Detector::keyPoints keypoints;
         int sectors;
         int state;
         int currentLevel;
     };
 
     VideoCapture capture;
-    BlobDetector *detector;
+    Detector *detector;
 
     std::vector<capFrame> frames;
     QTimer timer;

@@ -1,11 +1,9 @@
-#include "blobdetector.h"
+#include "detector.h"
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <stdexcept>
 
-#include <iostream>
-
-BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
+Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
     cv::SimpleBlobDetector::Params params;
     params.minDistBetweenBlobs = 10.0f;
     params.filterByInertia = false;
@@ -32,13 +30,13 @@ BlobDetector::BlobDetector(QMap<QString, QVariant> settings, int h, int w){
            settings.value("arena/radius").toInt(), Scalar(255), -1);
 }
 
-BlobDetector::~BlobDetector(){
+Detector::~Detector(){
     delete detector;
 }
 
 
-BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
-    BlobDetector::keyPoints result;
+Detector::keyPoints Detector::detect(Mat *frame){
+    Detector::keyPoints result;
 
     if (!frame->empty() && frame->channels() == 3){
         std::vector<KeyPoint> keypoints;
@@ -66,7 +64,7 @@ BlobDetector::keyPoints BlobDetector::detect(Mat *frame){
     return result;
 }
 
-std::vector<KeyPoint> BlobDetector::detectAll(Mat *frame){
+std::vector<KeyPoint> Detector::detectAll(Mat *frame){
     std::vector<KeyPoint> keypoints_post;
 
     if (frame->channels() == 3){
