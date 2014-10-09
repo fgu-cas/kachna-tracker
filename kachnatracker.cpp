@@ -26,16 +26,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
     QString fileName = appSettings->value("lastUsedSettings",
                                           QCoreApplication::applicationDirPath()+"experiment.ini").toString();
-    QSettings experimentIni(fileName, QSettings::IniFormat, this);
-    QMap<QString, QVariant> experimentSettings;
-
-    QStringList keys = experimentIni.allKeys();
-    for (int i = 0; i<keys.size();i++){
-        QString key = keys.value(i);
-        experimentSettings.insert(key, experimentIni.value(key));
-    }
-
-    configWin.setSettings(experimentSettings);
+    loadSettings(fileName);
 
     reset();
 
@@ -49,6 +40,33 @@ kachnatracker::~kachnatracker(){
 
     delete appSettings;
     delete ui;
+}
+
+void kachnatracker::loadSettings(QString fileName){
+
+    QSettings experimentIni(fileName, QSettings::IniFormat, this);
+    QMap<QString, QVariant> experimentSettings;
+
+    QStringList keys = experimentIni.allKeys();
+    for (int i = 0; i<keys.size();i++){
+        QString key = keys.value(i);
+        experimentSettings.insert(key, experimentIni.value(key));
+    }
+
+    configWin.setSettings(experimentSettings);
+    appSettings->setValue("lastUsedSettings", fileName);
+
+    QString version = experimentIni.value("general/version").toString();
+    int majorVersion = version.split(".")[0].toInt();
+    if (majorVersion < MAJOR_VERSION){
+        QMessageBox alert;
+        alert.setText(tr("<b>Hold on! You're using an old settings file!</b>"));
+        alert.setInformativeText(tr("Please make sure that all settings are correct before proceeding with the experiment, "
+                                    "then save the settings afterwards to get rid of this warning."));
+        alert.setStandardButtons(QMessageBox::Ok);
+        alert.exec();
+        configWin.show();
+    }
 }
 
 
@@ -65,18 +83,8 @@ void kachnatracker::on_actionImportConfig_triggered(){
     if (fileName.isEmpty()){
         return;
     }
-    QMap<QString, QVariant> experimentSettings;
-    QSettings experimentIni(fileName, QSettings::IniFormat);
 
-    QStringList keys = experimentIni.allKeys();
-    for (int i = 0; i<keys.size();i++){
-        QString key = keys.value(i);
-        experimentSettings.insert(key, experimentIni.value(key));
-    }
-
-    appSettings->setValue("lastUsedSettings", fileName);
-
-    configWin.setSettings(experimentSettings);
+    loadSettings(fileName);
 }
 
 
@@ -96,6 +104,9 @@ void kachnatracker::on_actionExportConfig_triggered(){
             QString key = keys[i];
             settings.setValue(key, experimentSettings.value(key));
         }
+        settings.setValue("general/version", QString("%1.%2.%3")
+                          .arg(MAJOR_VERSION)
+                          .arg(MINOR_VERSION));
         appSettings->setValue("lastUsedSettings", fileName);
     }
 }
@@ -106,7 +117,7 @@ void kachnatracker::experimentTimeout(){
         QMessageBox *alert = new QMessageBox(this);
         alert->setAttribute(Qt::WA_DeleteOnClose);
         alert->setStandardButtons(QMessageBox::Ok);
-        alert->setText("Experiment ended!");
+        alert->setText(tr("Experiment ended!"));
         if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
             updateTimer.stop();
             experiment->stop();

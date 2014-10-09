@@ -8,6 +8,9 @@
 #include "experiment.h"
 #include "detector.h"
 
+#define MAJOR_VERSION 1
+#define MINOR_VERSION 0
+
 namespace Ui {
 class kachnatracker;
 }
@@ -40,6 +43,8 @@ private slots:
 private:
     void reset();
     void experimentTimeout();
+
+    void loadSettings(QString);
 
     void closeEvent(QCloseEvent *);
 

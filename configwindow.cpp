@@ -32,8 +32,6 @@ QMap<QString, QVariant> configWindow::getSettings()
 {
     QMap<QString, QVariant> settings;
 
-    settings.insert("version", "0.1");
-
     QTime time = ui->lengthEdit->time();
     settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
     settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
