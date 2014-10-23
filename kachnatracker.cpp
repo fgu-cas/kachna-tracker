@@ -58,7 +58,15 @@ void kachnatracker::loadSettings(QString fileName){
 
     QString version = experimentIni.value("general/version").toString();
     int majorVersion = version.split(".")[0].toInt();
-    if (majorVersion < MAJOR_VERSION){
+    if (version.isEmpty()){
+        QMessageBox alert;
+        alert.setText(tr("<b>Is this the first time you're running Kachna Tracker?</b>"));
+        alert.setInformativeText(tr("No valid settings were found, please make sure to correctly set up"
+                                    " the experiment parameters and export them before proceeding."));
+        alert.setStandardButtons(QMessageBox::Ok);
+        alert.exec();
+        configWin.show();
+    } else if (majorVersion < MAJOR_VERSION){
         QMessageBox alert;
         alert.setText(tr("<b>Hold on! You're using an old settings file!</b>"));
         alert.setInformativeText(tr("Please make sure that all settings are correct before proceeding with the experiment, "
