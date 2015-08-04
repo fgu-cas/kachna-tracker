@@ -22,7 +22,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
 
-    appSettings = new QSettings("FGU AV", "Kachna Tracker", this);
+    appSettings.reset(new QSettings("FGU AV", "Kachna Tracker", this));
 
     QString fileName = appSettings->value("lastUsedSettings",
                                           QCoreApplication::applicationDirPath()+"experiment.ini").toString();
@@ -37,8 +37,6 @@ kachnatracker::kachnatracker(QWidget *parent) :
 }
 
 kachnatracker::~kachnatracker(){
-
-    delete appSettings;
     delete ui;
 }
 
@@ -202,11 +200,10 @@ void kachnatracker::on_startButton_clicked(){
 
         reset();
 
-        delete experiment;
-        experiment = new Experiment(this, &experimentSettings);
+        experiment.reset(new Experiment(this, &experimentSettings));
         experiment->start();
 
-        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment, SLOT(changeShock(double)));
+        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment.get(), SLOT(changeShock(double)));
 
         updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
         elapsedTimer.start();

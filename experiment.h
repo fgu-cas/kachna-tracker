@@ -48,7 +48,7 @@ private:
     };
 
     VideoCapture capture;
-    Detector *detector;
+    std::unique_ptr<Detector> detector;
 
     std::vector<capFrame> frames;
     QTimer timer;

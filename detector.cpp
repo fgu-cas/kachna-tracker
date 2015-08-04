@@ -22,16 +22,12 @@ Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
 
     img_threshold = settings.value("tracking/threshold").toInt();
 
-    detector = new SimpleBlobDetector(params);
+    detector.reset(new SimpleBlobDetector(params));
 
     mask = Mat(h, w, CV_8UC1);
     mask.setTo(Scalar(0));
     circle(mask, Point2f(settings.value("arena/X").toFloat(), settings.value("arena/Y").toFloat()),
            settings.value("arena/radius").toInt(), Scalar(255), -1);
-}
-
-Detector::~Detector(){
-    delete detector;
 }
 
 

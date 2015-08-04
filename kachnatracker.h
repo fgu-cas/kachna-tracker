@@ -1,6 +1,7 @@
 #ifndef KACHNATRACKER_H
 #define KACHNATRACKER_H
 
+#include <memory>
 #include <QMainWindow>
 #include <QSettings>
 #include <QCloseEvent>
@@ -55,12 +56,12 @@ private:
 
 
     Ui::kachnatracker *ui;
-    QSettings *appSettings;
-    Experiment *experiment;
+    std::unique_ptr<QSettings> appSettings;
+    std::unique_ptr<Experiment> experiment;
     QMap<QString, QVariant> experimentSettings;
 
     QPixmap pixmap;
-   Detector::keyPoints lastKeypoints;
+    Detector::keyPoints lastKeypoints;
 };
 
 #endif // KACHNATRACKER_H

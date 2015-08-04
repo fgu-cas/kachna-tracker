@@ -1,6 +1,8 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
+#include <memory>
+
 #include <QMap>
 #include <QVariant>
 
@@ -13,7 +15,6 @@ class Detector
 {
 public:
     Detector(QMap<QString, QVariant> settings, int h, int w);
-    ~Detector();
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
@@ -21,7 +22,7 @@ public:
     std::vector<KeyPoint> detectAll(Mat *frame);
 
 private:
-    SimpleBlobDetector *detector;
+    std::unique_ptr<SimpleBlobDetector> detector;
 
     double maxRat;
     double minRat;

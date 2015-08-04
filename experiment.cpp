@@ -14,7 +14,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 {
     capture.open(settings->value("video/device", 0).toInt());
 
-    detector = new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH));
+    detector.reset(new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
 
     timer.setInterval(settings->value("frameInterval", 40).toInt());
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
@@ -50,7 +50,6 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
 Experiment::~Experiment(){
     setShock(0);
-    delete detector;
 }
 
 void Experiment::start(){
