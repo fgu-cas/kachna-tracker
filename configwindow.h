@@ -34,6 +34,7 @@ signals:
 
 private slots:
 
+    void refreshDevices();
     void maskValueChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
@@ -47,6 +48,7 @@ private:
 
     QTimer refreshTimer;
     VideoCapture capture;
+
 };
 
 #endif // CONFIGWINDOW_H

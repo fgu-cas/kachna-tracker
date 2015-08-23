@@ -42,4 +42,6 @@ LIBS += -LC:\\dev\\opencv\\build\\bin \
 LIBS += -L .. \
         -lcbw32
 
+LIBS += -lole32 -loleaut32
+
 QMAKE_LFLAGS = -static-libgcc -static-libstdc++

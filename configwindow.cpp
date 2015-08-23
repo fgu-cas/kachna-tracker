@@ -7,6 +7,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
+#include <initguid.h>
+#include <windows.h>
+#include <dshow.h>
+
+
 configWindow::configWindow(QWidget *parent) :
     QTabWidget(parent),
     ui(new Ui::configWindow)
@@ -21,6 +26,9 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(on_refreshTrackingButton_clicked()));
+
+    connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
+    refreshDevices();
 }
 
 configWindow::~configWindow()
@@ -41,7 +49,7 @@ QMap<QString, QVariant> configWindow::getSettings()
     settings.insert("system/updateInterval", ui->updateBox->value());
 
 
-    settings.insert("video/device", ui->deviceBox->value());
+    settings.insert("video/device", ui->deviceCombobox->currentIndex());
 
     settings.insert("tracking/threshold", ui->threshSpin->value());
     settings.insert("tracking/maxArea", ui->maxAreaBox->value());
@@ -78,7 +86,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->lengthEdit->setTime(QTime(h, m, s));
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
-    ui->deviceBox->setValue(settings.value("video/device").toInt());
+    ui->deviceCombobox->setCurrentIndex(settings.value("video/device").toInt());
 
     ui->maskXBox->setValue(settings.value("arena/X").toDouble());
     ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
@@ -108,7 +116,7 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
 
 void configWindow::on_testButton_clicked()
 {
-    capture.open(ui->deviceBox->value());
+    capture.open(ui->deviceCombobox->currentIndex());
 
     Mat frame;
     int i = 0;
@@ -156,7 +164,7 @@ void configWindow::on_refreshTrackingButton_clicked()
     if (capture.isOpened()){
         capture >> frame;
     } else {
-        capture.open(ui->deviceBox->value());
+        capture.open(ui->deviceCombobox->currentIndex());
         int i = 0;
         do {
             capture >> frame;
@@ -215,11 +223,62 @@ void configWindow::on_checkBox_stateChanged(int state)
 {
     if (state == Qt::Checked){
         ui->refreshTrackingButton->setDisabled(true);
-        capture.open(ui->deviceBox->value());
+        capture.open(ui->deviceCombobox->currentIndex());
         refreshTimer.start(100);
     } else {
         ui->refreshTrackingButton->setDisabled(false);
         refreshTimer.stop();
         capture.release();
+    }
+}
+
+void configWindow::refreshDevices(){
+    ui->deviceCombobox->clear();
+
+    // Here be dragons. If it weren't for Naveen @ stackoverflow I'd be completely lost.
+    // https://stackoverflow.com/questions/4286223/how-to-get-a-list-of-video-capture-devices-web-cameras-on-windows-c
+
+//    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+    IEnumMoniker *pEnum;
+    ICreateDevEnum *pDevEnum;
+    HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
+            CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDevEnum));
+    if (SUCCEEDED(hr)){
+        hr = pDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnum, 0);
+        pDevEnum->Release();
+    }
+
+    if (SUCCEEDED(hr)){
+        IMoniker *pMoniker = NULL;
+        while (pEnum->Next(1, &pMoniker, NULL) == S_OK){
+            IPropertyBag *pPropBag;
+            HRESULT hr = pMoniker->BindToStorage(0, 0, IID_PPV_ARGS(&pPropBag));
+            if (FAILED(hr))
+            {
+                pMoniker->Release();
+                continue;
+            }
+
+            VARIANT var;
+            VariantInit(&var);
+
+            hr = pPropBag->Read(L"Description", &var, 0);
+            if (FAILED(hr))
+            {
+                hr = pPropBag->Read(L"FriendlyName", &var, 0);
+            }
+            if (SUCCEEDED(hr))
+            {
+                wchar_t *name = var.bstrVal;
+                ui->deviceCombobox->addItem(QString::fromWCharArray(name));
+                VariantClear(&var);
+            }
+
+            pPropBag->Release();
+            pMoniker->Release();
+        }
+        pEnum->Release();
+        //CoUninitialize();
     }
 }
