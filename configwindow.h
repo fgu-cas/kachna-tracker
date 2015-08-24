@@ -33,12 +33,11 @@ signals:
     void configurationUpdated();
 
 private slots:
-    void valueMaskChanged();
+
+    void maskValueChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
-
     void on_browseButton_clicked();
-
     void on_checkBox_stateChanged(int arg1);
 
 private:

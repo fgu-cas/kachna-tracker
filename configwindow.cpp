@@ -13,9 +13,9 @@ configWindow::configWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
-    connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(valueMaskChanged()));
-    connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(valueMaskChanged()));
+    connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
+    connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
+    connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
@@ -123,7 +123,7 @@ void configWindow::on_testButton_clicked()
                                                   frame.rows,
                                                   frame.step,
                                                   QImage::Format_RGB888));
-        valueMaskChanged();
+        maskValueChanged();
     } else {
         QMessageBox result;
         result.setText("Error! Couldn't retrieve frame.");
@@ -133,7 +133,7 @@ void configWindow::on_testButton_clicked()
     capture.release();
 }
 
-void configWindow::valueMaskChanged(){
+void configWindow::maskValueChanged(){
     if (capturedFrame.height() > 0){
         QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
 
