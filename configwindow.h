@@ -13,6 +13,8 @@
 
 #include "detector.h"
 
+typedef QMap<QString, QVariant> Settings;
+
 using namespace cv;
 
 namespace Ui {
@@ -25,14 +27,14 @@ class configWindow : public QTabWidget
 
 public:
     explicit configWindow(QWidget *parent = 0);
-    QMap<QString, QVariant> getSettings();
-    void setSettings(QMap<QString, QVariant> settings);
     ~configWindow();
 
 signals:
-    void configurationUpdated();
+    void configurationUpdated(Settings);
 
-private slots:
+public slots:
+
+    void load(Settings settings);
 
     void maskValueChanged();
     void on_testButton_clicked();
@@ -40,13 +42,24 @@ private slots:
     void on_browseButton_clicked();
     void on_checkBox_stateChanged(int arg1);
 
+private slots:
+    void on_revertButton_clicked();
+
+    void on_applyButton_clicked();
+
+    void on_okayButton_clicked();
+
 private:
     Ui::configWindow *ui;
 
-    QPixmap capturedFrame;
+    Settings compileSettings();
+    Settings lastSettings;
 
+    QPixmap capturedFrame;
     QTimer refreshTimer;
     VideoCapture capture;
+
+    void closeEvent(QCloseEvent*);
 };
 
 #endif // CONFIGWINDOW_H

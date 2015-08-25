@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <cmath>
 
+
 using namespace cv;
 
 kachnatracker::kachnatracker(QWidget *parent) :
@@ -20,6 +21,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui(new Ui::kachnatracker){
 
     ui->setupUi(this);
+    connect(&configWin, SIGNAL(configurationUpdated(Settings)), this, SLOT(onConfigurationUpdated(Settings)));
     connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
 
     appSettings.reset(new QSettings("FGU AV", "Kachna Tracker", this));
@@ -43,15 +45,16 @@ kachnatracker::~kachnatracker(){
 void kachnatracker::loadSettings(QString fileName){
 
     QSettings experimentIni(fileName, QSettings::IniFormat, this);
-    QMap<QString, QVariant> experimentSettings;
+    Settings settings;
 
     QStringList keys = experimentIni.allKeys();
     for (int i = 0; i<keys.size();i++){
         QString key = keys.value(i);
-        experimentSettings.insert(key, experimentIni.value(key));
+        settings.insert(key, experimentIni.value(key));
     }
 
-    configWin.setSettings(experimentSettings);
+    configWin.load(settings);
+    currentSettings = settings;
     appSettings->setValue("lastUsedSettings", fileName);
 
     QString version = experimentIni.value("general/version").toString();
@@ -77,8 +80,11 @@ void kachnatracker::loadSettings(QString fileName){
 
 
 void kachnatracker::on_actionConfigure_triggered(){
-
     configWin.show();
+}
+
+void kachnatracker::onConfigurationUpdated(Settings settings){
+    currentSettings = settings;
 }
 
 void kachnatracker::on_actionImportConfig_triggered(){
@@ -104,13 +110,12 @@ void kachnatracker::on_actionExportConfig_triggered(){
             fileName += ".ini";
         }
         QSettings settings(fileName, QSettings::IniFormat, this);
-        QMap<QString, QVariant> experimentSettings = configWin.getSettings();
-        QList<QString> keys = experimentSettings.keys();
+        QList<QString> keys = currentSettings.keys();
         for (int i = 0; i < keys.size(); i++){
             QString key = keys[i];
-            settings.setValue(key, experimentSettings.value(key));
+            settings.setValue(key, currentSettings.value(key));
         }
-        settings.setValue("general/version", QString("%1.%2.%3")
+        settings.setValue("general/version", QString("%1.%2")
                           .arg(MAJOR_VERSION)
                           .arg(MINOR_VERSION));
         appSettings->setValue("lastUsedSettings", fileName);
@@ -124,7 +129,7 @@ void kachnatracker::experimentTimeout(){
         alert->setAttribute(Qt::WA_DeleteOnClose);
         alert->setStandardButtons(QMessageBox::Ok);
         alert->setText(tr("Experiment ended!"));
-        if (configWin.getSettings().value("experiment/stopAfterTimeout").toBool()){
+        if (currentSettings.value("experiment/stopAfterTimeout").toBool()){
             updateTimer.stop();
             experiment->stop();
             alert->exec();
@@ -139,11 +144,9 @@ void kachnatracker::experimentTimeout(){
 void kachnatracker::saveTracks(){
 
     if (experiment != 0){
-        QMap<QString, QVariant> settings = configWin.getSettings();
-
         QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
-                                                        settings.value("system/defaultDirectory").toString()+'/'+
-                                                        settings.value("system/defaultFilename").toString()+"_rat",
+                                                        currentSettings.value("system/defaultDirectory").toString()+'/'+
+                                                        currentSettings.value("system/defaultFilename").toString()+"_rat",
                                                         tr("Files (*.dat)"));
         if (!fileName.isEmpty()){
             if (!fileName.endsWith(".dat")){
@@ -159,8 +162,8 @@ void kachnatracker::saveTracks(){
         }
 
         fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
-                                                    settings.value("system/defaultDirectory").toString()+'/'+
-                                                    settings.value("system/defaultFilename").toString()+"_rob",
+                                                    currentSettings.value("system/defaultDirectory").toString()+'/'+
+                                                    currentSettings.value("system/defaultFilename").toString()+"_rob",
                                                     tr("Files (*.dat)"));
         if (!fileName.isEmpty()){
             if (!fileName.endsWith(".dat")){
@@ -185,27 +188,25 @@ void kachnatracker::on_startButton_clicked(){
         experiment->stop();
         saveTracks();
     } else {
-        experimentSettings = QMap<QString, QVariant>(configWin.getSettings());
-
-        VideoCapture capture = VideoCapture(experimentSettings.value("video/device").toInt());
+        VideoCapture capture = VideoCapture(currentSettings.value("video/device").toInt());
         appSettings->setValue("lastSize", QSize(capture.get(CV_CAP_PROP_FRAME_WIDTH),
                                                 capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
         capture.release();
 
         QPainter painter(&pixmap);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(experimentSettings.value("arena/X").toInt(), experimentSettings.value("arena/Y").toInt()),
-                            experimentSettings.value("arena/radius").toInt(), experimentSettings.value("arena/radius").toInt());
+        painter.drawEllipse(QPoint(currentSettings.value("arena/X").toInt(), currentSettings.value("arena/Y").toInt()),
+                            currentSettings.value("arena/radius").toInt(), currentSettings.value("arena/radius").toInt());
         painter.end();
 
         reset();
 
-        experiment.reset(new Experiment(this, &experimentSettings));
+        experiment.reset(new Experiment(this, &currentSettings));
         experiment->start();
 
         connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment.get(), SLOT(changeShock(double)));
 
-        updateTimer.start(experimentSettings.value("system/updateInterval").toInt());
+        updateTimer.start(currentSettings.value("system/updateInterval").toInt());
         elapsedTimer.start();
     }
 }
@@ -260,7 +261,7 @@ void kachnatracker::requestUpdate(){
         painter.setPen(Qt::yellow);
         painter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-        int radius = experimentSettings.value("shock/triggerDistance").toInt();
+        int radius = currentSettings.value("shock/triggerDistance").toInt();
         painter.drawEllipse(robot, radius, radius);
         painter.end();
         ui->displayLabel->setPixmap(tempPixmap);
@@ -277,7 +278,7 @@ void kachnatracker::requestUpdate(){
 
 void kachnatracker::updateTick(){
 
-    qint64 duration = experimentSettings.value("experiment/duration").toInt()*1000;
+    qint64 duration = currentSettings.value("experiment/duration").toInt()*1000;
     qint64 elapsed = elapsedTimer.elapsed();
     ui->progressBar->setValue((elapsed*1.0/duration)*100);
 

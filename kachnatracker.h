@@ -25,7 +25,10 @@ class kachnatracker : public QMainWindow
 public:
     explicit kachnatracker(QWidget *parent = 0);
     ~kachnatracker();
-private slots:
+
+public slots:
+
+    void onConfigurationUpdated(Settings settings);
     void on_actionConfigure_triggered();
 
     void on_actionImportConfig_triggered();
@@ -50,6 +53,7 @@ private:
     void closeEvent(QCloseEvent *);
 
     configWindow configWin;
+    Settings currentSettings;
     QTimer updateTimer;
     QElapsedTimer elapsedTimer;
     bool experimentEnded;
@@ -58,8 +62,6 @@ private:
     Ui::kachnatracker *ui;
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
-    QMap<QString, QVariant> experimentSettings;
-
     QPixmap pixmap;
     Detector::keyPoints lastKeypoints;
 };

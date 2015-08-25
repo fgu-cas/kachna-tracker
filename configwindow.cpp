@@ -2,6 +2,7 @@
 #include "ui_configwindow.h"
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QCloseEvent>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -28,46 +29,7 @@ configWindow::~configWindow()
     delete ui;
 }
 
-QMap<QString, QVariant> configWindow::getSettings()
-{
-    QMap<QString, QVariant> settings;
-
-    QTime time = ui->lengthEdit->time();
-    settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
-    settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
-
-    settings.insert("system/defaultDirectory", ui->directoryEdit->text());
-    settings.insert("system/defaultFilename", ui->filenameEdit->text());
-    settings.insert("system/updateInterval", ui->updateBox->value());
-
-
-    settings.insert("video/device", ui->deviceBox->value());
-
-    settings.insert("tracking/threshold", ui->threshSpin->value());
-    settings.insert("tracking/maxArea", ui->maxAreaBox->value());
-    settings.insert("tracking/minArea", ui->minAreaBox->value());
-
-    settings.insert("arena/X", ui->maskXBox->value());
-    settings.insert("arena/Y", ui->maskYBox->value());
-    settings.insert("arena/radius", ui->maskRadiusBox->value());
-    settings.insert("arena/size", ui->arenaSizeBox->value());
-
-    settings.insert("tracking/minRat", ui->ratMinSize->value());
-    settings.insert("tracking/maxRat", ui->ratMaxSize->value());
-    settings.insert("tracking/minRobot", ui->robotMinSize->value());
-    settings.insert("tracking/maxRobot", ui->robotMaxSize->value());
-
-    settings.insert("shock/EntranceLatency", ui->entryBox->value());
-    settings.insert("shock/InterShockLatency", ui->interBox->value());
-    settings.insert("shock/ShockDuration", ui->durationBox->value());
-    settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
-    settings.insert("shock/triggerDistance", ui->triggerBox->value());
-
-    return settings;
-}
-
-
-void configWindow::setSettings(QMap<QString, QVariant> settings){
+void configWindow::load(Settings settings){
     int length = settings.value("experiment/duration").toInt();
     int s = length%60;
     length /= 60;
@@ -104,6 +66,46 @@ void configWindow::setSettings(QMap<QString, QVariant> settings){
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
 
     ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
+
+    lastSettings = compileSettings();
+}
+
+Settings configWindow::compileSettings()
+{
+    Settings settings;
+
+    QTime time = ui->lengthEdit->time();
+    settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
+    settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
+
+    settings.insert("system/defaultDirectory", ui->directoryEdit->text());
+    settings.insert("system/defaultFilename", ui->filenameEdit->text());
+    settings.insert("system/updateInterval", ui->updateBox->value());
+
+
+    settings.insert("video/device", ui->deviceBox->value());
+
+    settings.insert("tracking/threshold", ui->threshSpin->value());
+    settings.insert("tracking/maxArea", ui->maxAreaBox->value());
+    settings.insert("tracking/minArea", ui->minAreaBox->value());
+
+    settings.insert("arena/X", ui->maskXBox->value());
+    settings.insert("arena/Y", ui->maskYBox->value());
+    settings.insert("arena/radius", ui->maskRadiusBox->value());
+    settings.insert("arena/size", ui->arenaSizeBox->value());
+
+    settings.insert("tracking/minRat", ui->ratMinSize->value());
+    settings.insert("tracking/maxRat", ui->ratMaxSize->value());
+    settings.insert("tracking/minRobot", ui->robotMinSize->value());
+    settings.insert("tracking/maxRobot", ui->robotMaxSize->value());
+
+    settings.insert("shock/EntranceLatency", ui->entryBox->value());
+    settings.insert("shock/InterShockLatency", ui->interBox->value());
+    settings.insert("shock/ShockDuration", ui->durationBox->value());
+    settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
+    settings.insert("shock/triggerDistance", ui->triggerBox->value());
+
+    return settings;
 }
 
 void configWindow::on_testButton_clicked()
@@ -165,7 +167,7 @@ void configWindow::on_refreshTrackingButton_clicked()
         capture.release();
     }
 
-   Detector detector(getSettings(), frame.rows, frame.cols);
+   Detector detector(compileSettings(), frame.rows, frame.cols);
 
    Detector::keyPoints keypoints = detector.detect(&frame);
 
@@ -221,5 +223,49 @@ void configWindow::on_checkBox_stateChanged(int state)
         ui->refreshTrackingButton->setDisabled(false);
         refreshTimer.stop();
         capture.release();
+    }
+}
+
+void configWindow::on_revertButton_clicked()
+{
+    load(lastSettings);
+}
+
+void configWindow::on_applyButton_clicked()
+{
+    Settings settings = compileSettings();
+    lastSettings = settings;
+    emit(configurationUpdated(settings));
+}
+
+void configWindow::on_okayButton_clicked()
+{
+    on_applyButton_clicked();
+    close();
+}
+
+void configWindow::closeEvent(QCloseEvent *event){
+    if (compileSettings() == lastSettings){
+        event->accept();
+        return;
+    }
+    QMessageBox reallyDialog;
+    reallyDialog.setIcon(QMessageBox::Warning);
+    reallyDialog.setModal(true);
+    reallyDialog.setText("Wait! You've got unsaved changes in experiment configuration.");
+    reallyDialog.setInformativeText("Do you want to save the changes?");
+    reallyDialog.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
+    switch (reallyDialog.exec()){
+        case QMessageBox::Save:
+            on_applyButton_clicked();
+            event->accept();
+            break;
+        case QMessageBox::Discard:
+            on_revertButton_clicked();
+            event->accept();
+            break;
+        case QMessageBox::Cancel:
+            event->ignore();
+            break;
     }
 }
