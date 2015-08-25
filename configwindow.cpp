@@ -265,6 +265,7 @@ void configWindow::closeEvent(QCloseEvent *event){
             event->accept();
             break;
         case QMessageBox::Cancel:
+            setCurrentIndex(0);
             event->ignore();
             break;
     }
