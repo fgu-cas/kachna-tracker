@@ -4,10 +4,7 @@
 
 #include <QDateTime>
 
-#ifdef _WIN32
 #include "../cbw.h"
-#endif
-
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
@@ -175,16 +172,12 @@ Experiment::Update Experiment::getUpdate(){
 }
 
 void Experiment::setShock(double mA){
-#ifdef _WIN32
     int level = (int) (mA*10);
     if (level > 7){
         level = 7;
     }
     cbDOut(0, FIRSTPORTC, level);
     currentLevel = level;
-#else
-    std::cout << "Shock set to " << mA << " @ " << elapsedTimer.elapsed() << std::endl;
-#endif
 }
 
 
