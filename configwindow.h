@@ -36,6 +36,7 @@ public slots:
 
     void load(Settings settings);
 
+    void refreshDevices();
     void maskValueChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
