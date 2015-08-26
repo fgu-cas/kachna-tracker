@@ -308,7 +308,22 @@ void kachnatracker::updateTick(){
 }
 
 void kachnatracker::closeEvent(QCloseEvent *closeEvent){
-    if (dirty){
+    if (experiment != 0 && experiment->isRunning()){
+        QMessageBox reallyDialog;
+        reallyDialog.setIcon(QMessageBox::Warning);
+        reallyDialog.setText("Wait! An experiment is currently in progress!");
+        reallyDialog.setInformativeText("Are you sure you want to quit the application?");
+        reallyDialog.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel );
+        switch (reallyDialog.exec()){
+            case QMessageBox::Yes:
+                updateTimer.stop();
+                experiment->stop();
+                break;
+            case QMessageBox::Cancel:
+                closeEvent->ignore();
+                return;
+        }
+    } else if (dirty){
         QMessageBox reallyDialog;
         reallyDialog.setIcon(QMessageBox::Warning);
         reallyDialog.setModal(true);

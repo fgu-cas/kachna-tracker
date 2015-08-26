@@ -19,6 +19,7 @@ class Experiment : public QObject
 public:
     explicit Experiment(QObject *parent = 0, QMap<QString, QVariant> *settings = 0);
     ~Experiment();
+    bool isRunning();
     QString getLog(bool rat);
 
     struct Stats {

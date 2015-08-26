@@ -61,6 +61,10 @@ void Experiment::stop(){
     elapsedTime = elapsedTimer.elapsed();
 }
 
+bool Experiment::isRunning(){
+    return this->timer.isActive();
+}
+
 void Experiment::processFrame(){
 
     Mat frame;
