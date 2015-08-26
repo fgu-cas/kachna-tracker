@@ -194,6 +194,9 @@ void kachnatracker::on_startButton_clicked(){
         VideoCapture capture = VideoCapture(currentSettings.value("video/device").toInt());
         appSettings->setValue("lastSize", QSize(capture.get(CV_CAP_PROP_FRAME_WIDTH),
                                                 capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
+        pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
+                         capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+        pixmap.fill(Qt::white);
         capture.release();
 
         QPainter painter(&pixmap);
