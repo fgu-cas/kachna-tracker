@@ -52,6 +52,7 @@ Experiment::~Experiment(){
 void Experiment::start(){
     timer.start();
     elapsedTimer.start();
+    startTimestamp = QDateTime::currentMSecsSinceEpoch();
 }
 
 void Experiment::stop(){
@@ -66,9 +67,11 @@ bool Experiment::isRunning(){
 }
 
 void Experiment::processFrame(){
+    capFrame capframe;
 
     Mat frame;
     capture >> frame;
+    capframe.timestamp = elapsedTimer.elapsed();
 
    Detector::keyPoints points = detector->detect(&frame);
 
@@ -82,7 +85,6 @@ void Experiment::processFrame(){
         distance = cv::norm(points.rat.pt - points.robot.pt);
     }
 
-    capFrame capframe;
     capframe.keypoints = points;
     capframe.state = shockState;
     capframe.currentLevel = currentLevel;
@@ -186,11 +188,15 @@ void Experiment::setShock(double mA){
 
 
 QString Experiment::getLog(bool rat){
+    QDateTime start;
+    start.setMSecsSinceEpoch(startTimestamp);
+
     QString log;
     log += "%%BEGIN_HEADER\r\n";
     log += "        %%BEGIN DATABASE_INFORMATION\r\n";
-    log += "                %Date.0 ( "+QDate::currentDate().toString("d.M.yyyy")+" )\r\n";
-    log += "                %Time.0 ( "+QTime::currentTime().toString("h:mm")+" )\r\n";
+    log += "                %Date.0 ( "+start.toString("d.M.yyyy")+" )\r\n";
+    log += "                %Time.0 ( "+start.toString("h:mm")+" )\r\n";
+    log += "                %MilliTime.0 ( "+QString::number(startTimestamp)+" )\r\n";
     log += "        %%END DATABASE_INFORMATION\r\n";
     log += "        %%BEGIN SETUP_INFORMATION\r\n";
     log += "                %TrackerVersion.0 ( Kachna Tracker v1.0 release 04/2014 )\r\n";
@@ -221,7 +227,7 @@ QString Experiment::getLog(bool rat){
     for (unsigned i = 0;i < frames.size(); i++){
         log += QString::number(i+1);
         log += "      ";
-        log += QString::number(i*40);
+        log += QString::number(frames[i].timestamp);
         log += "      ";
         if (rat){
             log += QString::number(frames[i].keypoints.rat.pt.x);
