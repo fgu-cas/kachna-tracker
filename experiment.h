@@ -71,7 +71,7 @@ private:
         PAUSE,
         REFRACTORY
     } shockState;
-    int currentLevel;
+    int currentLevel = 0;
 
     struct {
         double level;
