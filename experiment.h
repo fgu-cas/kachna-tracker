@@ -38,6 +38,10 @@ public:
 
 
 private:
+    qint64 startTimestamp;
+    QString startTime;
+    QString startDate;
+
     void setShock(double mA);
 
     struct capFrame {
@@ -45,6 +49,7 @@ private:
         int sectors;
         int state;
         int currentLevel;
+        qint64 timestamp;
     };
 
     VideoCapture capture;
