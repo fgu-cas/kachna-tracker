@@ -64,6 +64,8 @@ private:
     std::unique_ptr<Experiment> experiment;
     QPixmap pixmap;
     Detector::keyPoints lastKeypoints;
+
+    bool dirty = false;
 };
 
 #endif // KACHNATRACKER_H

@@ -85,6 +85,7 @@ void kachnatracker::on_actionConfigure_triggered(){
 
 void kachnatracker::onConfigurationUpdated(Settings settings){
     currentSettings = settings;
+    dirty = true;
 }
 
 void kachnatracker::on_actionImportConfig_triggered(){
@@ -120,6 +121,8 @@ void kachnatracker::on_actionExportConfig_triggered(){
                           .arg(MINOR_VERSION));
         appSettings->setValue("lastUsedSettings", fileName);
     }
+
+    dirty = false;
 }
 
 void kachnatracker::experimentTimeout(){
@@ -301,10 +304,26 @@ void kachnatracker::updateTick(){
                            .arg(s, 2, 10, QChar('0')));
 }
 
-void kachnatracker::closeEvent(QCloseEvent *event){
+void kachnatracker::closeEvent(QCloseEvent *closeEvent){
+    if (dirty){
+        QMessageBox reallyDialog;
+        reallyDialog.setIcon(QMessageBox::Warning);
+        reallyDialog.setModal(true);
+        reallyDialog.setText("Wait! You've altered the experiment settings but haven't exported them.");
+        reallyDialog.setInformativeText("Are you sure you want to quit the application without saving?");
+        reallyDialog.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
+        switch (reallyDialog.exec()){
+            case QMessageBox::Save:
+                on_actionExportConfig_triggered();
+                break;
+            case QMessageBox::Cancel:
+                closeEvent->ignore();
+                return;
+        }
+    }
 
     configWin.close();
-    event->accept();
+    closeEvent->accept();
 }
 
 void kachnatracker::reset(){
