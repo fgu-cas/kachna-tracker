@@ -185,7 +185,7 @@
      <x>0</x>
      <y>0</y>
      <width>639</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuConfiguration">
@@ -203,6 +203,8 @@
     </property>
     <addaction name="actionSave_tracks"/>
     <addaction name="actionSave_screenshot"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfiguration"/>
@@ -241,6 +243,11 @@
   <action name="actionSave_screenshot">
    <property name="text">
     <string>Save screenshot</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

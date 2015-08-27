@@ -375,3 +375,11 @@ void kachnatracker::on_actionSave_screenshot_triggered(){
         pixmap.save(fileName);
     }
 }
+
+void kachnatracker::on_actionAbout_triggered()
+{
+    QMessageBox aboutBox;
+    aboutBox.setText("<b>Kachna Tracker</b>");
+    aboutBox.setInformativeText("Version 1.1-rc2 (2015/08/27)<br><br>https://www.github.com/tmladek/kachna-tracker");
+    aboutBox.exec();
+}

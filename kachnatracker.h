@@ -44,6 +44,9 @@ public slots:
 
     void on_actionSave_screenshot_triggered();
 
+private slots:
+    void on_actionAbout_triggered();
+
 private:
     void reset();
     void experimentTimeout();
