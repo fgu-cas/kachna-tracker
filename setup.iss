@@ -21,7 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputDir=c:\dev\build\kachna
+OutputDir=C:\dev\build\kachna
 OutputBaseFilename=kachna-tracker_setup
 Compression=lzma2
 SolidCompression=yes
@@ -50,12 +50,11 @@ Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Guid.dll"; DestDir: "{app}";
 Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Testd.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Widgets.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Widgetsd.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\Tools\mingw492_32\bin\libwinpthread-1.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\Tools\mingw492_32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\Tools\mingw492_32\bin\libstdc++-6.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\Tools\mingw492_32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.4\mingw491_32\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; 
-Source: "C:\Qt\5.4\mingw491_32\plugins\platforms\qwindowsd.dll"; DestDir: "{app}\platforms"; 
+Source: "C:\Qt\5.5\mingw492_32\bin\libwinpthread-1.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.5\mingw492_32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.5\mingw492_32\bin\libstdc++-6.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.5\mingw492_32\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; 
+Source: "C:\Qt\5.5\mingw492_32\plugins\platforms\qwindowsd.dll"; DestDir: "{app}\platforms"; 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
