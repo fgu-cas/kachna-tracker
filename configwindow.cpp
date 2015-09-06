@@ -294,6 +294,10 @@ void configWindow::refreshDevices(){
             CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDevEnum));
     if (SUCCEEDED(hr)){
         hr = pDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnum, 0);
+        if (hr == S_FALSE)
+        {
+            hr = VFW_E_NOT_FOUND;  // The category is empty. Treat as an error.
+        }
         pDevEnum->Release();
     }
 
