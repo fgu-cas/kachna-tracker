@@ -8,6 +8,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
+#include "kachnatracker.h"
 #include "detector.h"
 
 
@@ -54,6 +55,7 @@ private:
     };
 
     VideoCapture capture;
+    bool isLive;
     std::unique_ptr<Detector> detector;
 
     std::vector<capFrame> frames;

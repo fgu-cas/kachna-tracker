@@ -9,7 +9,14 @@
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
-    capture.open(settings->value("video/device", 0).toInt());
+    int deviceIndex = settings->value("video/device").toInt();
+    if (deviceIndex == -1){
+       capture.open(settings->value("video/filename").toString().toStdString());
+       isLive = false;
+    } else {
+        capture.open(deviceIndex);
+       isLive = true;
+    }
 
     detector.reset(new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
 
@@ -70,7 +77,12 @@ void Experiment::processFrame(){
     capFrame capframe;
 
     Mat frame;
-    capture >> frame;
+    bool read = capture.read(frame);
+    if ( !read && !isLive ){ //We've reached the end of the file
+        kachnatracker* mainwindow = dynamic_cast<kachnatracker*>(parent());
+        mainwindow->experimentTimeout();
+        return;
+    }
     capframe.timestamp = elapsedTimer.elapsed();
 
    Detector::keyPoints points = detector->detect(&frame);

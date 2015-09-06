@@ -49,7 +49,15 @@ void configWindow::load(Settings settings)
     ui->lengthEdit->setTime(QTime(h, m, s));
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
-    ui->deviceCombobox->setCurrentIndex(settings.value("video/device").toInt());
+    int deviceIndex = settings.value("video/device").toInt();
+    if (deviceIndex == -1){
+        videoFilename = settings.value("video/filename").toString();
+        refreshDevices();
+        ui->deviceCombobox->setCurrentIndex(ui->deviceCombobox->count()-1);
+    } else {
+        refreshDevices();
+        ui->deviceCombobox->setCurrentIndex(deviceIndex);
+    }
 
     ui->maskXBox->setValue(settings.value("arena/X").toDouble());
     ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
@@ -76,7 +84,9 @@ void configWindow::load(Settings settings)
 
     ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
 
+
     lastSettings = compileSettings();
+    emit(configurationUpdated(settings));
 }
 
 Settings configWindow::compileSettings()
@@ -91,8 +101,13 @@ Settings configWindow::compileSettings()
     settings.insert("system/defaultFilename", ui->filenameEdit->text());
     settings.insert("system/updateInterval", ui->updateBox->value());
 
-
-    settings.insert("video/device", ui->deviceCombobox->currentIndex());
+    int deviceIndex = ui->deviceCombobox->currentIndex();
+    if (deviceIndex == ui->deviceCombobox->count()-1){
+        settings.insert("video/device", -1);
+        settings.insert("video/filename", videoFilename);
+    } else {
+        settings.insert("video/device", deviceIndex);
+    }
 
     settings.insert("tracking/threshold", ui->threshSpin->value());
     settings.insert("tracking/maxArea", ui->maxAreaBox->value());
@@ -119,15 +134,8 @@ Settings configWindow::compileSettings()
 
 void configWindow::on_testButton_clicked()
 {
-    capture.open(ui->deviceCombobox->currentIndex());
-
     Mat frame;
-    int i = 0;
-    do {
-        capture >> frame;
-        i++;
-    } while (frame.empty() && i < 10);
-
+    capture >> frame;
     if (!frame.empty()){
         capturedFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
                                                   frame.cols,
@@ -140,8 +148,6 @@ void configWindow::on_testButton_clicked()
         result.setText("Error! Couldn't retrieve frame.");
         result.exec();
     }
-
-    capture.release();
 }
 
 void configWindow::maskValueChanged(){
@@ -164,17 +170,12 @@ void configWindow::maskValueChanged(){
 void configWindow::on_refreshTrackingButton_clicked()
 {
     Mat frame;
-    if (capture.isOpened()){
+
+    int i = 0;
+    do {
         capture >> frame;
-    } else {
-        capture.open(ui->deviceCombobox->currentIndex());
-        int i = 0;
-        do {
-            capture >> frame;
-            i++;
-        } while (frame.empty() && i < 10);
-        capture.release();
-    }
+        i++;
+    } while (frame.empty() && i < 10);
 
    Detector detector(compileSettings(), frame.rows, frame.cols);
 
@@ -226,12 +227,10 @@ void configWindow::on_checkBox_stateChanged(int state)
 {
     if (state == Qt::Checked){
         ui->refreshTrackingButton->setDisabled(true);
-        capture.open(ui->deviceCombobox->currentIndex());
         refreshTimer.start(100);
     } else {
         ui->refreshTrackingButton->setDisabled(false);
         refreshTimer.stop();
-        capture.release();
     }
 }
 
@@ -253,8 +252,21 @@ void configWindow::on_okayButton_clicked()
     close();
 }
 
+void configWindow::showEvent(QShowEvent *event){
+    if (ui->deviceCombobox->currentIndex() == ui->deviceCombobox->count()-1 &&
+            videoFilename.isEmpty()){
+        on_deviceCombobox_activated(ui->deviceCombobox->currentIndex());
+    } else {
+        ui->lengthEdit->setEnabled(false);
+        ui->timeoutStopBox->setEnabled(false);
+        capture.open(videoFilename.toStdString());
+    }
+    event->accept();
+}
+
 void configWindow::closeEvent(QCloseEvent *event){
     if (compileSettings() == lastSettings){
+        capture.release();
         event->accept();
         return;
     }
@@ -267,16 +279,39 @@ void configWindow::closeEvent(QCloseEvent *event){
     switch (reallyDialog.exec()){
         case QMessageBox::Save:
             on_applyButton_clicked();
+            capture.release();
             event->accept();
             break;
         case QMessageBox::Discard:
             on_revertButton_clicked();
+            capture.release();
             event->accept();
             break;
         case QMessageBox::Cancel:
             setCurrentIndex(0);
             event->ignore();
             break;
+    }
+}
+
+void configWindow::on_deviceCombobox_activated(int index){
+    int last = ui->deviceCombobox->count()-1;
+    if (index == last){
+        QString filename = QFileDialog::getOpenFileName(this, "Open Video", QString(), "Videos (*.avi)");
+        if (!filename.isEmpty()){
+            videoFilename = filename;
+            ui->deviceCombobox->removeItem(last);
+            ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
+            ui->deviceCombobox->setCurrentIndex(last);
+
+            ui->lengthEdit->setEnabled(false);
+            ui->timeoutStopBox->setEnabled(false);
+            capture.open(videoFilename.toStdString());
+        }
+    } else {
+        ui->timeoutStopBox->setEnabled(true);
+        ui->lengthEdit->setEnabled(true);
+        capture.open(index);
     }
 }
 
@@ -332,5 +367,11 @@ void configWindow::refreshDevices(){
         }
         pEnum->Release();
         //CoUninitialize();
+    }
+
+    if (videoFilename.isEmpty()){
+        ui->deviceCombobox->addItem("File...");
+    } else {
+        ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
     }
 }

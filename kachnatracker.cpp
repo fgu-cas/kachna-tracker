@@ -21,6 +21,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     ui(new Ui::kachnatracker){
 
     ui->setupUi(this);
+    configWin.setWindowModality(Qt::ApplicationModal);
     connect(&configWin, SIGNAL(configurationUpdated(Settings)), this, SLOT(onConfigurationUpdated(Settings)));
     connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
 
@@ -39,6 +40,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
         configWin.show();
     } else {
         loadSettings(fileName);
+        dirty = false;
     }
 
     reset();
@@ -65,7 +67,6 @@ void kachnatracker::loadSettings(QString fileName){
     }
 
     configWin.load(settings);
-    currentSettings = settings;
     appSettings->setValue("lastUsedSettings", fileName);
 
     QString version = experimentIni.value("general/version").toString();
@@ -137,7 +138,7 @@ void kachnatracker::experimentTimeout(){
         alert->setAttribute(Qt::WA_DeleteOnClose);
         alert->setStandardButtons(QMessageBox::Ok);
         alert->setText(tr("Experiment ended!"));
-        if (currentSettings.value("experiment/stopAfterTimeout").toBool()){
+        if (currentSettings.value("experiment/stopAfterTimeout").toBool() || !isLive){
             updateTimer.stop();
             experiment->stop();
             alert->exec();
@@ -196,7 +197,17 @@ void kachnatracker::on_startButton_clicked(){
         experiment->stop();
         saveTracks();
     } else {
-        VideoCapture capture = VideoCapture(currentSettings.value("video/device").toInt());
+        VideoCapture capture;
+        int deviceIndex = currentSettings.value("video/device").toInt();
+        if (deviceIndex == -1){
+            capture.open(currentSettings.value("video/filename").toString().toStdString());
+            isLive = false;
+            ui->progressBar->setValue(100);
+            ui->timeLabel->setText("---");
+        } else {
+            capture.open(deviceIndex);
+            isLive = true;
+        }
         appSettings->setValue("lastSize", QSize(capture.get(CV_CAP_PROP_FRAME_WIDTH),
                                                 capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
         pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
@@ -288,28 +299,29 @@ void kachnatracker::requestUpdate(){
 }
 
 void kachnatracker::updateTick(){
+    if (isLive){
+        qint64 duration = currentSettings.value("experiment/duration").toInt()*1000;
+        qint64 elapsed = elapsedTimer.elapsed();
+        ui->progressBar->setValue((elapsed*1.0/duration)*100);
 
-    qint64 duration = currentSettings.value("experiment/duration").toInt()*1000;
-    qint64 elapsed = elapsedTimer.elapsed();
-    ui->progressBar->setValue((elapsed*1.0/duration)*100);
-
-    QString sign = "-";
-    int time = (duration-elapsed)/1000;
-    if (time <= 0){
-        experimentTimeout();
-        experimentEnded = true;
-        time *= -1;
-        sign = "+";
+        QString sign = "-";
+        int time = (duration-elapsed)/1000;
+        if (time <= 0){
+            experimentTimeout();
+            experimentEnded = true;
+            time *= -1;
+            sign = "+";
+        }
+        int s = time%60;
+        time /= 60;
+        int m = time % 60;
+        time /= 60;
+        int h = time % 24;
+        ui->timeLabel->setText(QString("%1%2:%3:%4").arg(sign)
+                               .arg(h, 2, 10, QChar('0'))
+                               .arg(m, 2, 10, QChar('0'))
+                               .arg(s, 2, 10, QChar('0')));
     }
-    int s = time%60;
-    time /= 60;
-    int m = time % 60;
-    time /= 60;
-    int h = time % 24;
-    ui->timeLabel->setText(QString("%1%2:%3:%4").arg(sign)
-                           .arg(h, 2, 10, QChar('0'))
-                           .arg(m, 2, 10, QChar('0'))
-                           .arg(s, 2, 10, QChar('0')));
 }
 
 void kachnatracker::closeEvent(QCloseEvent *closeEvent){

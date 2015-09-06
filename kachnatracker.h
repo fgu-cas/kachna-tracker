@@ -4,10 +4,11 @@
 #include <memory>
 #include <QMainWindow>
 #include <QSettings>
+#include <QElapsedTimer>
 #include <QCloseEvent>
 #include "configwindow.h"
-#include "experiment.h"
 #include "detector.h"
+class Experiment;
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
@@ -40,6 +41,7 @@ public slots:
     void saveTracks();
 
     void updateTick();
+    void experimentTimeout();
     void requestUpdate();
 
     void on_actionSave_screenshot_triggered();
@@ -49,7 +51,6 @@ private slots:
 
 private:
     void reset();
-    void experimentTimeout();
 
     void loadSettings(QString);
 
@@ -60,6 +61,7 @@ private:
     QTimer updateTimer;
     QElapsedTimer elapsedTimer;
     bool experimentEnded;
+    bool isLive;
 
 
     Ui::kachnatracker *ui;
@@ -70,5 +72,7 @@ private:
 
     bool dirty = false;
 };
+
+#include "experiment.h"
 
 #endif // KACHNATRACKER_H

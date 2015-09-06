@@ -42,6 +42,7 @@ public slots:
     void on_refreshTrackingButton_clicked();
     void on_browseButton_clicked();
     void on_checkBox_stateChanged(int arg1);
+    void on_deviceCombobox_activated(int);
 
 private slots:
     void on_revertButton_clicked();
@@ -61,6 +62,8 @@ private:
     VideoCapture capture;
 
     void closeEvent(QCloseEvent*);
+    void showEvent(QShowEvent *);
+    QString videoFilename;
 };
 
 #endif // CONFIGWINDOW_H
