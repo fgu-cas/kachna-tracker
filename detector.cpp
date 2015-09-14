@@ -12,8 +12,8 @@ Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
     params.blobColor = 255;
     params.filterByCircularity = false;
     params.filterByArea = true;
-    params.minArea = settings.value("tracking/minArea").toDouble();
-    params.maxArea = settings.value("tracking/maxArea").toDouble();
+    params.minArea = 20;
+    params.maxArea = 700;
 
     maxRat = settings.value("tracking/maxRat").toDouble();
     minRat = settings.value("tracking/minRat").toDouble();

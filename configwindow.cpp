@@ -65,8 +65,6 @@ void configWindow::load(Settings settings)
     ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
     ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
-    ui->maxAreaBox->setValue(settings.value("tracking/maxArea").toDouble());
-    ui->minAreaBox->setValue(settings.value("tracking/minArea").toDouble());
 
     ui->ratMinSize->setValue(settings.value("tracking/minRat").toDouble());
     ui->ratMaxSize->setValue(settings.value("tracking/maxRat").toDouble());
@@ -110,8 +108,6 @@ Settings configWindow::compileSettings()
     }
 
     settings.insert("tracking/threshold", ui->threshSpin->value());
-    settings.insert("tracking/maxArea", ui->maxAreaBox->value());
-    settings.insert("tracking/minArea", ui->minAreaBox->value());
 
     settings.insert("arena/X", ui->maskXBox->value());
     settings.insert("arena/Y", ui->maskYBox->value());
