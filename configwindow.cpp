@@ -83,8 +83,11 @@ void configWindow::load(Settings settings)
     ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
 
 
-    lastSettings = compileSettings();
-    emit(configurationUpdated(settings));
+    Settings newsettings = compileSettings();
+    if (lastSettings != newsettings){
+        lastSettings = newsettings;
+        emit(configurationUpdated(settings));
+    }
 }
 
 Settings configWindow::compileSettings()

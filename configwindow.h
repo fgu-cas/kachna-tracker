@@ -34,7 +34,7 @@ signals:
 
 public slots:
 
-    void load(Settings settings);
+    void load(Settings);
 
     void refreshDevices();
     void maskValueChanged();
