@@ -10,8 +10,8 @@
 #include "detector.h"
 class Experiment;
 
-#define MAJOR_VERSION 1
-#define MINOR_VERSION 2
+#define MAJOR_VERSION 2
+#define MINOR_VERSION 0
 
 namespace Ui {
 class kachnatracker;
