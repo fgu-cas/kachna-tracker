@@ -51,6 +51,8 @@ private slots:
 
     void on_okayButton_clicked();
 
+    void on_skipCombo_currentIndexChanged(int index);
+
     void refreshTracking();
 
 private:

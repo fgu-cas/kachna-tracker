@@ -1,5 +1,6 @@
 #include "detector.h"
 #include <opencv2/imgproc/imgproc.hpp>
+#include <qmath.h>
 
 #include <stdexcept>
 
@@ -20,6 +21,11 @@ Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
     maxRobot = settings.value("tracking/maxRobot").toDouble();
     minRobot = settings.value("tracking/minRobot").toDouble();
 
+    // multiple_reaction = settings.value("faults/multipleReaction").toInt();
+    skip_reaction = settings.value("faults/skipReaction").toInt();
+    skip_distance = settings.value("faults/skipDistance").toInt();
+    skip_timeout = settings.value("faults/skipTimeout").toInt();
+
     img_threshold = settings.value("tracking/threshold").toInt();
 
     detector.reset(new SimpleBlobDetector(params));
@@ -30,6 +36,11 @@ Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
            settings.value("arena/radius").toInt(), Scalar(255), -1);
 }
 
+double Detector::distance(KeyPoint a, KeyPoint b){
+    double dx = a.pt.x - b.pt.x;
+    double dy = a.pt.y - b.pt.y;
+    return qSqrt(dx*dx + dy*dy);
+}
 
 Detector::keyPoints Detector::detect(Mat *frame){
     Detector::keyPoints result;
@@ -49,10 +60,30 @@ Detector::keyPoints Detector::detect(Mat *frame){
         for (unsigned i = 0; i<keypoints.size(); i++){
            KeyPoint keypoint = keypoints[i];
            if (keypoint.size > minRat && keypoint.size < maxRat){
-               result.rat = keypoint;
+               if (skip_reaction == 1){
+                   if (lastPoints.rat.size == 0 ||
+                   distance(lastPoints.rat, keypoint) < skip_distance ||
+                   ratTimer.elapsed() > skip_timeout){
+                       result.rat = keypoint;
+                       lastPoints.rat = keypoint;
+                       ratTimer.start();
+                   }               } else {
+                  result.rat = keypoint;
+               }
            }
+
            if (keypoint.size > minRobot && keypoint.size < maxRobot){
-               result.robot = keypoint;
+               if (skip_reaction == 1){
+                   if (lastPoints.robot.size == 0 ||
+                   distance(lastPoints.robot, keypoint) < skip_distance ||
+                   robotTimer.elapsed() > skip_timeout){
+                       result.robot = keypoint;
+                       lastPoints.robot = keypoint;
+                       robotTimer.start();
+                   }
+               } else {
+                  result.robot = keypoint;
+               }
            }
         }
     }

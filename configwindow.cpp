@@ -26,6 +26,9 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
 
+    connect(ui->skipSpin, SIGNAL(valueChanged(int)), ui->skipSlider, SLOT(setValue(int)));
+    connect(ui->skipSlider, SIGNAL(valueChanged(int)), ui->skipSpin, SLOT(setValue(int)));
+
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
     connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
@@ -65,6 +68,11 @@ void configWindow::load(Settings settings)
     ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
     ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
+
+    //ui->multipleCombo->setCurrentIndex(settings.value("faults/multipleReaction").toInt());
+    ui->skipCombo->setCurrentIndex(settings.value("faults/skipReaction").toInt());
+    ui->skipSpin->setValue(settings.value("faults/skipDistance").toInt());
+    ui->skipTimeoutBox->setValue(settings.value("faults/skipTimeout").toInt()/1000.0);
 
     ui->ratMinSize->setValue(settings.value("tracking/minRat").toDouble());
     ui->ratMaxSize->setValue(settings.value("tracking/maxRat").toDouble());
@@ -111,6 +119,11 @@ Settings configWindow::compileSettings()
     }
 
     settings.insert("tracking/threshold", ui->threshSpin->value());
+
+    //settings.insert("faults/multipleReaction", ui->multipleCombo->currentIndex());
+    settings.insert("faults/skipReaction", ui->skipCombo->currentIndex());
+    settings.insert("faults/skipDistance", ui->skipSpin->value());
+    settings.insert("faults/skipTimeout", (int) (ui->skipTimeoutBox->value()*1000));
 
     settings.insert("arena/X", ui->maskXBox->value());
     settings.insert("arena/Y", ui->maskYBox->value());
@@ -394,5 +407,26 @@ void configWindow::refreshDevices(){
         ui->deviceCombobox->addItem("File...");
     } else {
         ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
+    }
+}
+
+void configWindow::on_skipCombo_currentIndexChanged(int index)
+{
+    switch(index){
+        case 0:
+            ui->skipSlider->setEnabled(false);
+            ui->skipSpin->setEnabled(false);
+            ui->skipTimeoutBox->setEnabled(false);
+            break;
+        case 1:
+            ui->skipSlider->setEnabled(true);
+            ui->skipSpin->setEnabled(true);
+            ui->skipTimeoutBox->setEnabled(true);
+            break;
+        case 2:
+            ui->skipSlider->setEnabled(true);
+            ui->skipSpin->setEnabled(true);
+            ui->skipTimeoutBox->setEnabled(false);
+            break;
     }
 }

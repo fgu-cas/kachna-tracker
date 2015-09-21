@@ -5,6 +5,7 @@
 
 #include <QMap>
 #include <QVariant>
+#include <QElapsedTimer>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -22,7 +23,12 @@ public:
     std::vector<KeyPoint> detectAll(Mat *frame);
 
 private:
+    double distance(KeyPoint, KeyPoint);
+
     std::unique_ptr<SimpleBlobDetector> detector;
+    keyPoints lastPoints;
+    QElapsedTimer ratTimer;
+    QElapsedTimer robotTimer;
 
     double maxRat;
     double minRat;
@@ -30,6 +36,11 @@ private:
     double minRobot;
 
     double img_threshold;
+
+    int multiple_reaction;
+    int skip_reaction;
+    int skip_distance;
+    int skip_timeout;
 
     Mat mask;
 };
