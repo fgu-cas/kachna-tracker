@@ -41,7 +41,7 @@ public slots:
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
     void on_browseButton_clicked();
-    void on_checkBox_stateChanged(int arg1);
+    void on_refreshCheckbox_stateChanged(int arg1);
     void on_deviceCombobox_activated(int);
 
 private slots:
@@ -51,8 +51,11 @@ private slots:
 
     void on_okayButton_clicked();
 
+    void refreshTracking();
+
 private:
     Ui::configWindow *ui;
+    std::unique_ptr<Detector> detector;
 
     Settings compileSettings();
     Settings lastSettings;

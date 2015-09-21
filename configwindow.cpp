@@ -26,7 +26,7 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
 
-    connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(on_refreshTrackingButton_clicked()));
+    connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
     connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
     refreshDevices();
@@ -168,50 +168,13 @@ void configWindow::maskValueChanged(){
 
 void configWindow::on_refreshTrackingButton_clicked()
 {
-    Mat frame;
 
-    int i = 0;
-    do {
-        capture >> frame;
-        i++;
-    } while (frame.empty() && i < 10);
+   Mat frame;
+   capture >> frame;
 
-   Detector detector(compileSettings(), frame.rows, frame.cols);
+   detector.reset(new Detector(compileSettings(), frame.rows, frame.cols));
 
-   Detector::keyPoints keypoints = detector.detect(&frame);
-
-    QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
-    QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
-
-    std::vector<KeyPoint> detectAll = detector.detectAll(&frame);
-    ui->keypointList->clear();
-    for (unsigned i = 0; i < detectAll.size(); i++){
-        KeyPoint keypoint = detectAll[i];
-        ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
-                                  + ", " + QString::number(keypoint.pt.y) + " (" +
-                                  QString::number(keypoint.size) + ")");
-    }
-
-
-    QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                               frame.cols,
-                                               frame.rows,
-                                               frame.step,
-                                               QImage::Format_RGB888));
-
-    QPainter painter(&pixmap);
-
-    int ratSize = (int)(keypoints.rat.size+0.5);
-    painter.setPen(Qt::red);
-    painter.drawEllipse(rat, ratSize, ratSize);
-
-    int robotSize = (int)(keypoints.robot.size+0.5);
-    painter.setPen(Qt::blue);
-    painter.drawEllipse(robot, robotSize, robotSize);
-
-    painter.end();
-
-    ui->trackingLabel->setPixmap(pixmap);
+   refreshTracking();
 }
 
 void configWindow::on_browseButton_clicked()
@@ -222,15 +185,71 @@ void configWindow::on_browseButton_clicked()
     }
 }
 
-void configWindow::on_checkBox_stateChanged(int state)
+void configWindow::on_refreshCheckbox_stateChanged(int state)
 {
     if (state == Qt::Checked){
-        ui->refreshTrackingButton->setDisabled(true);
-        refreshTimer.start(100);
+        ui->refreshTrackingButton->setEnabled(false);
+        ui->threshSpin->setEnabled(false);
+        ui->ratMaxSize->setEnabled(false);
+        ui->ratMinSize->setEnabled(false);
+        ui->robotMaxSize->setEnabled(false);
+        ui->robotMinSize->setEnabled(false);
+
+        Mat frame;
+        capture >> frame;
+
+        detector.reset(new Detector(compileSettings(), frame.rows, frame.cols));
+        refreshTimer.start(ui->updateBox->value());
     } else {
-        ui->refreshTrackingButton->setDisabled(false);
+        ui->refreshTrackingButton->setEnabled(true);
+        ui->threshSpin->setEnabled(true);
+        ui->ratMaxSize->setEnabled(true);
+        ui->ratMinSize->setEnabled(true);
+        ui->robotMaxSize->setEnabled(true);
+        ui->robotMinSize->setEnabled(true);
+
         refreshTimer.stop();
     }
+}
+
+void configWindow::refreshTracking(){
+   Mat frame;
+   capture >> frame;
+
+   Detector::keyPoints keypoints = detector->detect(&frame);
+
+   QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
+   QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
+
+   std::vector<KeyPoint> detectAll = detector->detectAll(&frame);
+   ui->keypointList->clear();
+   for (unsigned i = 0; i < detectAll.size(); i++){
+       KeyPoint keypoint = detectAll[i];
+       ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
+                                 + ", " + QString::number(keypoint.pt.y) + " (" +
+                                 QString::number(keypoint.size) + ")");
+   }
+
+
+   QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                              frame.cols,
+                                              frame.rows,
+                                              frame.step,
+                                              QImage::Format_RGB888));
+
+   QPainter painter(&pixmap);
+
+   int ratSize = (int)(keypoints.rat.size+0.5);
+   painter.setPen(Qt::red);
+   painter.drawEllipse(rat, ratSize, ratSize);
+
+   int robotSize = (int)(keypoints.robot.size+0.5);
+   painter.setPen(Qt::blue);
+   painter.drawEllipse(robot, robotSize, robotSize);
+
+   painter.end();
+
+   ui->trackingLabel->setPixmap(pixmap);
 }
 
 void configWindow::on_revertButton_clicked()
@@ -264,6 +283,9 @@ void configWindow::showEvent(QShowEvent *event){
 }
 
 void configWindow::closeEvent(QCloseEvent *event){
+    if (ui->refreshCheckbox->isChecked()){
+       ui->refreshCheckbox->setChecked(false);
+    }
     if (compileSettings() == lastSettings){
         capture.release();
         event->accept();

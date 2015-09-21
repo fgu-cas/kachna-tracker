@@ -678,7 +678,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="refreshCheckbox">
         <property name="text">
          <string>Live refresh</string>
         </property>
