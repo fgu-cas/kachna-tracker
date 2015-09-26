@@ -53,6 +53,8 @@ private slots:
 
     void refreshTracking();
 
+    void on_triggerBox_valueChanged(int);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;

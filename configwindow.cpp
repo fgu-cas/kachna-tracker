@@ -185,6 +185,18 @@ void configWindow::on_browseButton_clicked()
     }
 }
 
+void configWindow::on_triggerBox_valueChanged(int dist_px)
+{
+   double diameter_real = ui->arenaSizeBox->value();
+   double radius_px = ui->maskRadiusBox->value();
+
+   double dist_real = diameter_real * (dist_px/(radius_px*2));
+
+   QString result("%1 m");
+
+   ui->triggerRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
+}
+
 void configWindow::on_refreshCheckbox_stateChanged(int state)
 {
     if (state == Qt::Checked){
@@ -396,3 +408,4 @@ void configWindow::refreshDevices(){
         ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
     }
 }
+

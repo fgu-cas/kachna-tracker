@@ -317,6 +317,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="triggerRealLabel">
+              <property name="text">
+               <string>(0,23 m)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QSpinBox" name="triggerBox">
               <property name="suffix">
                <string> px</string>
@@ -499,7 +506,7 @@
         <item row="5" column="0">
          <widget class="QLabel" name="label_27">
           <property name="text">
-           <string>Real size</string>
+           <string>Real diameter</string>
           </property>
          </widget>
         </item>
