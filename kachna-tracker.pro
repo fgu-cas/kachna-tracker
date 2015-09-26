@@ -19,13 +19,15 @@ SOURCES += main.cpp\
     configwindow.cpp \
     experiment.cpp \
     detector.cpp \
-    shockspinbox.cpp
+    shockspinbox.cpp \
+    masklabel.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
     experiment.h \
     shockspinbox.h \
-    detector.h
+    detector.h \
+    masklabel.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

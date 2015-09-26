@@ -19,12 +19,16 @@ configWindow::configWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
-    connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
+    connect(ui->maskXBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
+    connect(ui->maskYBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
     connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
     connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
     connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
+
+    connect(ui->videoLabel, SIGNAL(posChangedX(int)), ui->maskXBox, SLOT(setValue(int)));
+    connect(ui->videoLabel, SIGNAL(posChangedY(int)), ui->maskYBox, SLOT(setValue(int)));
+    connect(ui->videoLabel, SIGNAL(radiusChanged(int)), ui->maskRadiusBox, SLOT(setValue(int)));
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
@@ -409,3 +413,12 @@ void configWindow::refreshDevices(){
     }
 }
 
+
+void configWindow::on_maskButton_toggled(bool checked)
+{
+    ui->videoLabel->setEditable(checked);
+
+    ui->maskXBox->setDisabled(checked);
+    ui->maskYBox->setDisabled(checked);
+    ui->maskRadiusBox->setDisabled(checked);
+}
