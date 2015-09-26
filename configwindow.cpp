@@ -228,21 +228,7 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
 void configWindow::refreshTracking(){
    Mat frame;
    capture >> frame;
-
-   Detector::keyPoints keypoints = detector->detect(&frame);
-
-   QPoint rat(keypoints.rat.pt.x, keypoints.rat.pt.y);
-   QPoint robot(keypoints.robot.pt.x, keypoints.robot.pt.y);
-
-   std::vector<KeyPoint> detectAll = detector->detectAll(&frame);
-   ui->keypointList->clear();
-   for (unsigned i = 0; i < detectAll.size(); i++){
-       KeyPoint keypoint = detectAll[i];
-       ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
-                                 + ", " + QString::number(keypoint.pt.y) + " (" +
-                                 QString::number(keypoint.size) + ")");
-   }
-
+   std::vector<KeyPoint> keypoints = detector->detect(&frame);
 
    QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
                                               frame.cols,
@@ -251,14 +237,32 @@ void configWindow::refreshTracking(){
                                               QImage::Format_RGB888));
 
    QPainter painter(&pixmap);
+   ui->keypointList->clear();
 
-   int ratSize = (int)(keypoints.rat.size+0.5);
-   painter.setPen(Qt::red);
-   painter.drawEllipse(rat, ratSize, ratSize);
+   for (unsigned i = 0; i < keypoints.size(); i++){
+       KeyPoint keypoint = keypoints[i];
+       ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
+                                 + ", " + QString::number(keypoint.pt.y) + " (" +
+                                 QString::number(keypoint.size) + ")");
 
-   int robotSize = (int)(keypoints.robot.size+0.5);
-   painter.setPen(Qt::blue);
-   painter.drawEllipse(robot, robotSize, robotSize);
+       if (keypoint.size > ui->ratMinSize->value() &&
+               keypoint.size < ui->ratMaxSize->value()){
+
+            QPoint rat(keypoint.pt.x, keypoint.pt.y);
+            int ratSize = (int)(keypoint.size+0.5);
+            painter.setPen(Qt::red);
+            painter.drawEllipse(rat, ratSize, ratSize);
+
+       } else if (keypoint.size > ui->robotMinSize->value() &&
+               keypoint.size < ui->robotMaxSize->value()){
+
+            QPoint robot(keypoint.pt.x, keypoint.pt.y);
+            int robotSize = (int)(keypoint.size+0.5);
+            painter.setPen(Qt::blue);
+            painter.drawEllipse(robot, robotSize, robotSize);
+
+       }
+   }
 
    painter.end();
 

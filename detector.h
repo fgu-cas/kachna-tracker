@@ -19,28 +19,11 @@ public:
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
-    keyPoints detect(Mat *frame);
-    std::vector<KeyPoint> detectAll(Mat *frame);
+    std::vector<KeyPoint> detect(Mat *frame);
 
 private:
-    double distance(KeyPoint, KeyPoint);
-
     std::unique_ptr<SimpleBlobDetector> detector;
-    keyPoints lastPoints;
-    QElapsedTimer ratTimer;
-    QElapsedTimer robotTimer;
-
-    double maxRat;
-    double minRat;
-    double maxRobot;
-    double minRobot;
-
     double img_threshold;
-
-    int multiple_reaction;
-    int skip_reaction;
-    int skip_distance;
-    int skip_timeout;
 
     Mat mask;
 };

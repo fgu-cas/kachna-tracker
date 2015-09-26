@@ -3,6 +3,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <QDateTime>
+#include <qmath.h>
 
 #include "../cbw.h"
 
@@ -24,6 +25,16 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
     triggerDistance = settings->value("shock/triggerDistance").toInt();
+
+    maxRat = settings->value("tracking/maxRat").toDouble();
+    minRat = settings->value("tracking/minRat").toDouble();
+    maxRobot = settings->value("tracking/maxRobot").toDouble();
+    minRobot = settings->value("tracking/minRobot").toDouble();
+
+    // multiple_reaction = settings->value("faults/multipleReaction").toInt();
+    skip_reaction = settings->value("faults/skipReaction").toInt();
+    skip_distance = settings->value("faults/skipDistance").toInt();
+    skip_timeout = settings->value("faults/skipTimeout").toInt();
 
     /* MC library init magic */
     float revision = (float) CURRENTREVNUM;
@@ -73,6 +84,12 @@ bool Experiment::isRunning(){
     return this->timer.isActive();
 }
 
+double Experiment::getDistance(KeyPoint a, KeyPoint b){
+    double dx = a.pt.x - b.pt.x;
+    double dy = a.pt.y - b.pt.y;
+    return qSqrt(dx*dx + dy*dy);
+}
+
 void Experiment::processFrame(){
     capFrame capframe;
 
@@ -85,7 +102,38 @@ void Experiment::processFrame(){
     }
     capframe.timestamp = elapsedTimer.elapsed();
 
-   Detector::keyPoints points = detector->detect(&frame);
+    std::vector<KeyPoint> keypoints = detector->detect(&frame);
+    Detector::keyPoints points;
+
+    for (unsigned i = 0; i<keypoints.size(); i++){
+       KeyPoint keypoint = keypoints[i];
+       if (keypoint.size > minRat && keypoint.size < maxRat){
+           if (skip_reaction == 1){
+               if (lastPoints.rat.size == 0 ||
+               getDistance(lastPoints.rat, keypoint) < skip_distance ||
+               ratTimer.elapsed() > skip_timeout){
+                   points.rat = keypoint;
+                   lastPoints.rat = keypoint;
+                   ratTimer.start();
+               }               } else {
+              points.rat = keypoint;
+           }
+       }
+
+       if (keypoint.size > minRobot && keypoint.size < maxRobot){
+           if (skip_reaction == 1){
+               if (lastPoints.robot.size == 0 ||
+               getDistance(lastPoints.robot, keypoint) < skip_distance ||
+               robotTimer.elapsed() > skip_timeout){
+                   points.robot = keypoint;
+                   lastPoints.robot = keypoint;
+                   robotTimer.start();
+               }
+           } else {
+              points.robot = keypoint;
+           }
+       }
+    }
 
     double distance = -1;
     bool badFrame = false;

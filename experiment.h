@@ -40,11 +40,16 @@ public:
 
 
 private:
+    // System
+    Stats stats;
+
+    QTimer timer;
+    QElapsedTimer elapsedTimer;
+    qint64 elapsedTime;
+
     qint64 startTimestamp;
     QString startTime;
     QString startDate;
-
-    void setShock(double mA);
 
     struct capFrame {
         Detector::keyPoints keypoints;
@@ -53,19 +58,36 @@ private:
         int currentLevel;
         qint64 timestamp;
     };
+    std::vector<capFrame> frames;
 
+    // Capture
     VideoCapture capture;
     bool isLive;
+
+    // Detection
     std::unique_ptr<Detector> detector;
+    Detector::keyPoints lastPoints;
+    double getDistance(KeyPoint a, KeyPoint b);
 
-    std::vector<capFrame> frames;
-    QTimer timer;
-    QElapsedTimer elapsedTimer;
-    qint64 elapsedTime;
-
-    Stats stats;
+    double maxRat;
+    double minRat;
+    double maxRobot;
+    double minRobot;
 
     double triggerDistance;
+
+    QElapsedTimer ratTimer;
+    QElapsedTimer robotTimer;
+
+    // Shock
+
+    void setShock(double mA);
+
+    int multiple_reaction;
+    int skip_reaction;
+    int skip_distance;
+    int skip_timeout;
+
 
     enum shockStates {
         OUTSIDE,
