@@ -19,6 +19,7 @@ public:
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
+    Mat process(Mat *frame);
     std::vector<KeyPoint> detect(Mat *frame);
 
 private:

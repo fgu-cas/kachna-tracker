@@ -8,6 +8,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
+#include <QDebug>
+
 #include <initguid.h>
 #include <windows.h>
 #include <dshow.h>
@@ -23,11 +25,14 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
     connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
-    connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
-    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
+    connect(ui->triggerSpin, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
+    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerSpin, SLOT(setValue(int)));
 
     connect(ui->skipSpin, SIGNAL(valueChanged(int)), ui->skipSlider, SLOT(setValue(int)));
     connect(ui->skipSlider, SIGNAL(valueChanged(int)), ui->skipSpin, SLOT(setValue(int)));
+
+    connect(ui->thresholdSpin, SIGNAL(valueChanged(int)), ui->thresholdSlider, SLOT(setValue(int)));
+    connect(ui->thresholdSlider, SIGNAL(valueChanged(int)), ui->thresholdSpin, SLOT(setValue(int)));
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
@@ -67,7 +72,7 @@ void configWindow::load(Settings settings)
     ui->maskRadiusBox->setValue(settings.value("arena/radius").toInt());
     ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
-    ui->threshSpin->setValue(settings.value("tracking/threshold").toInt());
+    ui->thresholdSpin->setValue(settings.value("tracking/threshold").toInt());
 
     //ui->multipleCombo->setCurrentIndex(settings.value("faults/multipleReaction").toInt());
     ui->skipCombo->setCurrentIndex(settings.value("faults/skipReaction").toInt());
@@ -83,7 +88,7 @@ void configWindow::load(Settings settings)
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
-    ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
+    ui->triggerSpin->setValue(settings.value("shock/triggerDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
@@ -118,7 +123,7 @@ Settings configWindow::compileSettings()
         settings.insert("video/device", deviceIndex);
     }
 
-    settings.insert("tracking/threshold", ui->threshSpin->value());
+    settings.insert("tracking/threshold", ui->thresholdSpin->value());
 
     //settings.insert("faults/multipleReaction", ui->multipleCombo->currentIndex());
     settings.insert("faults/skipReaction", ui->skipCombo->currentIndex());
@@ -139,7 +144,7 @@ Settings configWindow::compileSettings()
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
-    settings.insert("shock/triggerDistance", ui->triggerBox->value());
+    settings.insert("shock/triggerDistance", ui->triggerSpin->value());
 
     return settings;
 }
@@ -202,7 +207,8 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
 {
     if (state == Qt::Checked){
         ui->refreshTrackingButton->setEnabled(false);
-        ui->threshSpin->setEnabled(false);
+        ui->thresholdSpin->setEnabled(false);
+        ui->thresholdSlider->setEnabled(false);
         ui->ratMaxSize->setEnabled(false);
         ui->ratMinSize->setEnabled(false);
         ui->robotMaxSize->setEnabled(false);
@@ -215,7 +221,8 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         refreshTimer.start(ui->updateBox->value());
     } else {
         ui->refreshTrackingButton->setEnabled(true);
-        ui->threshSpin->setEnabled(true);
+        ui->thresholdSpin->setEnabled(true);
+        ui->thresholdSlider->setEnabled(true);
         ui->ratMaxSize->setEnabled(true);
         ui->ratMinSize->setEnabled(true);
         ui->robotMaxSize->setEnabled(true);
@@ -230,11 +237,22 @@ void configWindow::refreshTracking(){
    capture >> frame;
    std::vector<KeyPoint> keypoints = detector->detect(&frame);
 
-   QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                              frame.cols,
-                                              frame.rows,
-                                              frame.step,
-                                              QImage::Format_RGB888));
+   QPixmap pixmap;
+
+   if (ui->showThresholdBox->isChecked()){
+       frame = detector->process(&frame);
+       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                   frame.cols,
+                                                   frame.rows,
+                                                   frame.step,
+                                                   QImage::Format_Grayscale8));
+   } else {
+       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                   frame.cols,
+                                                   frame.rows,
+                                                   frame.step,
+                                                   QImage::Format_RGB888));
+   }
 
    QPainter painter(&pixmap);
    ui->keypointList->clear();

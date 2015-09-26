@@ -25,15 +25,19 @@ Detector::Detector(QMap<QString, QVariant> settings, int h, int w){
            settings.value("arena/radius").toInt(), Scalar(255), -1);
 }
 
+Mat Detector::process(Mat *frame){
+    Mat processedFrame;
+    frame->copyTo(processedFrame, mask);
+    cv::cvtColor(processedFrame, processedFrame, CV_RGB2GRAY);
+    threshold(processedFrame, processedFrame, img_threshold, 255, THRESH_BINARY);
+    return processedFrame;
+}
+
 std::vector<KeyPoint> Detector::detect(Mat *frame){
     std::vector<KeyPoint> result;
 
     if (!frame->empty() && frame->channels() == 3){
-        Mat processedFrame;
-        frame->copyTo(processedFrame, mask);
-        cv::cvtColor(processedFrame, processedFrame, CV_RGB2GRAY);
-        threshold(processedFrame, processedFrame, img_threshold, 255, THRESH_BINARY);
-
+        Mat processedFrame = process(frame);
         detector->detect(processedFrame, result);
     }
 

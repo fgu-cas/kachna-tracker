@@ -440,7 +440,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="triggerBox">
+           <widget class="QSpinBox" name="triggerSpin">
             <property name="suffix">
              <string> px</string>
             </property>
@@ -674,16 +674,55 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="threshSpin">
-          <property name="maximum">
-           <number>512</number>
-          </property>
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QSlider" name="thresholdSlider">
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="invertedAppearance">
+             <bool>false</bool>
+            </property>
+            <property name="invertedControls">
+             <bool>false</bool>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::NoTicks</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="thresholdSpin">
+            <property name="suffix">
+             <string/>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>150</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showThresholdBox">
+        <property name="text">
+         <string>Show thresholded image</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="Line" name="line_2">
