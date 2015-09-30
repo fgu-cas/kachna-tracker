@@ -21,18 +21,22 @@ configWindow::configWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->maskXBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
-    connect(ui->maskYBox, SIGNAL(valueChanged(double)), this, SLOT(maskValueChanged()));
+    connect(ui->maskXBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
+    connect(ui->maskYBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
     connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
-    connect(ui->triggerSpin, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
-    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerSpin, SLOT(setValue(int)));
+    connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
+    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
 
     connect(ui->skipSpin, SIGNAL(valueChanged(int)), ui->skipSlider, SLOT(setValue(int)));
     connect(ui->skipSlider, SIGNAL(valueChanged(int)), ui->skipSpin, SLOT(setValue(int)));
 
     connect(ui->thresholdSpin, SIGNAL(valueChanged(int)), ui->thresholdSlider, SLOT(setValue(int)));
     connect(ui->thresholdSlider, SIGNAL(valueChanged(int)), ui->thresholdSpin, SLOT(setValue(int)));
+
+    connect(ui->videoLabel, SIGNAL(posChangedX(int)), ui->maskXBox, SLOT(setValue(int)));
+    connect(ui->videoLabel, SIGNAL(posChangedY(int)), ui->maskYBox, SLOT(setValue(int)));
+    connect(ui->videoLabel, SIGNAL(radiusChanged(int)), ui->maskRadiusBox, SLOT(setValue(int)));
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
@@ -88,7 +92,7 @@ void configWindow::load(Settings settings)
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
-    ui->triggerSpin->setValue(settings.value("shock/triggerDistance").toInt());
+    ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
@@ -144,7 +148,7 @@ Settings configWindow::compileSettings()
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
-    settings.insert("shock/triggerDistance", ui->triggerSpin->value());
+    settings.insert("shock/triggerDistance", ui->triggerBox->value());
 
     return settings;
 }
@@ -201,6 +205,18 @@ void configWindow::on_browseButton_clicked()
     if (!directoryPath.isEmpty()){
         ui->directoryEdit->setText(directoryPath);
     }
+}
+
+void configWindow::on_triggerBox_valueChanged(int dist_px)
+{
+   double diameter_real = ui->arenaSizeBox->value();
+   double radius_px = ui->maskRadiusBox->value();
+
+   double dist_real = diameter_real * (dist_px/(radius_px*2));
+
+   QString result("%1 m");
+
+   ui->triggerRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
 }
 
 void configWindow::on_refreshCheckbox_stateChanged(int state)
@@ -451,4 +467,13 @@ void configWindow::on_skipCombo_currentIndexChanged(int index)
             ui->skipTimeoutBox->setEnabled(false);
             break;
     }
+}
+
+void configWindow::on_maskButton_toggled(bool checked)
+{
+    ui->videoLabel->setEditable(checked);
+
+    ui->maskXBox->setDisabled(checked);
+    ui->maskYBox->setDisabled(checked);
+    ui->maskRadiusBox->setDisabled(checked);
 }

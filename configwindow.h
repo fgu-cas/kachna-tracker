@@ -55,6 +55,10 @@ private slots:
 
     void refreshTracking();
 
+    void on_triggerBox_valueChanged(int);
+
+    void on_maskButton_toggled(bool checked);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;
