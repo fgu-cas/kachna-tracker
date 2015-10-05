@@ -45,6 +45,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
         float revision = (float) CURRENTREVNUM;
         cbDeclareRevision(&revision);
         cbErrHandling (PRINTALL, DONTSTOP);
+        cbDConfigPort (0, FIRSTPORTB, DIGITALOUT);
         cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
     }
 
