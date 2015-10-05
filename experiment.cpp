@@ -21,7 +21,8 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
     detector.reset(new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
 
-    timer.setInterval(settings->value("frameInterval", 40).toInt());
+    timer.setInterval(40);
+    timer.setTimerType(Qt::PreciseTimer);
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
     triggerDistance = settings->value("shock/triggerDistance").toInt();
