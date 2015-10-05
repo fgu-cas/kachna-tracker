@@ -91,6 +91,7 @@ double Experiment::getDistance(KeyPoint a, KeyPoint b){
 }
 
 void Experiment::processFrame(){
+    cbDOut(0, FIRSTPORTB, 1);
     capFrame capframe;
 
     Mat frame;
@@ -214,6 +215,7 @@ void Experiment::processFrame(){
                 shockState = OUTSIDE;
             }
     }
+    cbDOut(0, FIRSTPORTB, 0);
 }
 
 void Experiment::changeShock(double shockLevel){
