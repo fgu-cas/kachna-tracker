@@ -60,6 +60,9 @@ private:
     };
     std::vector<capFrame> frames;
 
+    bool doShock;
+    bool doSynch;
+
     // Capture
     VideoCapture capture;
     bool isLive;

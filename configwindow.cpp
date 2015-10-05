@@ -88,6 +88,9 @@ void configWindow::load(Settings settings)
     ui->robotMinSize->setValue(settings.value("tracking/minRobot").toDouble());
     ui->robotMaxSize->setValue(settings.value("tracking/maxRobot").toDouble());
 
+    ui->synchroBox->setChecked(settings.value("output/synchronization").toBool());
+    ui->shockBox->setChecked(settings.value("output/shock").toBool());
+
     ui->entryBox->setValue(settings.value("shock/EntranceLatency").toInt());
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
@@ -143,6 +146,9 @@ Settings configWindow::compileSettings()
     settings.insert("tracking/maxRat", ui->ratMaxSize->value());
     settings.insert("tracking/minRobot", ui->robotMinSize->value());
     settings.insert("tracking/maxRobot", ui->robotMaxSize->value());
+
+    settings.insert("output/synchronization", ui->synchroBox->isChecked());
+    settings.insert("output/shock", ui->shockBox->isChecked());
 
     settings.insert("shock/EntranceLatency", ui->entryBox->value());
     settings.insert("shock/InterShockLatency", ui->interBox->value());

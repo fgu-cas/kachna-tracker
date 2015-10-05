@@ -25,6 +25,9 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     timer.setTimerType(Qt::PreciseTimer);
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
+    doSynch = settings->value("output/synchronization").toBool();
+    doShock = settings->value("output/shock").toBool();
+
     triggerDistance = settings->value("shock/triggerDistance").toInt();
 
     maxRat = settings->value("tracking/maxRat").toDouble();
@@ -38,10 +41,12 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     skip_timeout = settings->value("faults/skipTimeout").toInt();
 
     /* MC library init magic */
-    float revision = (float) CURRENTREVNUM;
-    cbDeclareRevision(&revision);
-    cbErrHandling (PRINTALL, DONTSTOP);
-    cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
+    if (doShock || doSynch){
+        float revision = (float) CURRENTREVNUM;
+        cbDeclareRevision(&revision);
+        cbErrHandling (PRINTALL, DONTSTOP);
+        cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
+    }
 
     arena.x = settings->value("arena/X").toInt();
     arena.y = settings->value("arena/Y").toInt();
@@ -92,7 +97,7 @@ double Experiment::getDistance(KeyPoint a, KeyPoint b){
 }
 
 void Experiment::processFrame(){
-    cbDOut(0, FIRSTPORTB, 1);
+    if (doSynch) cbDOut(0, FIRSTPORTB, 1);
     capFrame capframe;
 
     Mat frame;
@@ -216,7 +221,7 @@ void Experiment::processFrame(){
                 shockState = OUTSIDE;
             }
     }
-    cbDOut(0, FIRSTPORTB, 0);
+    if (doSynch) cbDOut(0, FIRSTPORTB, 0);
 }
 
 void Experiment::changeShock(double shockLevel){
@@ -241,12 +246,14 @@ Experiment::Update Experiment::getUpdate(){
 }
 
 void Experiment::setShock(double mA){
-    int level = (int) (mA*10);
-    if (level > 7){
-        level = 7;
+    if (doShock){
+        int level = (int) (mA*10);
+        if (level > 7){
+            level = 7;
+        }
+        cbDOut(0, FIRSTPORTC, level);
+        currentLevel = level;
     }
-    cbDOut(0, FIRSTPORTC, level);
-    currentLevel = level;
 }
 
 
