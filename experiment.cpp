@@ -25,8 +25,10 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     timer.setTimerType(Qt::PreciseTimer);
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
-    doSynch = settings->value("output/synchronization").toBool();
+    doSynch = settings->value("output/sync_enabled").toBool();
+    synchInv = settings->value("output/sync_inverted").toBool();
     doShock = settings->value("output/shock").toBool();
+
 
     triggerDistance = settings->value("shock/triggerDistance").toInt();
 
@@ -98,7 +100,7 @@ double Experiment::getDistance(KeyPoint a, KeyPoint b){
 }
 
 void Experiment::processFrame(){
-    if (doSynch) cbDOut(0, FIRSTPORTB, 1);
+    if (doSynch) cbDOut(0, FIRSTPORTB, synchInv ? 0 : 1);
     capFrame capframe;
 
     Mat frame;
@@ -222,7 +224,7 @@ void Experiment::processFrame(){
                 shockState = OUTSIDE;
             }
     }
-    if (doSynch) cbDOut(0, FIRSTPORTB, 0);
+    if (doSynch) cbDOut(0, FIRSTPORTB, synchInv ? 1 : 0);
 }
 
 void Experiment::changeShock(double shockLevel){

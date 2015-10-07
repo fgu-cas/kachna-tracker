@@ -20,7 +20,7 @@
    <attribute name="title">
     <string>General</string>
    </attribute>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout_10">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -329,11 +329,22 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="shockBox">
-        <property name="text">
-         <string>Send shock to control-box</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
+        <item>
+         <widget class="QCheckBox" name="shockBox">
+          <property name="text">
+           <string>Send shock to control-box</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="invertBox">
+          <property name="text">
+           <string>Inverted</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QLabel" name="label_19">

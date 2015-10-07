@@ -62,6 +62,7 @@ private:
 
     bool doShock;
     bool doSynch;
+    bool synchInv;
 
     // Capture
     VideoCapture capture;
