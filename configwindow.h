@@ -11,7 +11,7 @@
 #include <QPixmap>
 #include <QPainter>
 
-#include "detector.h"
+#include "detector_threshold.h"
 
 typedef QMap<QString, QVariant> Settings;
 

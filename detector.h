@@ -19,13 +19,10 @@ public:
 
     struct keyPoints { KeyPoint rat; KeyPoint robot; };
 
-    Mat process(Mat *frame);
-    std::vector<KeyPoint> detect(Mat *frame);
+    virtual Mat process(Mat *frame) = 0;
+    virtual std::vector<KeyPoint> detect(Mat *frame) = 0;
 
-private:
-    std::unique_ptr<SimpleBlobDetector> detector;
-    double img_threshold;
-
+protected:
     Mat mask;
 };
 

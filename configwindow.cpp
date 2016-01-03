@@ -202,7 +202,7 @@ void configWindow::on_refreshTrackingButton_clicked()
    Mat frame;
    capture >> frame;
 
-   detector.reset(new Detector(compileSettings(), frame.rows, frame.cols));
+   detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
 
    refreshTracking();
 }
@@ -241,7 +241,7 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         Mat frame;
         capture >> frame;
 
-        detector.reset(new Detector(compileSettings(), frame.rows, frame.cols));
+        detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
         refreshTimer.start(ui->updateBox->value());
     } else {
         ui->refreshTrackingButton->setEnabled(true);

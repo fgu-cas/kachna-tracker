@@ -20,14 +20,16 @@ SOURCES += main.cpp\
     experiment.cpp \
     detector.cpp \
     shockspinbox.cpp \
-    masklabel.cpp
+    masklabel.cpp \
+    detector_threshold.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
     experiment.h \
     shockspinbox.h \
     detector.h \
-    masklabel.h
+    masklabel.h \
+    detector_threshold.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

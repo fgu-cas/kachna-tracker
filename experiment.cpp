@@ -19,7 +19,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
        isLive = true;
     }
 
-    detector.reset(new Detector(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+    detector.reset(new DetectorThreshold(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
 
     timer.setInterval(40);
     timer.setTimerType(Qt::PreciseTimer);
