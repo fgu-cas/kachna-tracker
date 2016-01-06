@@ -166,7 +166,7 @@ void configWindow::on_testButton_clicked()
     Mat frame;
     capture >> frame;
     if (!frame.empty()){
-        capturedFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
+        testFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
                                                   frame.cols,
                                                   frame.rows,
                                                   frame.step,
@@ -180,10 +180,10 @@ void configWindow::on_testButton_clicked()
 }
 
 void configWindow::maskValueChanged(){
-    if (capturedFrame.height() > 0){
+    if (testFrame.height() > 0){
         QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
 
-        QPixmap pixmap = QPixmap(capturedFrame);
+        QPixmap pixmap = QPixmap(testFrame);
         QPainter painter(&pixmap);
         painter.setPen(Qt::magenta);
         painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
@@ -257,58 +257,63 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
 }
 
 void configWindow::refreshTracking(){
-   Mat frame;
-   capture >> frame;
-   std::vector<KeyPoint> keypoints = detector->detect(&frame);
+   capture >> trackingFrame;
+   updateTrackingView();
+}
 
-   QPixmap pixmap;
+void configWindow::updateTrackingView(){
+    if (!trackingFrame.empty()){
+        QPixmap pixmap;
 
-   if (ui->showThresholdBox->isChecked()){
-       frame = detector->process(&frame);
-       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                   frame.cols,
-                                                   frame.rows,
-                                                   frame.step,
-                                                   QImage::Format_Grayscale8));
-   } else {
-       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                   frame.cols,
-                                                   frame.rows,
-                                                   frame.step,
-                                                   QImage::Format_RGB888));
-   }
+        std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
 
-   QPainter painter(&pixmap);
-   ui->keypointList->clear();
+        if (ui->thresholdEnableBox->isChecked()){
+            Mat frame = detector->process(&trackingFrame);
+            pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                        frame.cols,
+                                                        frame.rows,
+                                                        frame.step,
+                                                        QImage::Format_Grayscale8));
+        } else {
+            pixmap = QPixmap::fromImage(QImage((uchar*) trackingFrame.data,
+                                                        trackingFrame.cols,
+                                                        trackingFrame.rows,
+                                                        trackingFrame.step,
+                                                        QImage::Format_RGB888));
+        }
 
-   for (unsigned i = 0; i < keypoints.size(); i++){
-       KeyPoint keypoint = keypoints[i];
-       ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
-                                 + ", " + QString::number(keypoint.pt.y) + " (" +
-                                 QString::number(keypoint.size) + ")");
+        QPainter painter(&pixmap);
+        ui->keypointList->clear();
 
-       if (keypoint.size > ui->ratMinSize->value() &&
-               keypoint.size < ui->ratMaxSize->value()){
+        for (unsigned i = 0; i < keypoints.size(); i++){
+            KeyPoint keypoint = keypoints[i];
+            ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
+                                      + ", " + QString::number(keypoint.pt.y) + " (" +
+                                      QString::number(keypoint.size) + ")");
 
-            QPoint rat(keypoint.pt.x, keypoint.pt.y);
-            int ratSize = (int)(keypoint.size+0.5);
-            painter.setPen(Qt::red);
-            painter.drawEllipse(rat, ratSize, ratSize);
+            if (keypoint.size > ui->ratMinSize->value() &&
+                    keypoint.size < ui->ratMaxSize->value()){
 
-       } else if (keypoint.size > ui->robotMinSize->value() &&
-               keypoint.size < ui->robotMaxSize->value()){
+                 QPoint rat(keypoint.pt.x, keypoint.pt.y);
+                 int ratSize = (int)(keypoint.size+0.5);
+                 painter.setPen(Qt::red);
+                 painter.drawEllipse(rat, ratSize, ratSize);
 
-            QPoint robot(keypoint.pt.x, keypoint.pt.y);
-            int robotSize = (int)(keypoint.size+0.5);
-            painter.setPen(Qt::blue);
-            painter.drawEllipse(robot, robotSize, robotSize);
+            } else if (keypoint.size > ui->robotMinSize->value() &&
+                    keypoint.size < ui->robotMaxSize->value()){
 
-       }
-   }
+                 QPoint robot(keypoint.pt.x, keypoint.pt.y);
+                 int robotSize = (int)(keypoint.size+0.5);
+                 painter.setPen(Qt::blue);
+                 painter.drawEllipse(robot, robotSize, robotSize);
 
-   painter.end();
+            }
+        }
 
-   ui->trackingLabel->setPixmap(pixmap);
+        painter.end();
+
+        ui->trackingLabel->setPixmap(pixmap);
+    }
 }
 
 void configWindow::on_revertButton_clicked()
@@ -483,4 +488,20 @@ void configWindow::on_maskButton_toggled(bool checked)
     ui->maskXBox->setDisabled(checked);
     ui->maskYBox->setDisabled(checked);
     ui->maskRadiusBox->setDisabled(checked);
+}
+
+void configWindow::on_thresholdEnableBox_toggled(bool checked)
+{
+    (void)checked; // silence warning about unused parameter
+    detector.reset(new Detector(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    updateTrackingView();
+}
+
+void configWindow::on_thresholdSlider_valueChanged(int value)
+{
+    (void)value;
+    if (ui->thresholdEnableBox->isChecked()){
+        detector.reset(new Detector(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+        updateTrackingView();
+    }
 }

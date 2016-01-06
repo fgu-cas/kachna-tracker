@@ -55,9 +55,15 @@ private slots:
 
     void refreshTracking();
 
+    void updateTrackingView();
+
     void on_triggerBox_valueChanged(int);
 
     void on_maskButton_toggled(bool checked);
+
+    void on_thresholdEnableBox_toggled(bool checked);
+
+    void on_thresholdSlider_valueChanged(int value);
 
 private:
     Ui::configWindow *ui;
@@ -66,7 +72,8 @@ private:
     Settings compileSettings();
     Settings lastSettings;
 
-    QPixmap capturedFrame;
+    QPixmap testFrame;
+    Mat trackingFrame;
     QTimer refreshTimer;
     VideoCapture capture;
 

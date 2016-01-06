@@ -767,7 +767,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="showThresholdBox">
+       <widget class="QCheckBox" name="thresholdEnableBox">
         <property name="text">
          <string>Show thresholded image</string>
         </property>
