@@ -330,10 +330,9 @@ void configWindow::on_okayButton_clicked()
 }
 
 void configWindow::showEvent(QShowEvent *event){
-    if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1 ||
-            videoFilename.isEmpty()){
+    if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
         on_deviceCombobox_activated(ui->deviceCombobox->currentIndex());
-    } else {
+    } else if (!videoFilename.isEmpty()) {
         ui->lengthEdit->setEnabled(false);
         ui->timeoutStopBox->setEnabled(false);
         capture.open(videoFilename.toStdString());
