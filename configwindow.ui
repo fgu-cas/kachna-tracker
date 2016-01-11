@@ -14,7 +14,7 @@
    <string>Configuration Window</string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>2</number>
   </property>
   <widget class="QWidget" name="general_tab">
    <attribute name="title">
@@ -795,7 +795,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="showThresholdBox">
+           <widget class="QCheckBox" name="thresholdEnableBox">
             <property name="text">
              <string>Show thresholded image</string>
             </property>
@@ -929,6 +929,19 @@
           </item>
           <item>
            <widget class="ColorSelector" name="robotBackSelector" native="true"/>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>

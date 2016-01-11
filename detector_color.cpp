@@ -27,29 +27,29 @@ Mat DetectorColor::process(Mat *frame){
 }
 
 Mat DetectorColor::filter(Mat *frame, colorRange range){
+    Mat in_frame, mask_result;
+    cv::cvtColor(*frame, in_frame, CV_RGB2HSV);
     int hue = range.hue;
     int tol = range.hue_tolerance;
     int sat = range.saturation_low;
     int val = range.value_low;
 
-    Mat mask_result;
-
     if (tol > hue){
         Mat mask_a, mask_b;
-        inRange(*frame, Scalar(0, sat, val),
+        inRange(in_frame, Scalar(0, sat, val),
                            Scalar((hue+tol)/2, 255, 255), mask_a);
-        inRange(*frame, Scalar((360-(tol-hue))/2, sat, val),
+        inRange(in_frame, Scalar((360-(tol-hue))/2, sat, val),
                            Scalar(360/2, 255, 255), mask_b);
         add(mask_a, mask_b, mask_result);
     } else if (hue + tol > 360){
         Mat mask_a, mask_b;
-        inRange(*frame, Scalar((hue-tol)/2, sat, val),
+        inRange(in_frame, Scalar((hue-tol)/2, sat, val),
                            Scalar(360/2, 255, 255), mask_a);
-        inRange(*frame, Scalar(0, sat, val),
+        inRange(in_frame, Scalar(0, sat, val),
                            Scalar((tol-(360-hue))/2, 255, 255), mask_b);
         add(mask_a, mask_b, mask_result);
     } else {
-        inRange(*frame, Scalar((hue-tol)/2, sat, val),
+        inRange(in_frame, Scalar((hue-tol)/2, sat, val),
                            Scalar((hue+tol)/2, 255, 255), mask_result);
     }
 

@@ -240,7 +240,7 @@ void configWindow::on_testButton_clicked()
     Mat frame;
     capture >> frame;
     if (!frame.empty()){
-        capturedFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
+        testFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
                                                   frame.cols,
                                                   frame.rows,
                                                   frame.step,
@@ -254,10 +254,10 @@ void configWindow::on_testButton_clicked()
 }
 
 void configWindow::maskValueChanged(){
-    if (capturedFrame.height() > 0){
+    if (testFrame.height() > 0){
         QPoint center = QPoint(ui->maskXBox->value(), ui->maskYBox->value());
 
-        QPixmap pixmap = QPixmap(capturedFrame);
+        QPixmap pixmap = QPixmap(testFrame);
         QPainter painter(&pixmap);
         painter.setPen(Qt::magenta);
         painter.drawLine(QPoint(center.x()-5, center.y()-5), QPoint(center.x()+5, center.y()+5));
@@ -272,11 +272,12 @@ void configWindow::maskValueChanged(){
 
 void configWindow::on_refreshTrackingButton_clicked()
 {
-
    Mat frame;
    capture >> frame;
 
-   detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
+   if (ui->trackingCombobox->currentIndex() == 0){
+       detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
+   }
 
    refreshTracking();
 }
@@ -316,7 +317,9 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         Mat frame;
         capture >> frame;
 
-        detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
+        if (ui->trackingCombobox->currentIndex() == 0){
+            detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
+        }
         refreshTimer.start(ui->updateBox->value());
     } else {
         ui->trackingCombobox->setEnabled(true);
@@ -335,63 +338,72 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
 void configWindow::refreshTracking(){
    Mat frame;
    capture >> frame;
-   if (frame.empty())
-       return;
-   cv::cvtColor(frame, frame, CV_BGR2RGB);
-   if (colorFiltering){
-       frame = dynamic_cast<DetectorColor*>(detector.get())->filter(&frame, filterRange);
+   if (!frame.empty()){
+       cv::cvtColor(frame, frame, CV_BGR2RGB);
+       trackingFrame = frame;
    }
-   // std::vector<KeyPoint> keypoints = detector->detect(&frame);
+   updateTrackingView();
+}
 
-   QPixmap pixmap;
+void configWindow::updateTrackingView(){
+    if (!trackingFrame.empty()){
+        QPixmap pixmap;
+        Mat frame = trackingFrame;
 
-   if (ui->showThresholdBox->isChecked()){
-       frame = detector->process(&frame);
-       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                   frame.cols,
-                                                   frame.rows,
-                                                   frame.step,
-                                                   QImage::Format_Grayscale8));
-   } else {
-       pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                   frame.cols,
-                                                   frame.rows,
-                                                   frame.step,
-                                                   QImage::Format_RGB888));
-   }
+        if (colorFiltering){
+            DetectorColor* detectorColor = dynamic_cast<DetectorColor*>(detector.get());
+            frame = detectorColor->filter(&frame, filterRange);
+        }
 
-   /*
-   QPainter painter(&pixmap);
-   ui->keypointList->clear();
+        std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
 
-   for (unsigned i = 0; i < keypoints.size(); i++){
-       KeyPoint keypoint = keypoints[i];
-       ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
-                                 + ", " + QString::number(keypoint.pt.y) + " (" +
-                                 QString::number(keypoint.size) + ")");
+        if (ui->thresholdEnableBox->isChecked()){
+            Mat frame = detector->process(&frame);
+            pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                        frame.cols,
+                                                        frame.rows,
+                                                        frame.step,
+                                                        QImage::Format_Grayscale8));
+        } else {
+            pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                        frame.cols,
+                                                        frame.rows,
+                                                        frame.step,
+                                                        QImage::Format_RGB888));
+        }
 
-       if (keypoint.size > ui->ratMinSize->value() &&
-               keypoint.size < ui->ratMaxSize->value()){
+        QPainter painter(&pixmap);
+        ui->keypointList->clear();
 
-            QPoint rat(keypoint.pt.x, keypoint.pt.y);
-            int ratSize = (int)(keypoint.size+0.5);
-            painter.setPen(Qt::red);
-            painter.drawEllipse(rat, ratSize, ratSize);
+        for (unsigned i = 0; i < keypoints.size(); i++){
+            KeyPoint keypoint = keypoints[i];
+            ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
+                                      + ", " + QString::number(keypoint.pt.y) + " (" +
+                                      QString::number(keypoint.size) + ")");
 
-       } else if (keypoint.size > ui->robotMinSize->value() &&
-               keypoint.size < ui->robotMaxSize->value()){
+            if (keypoint.size > ui->ratMinSize->value() &&
+                    keypoint.size < ui->ratMaxSize->value()){
 
-            QPoint robot(keypoint.pt.x, keypoint.pt.y);
-            int robotSize = (int)(keypoint.size+0.5);
-            painter.setPen(Qt::blue);
-            painter.drawEllipse(robot, robotSize, robotSize);
+                 QPoint rat(keypoint.pt.x, keypoint.pt.y);
+                 int ratSize = (int)(keypoint.size+0.5);
+                 painter.setPen(Qt::red);
+                 painter.drawEllipse(rat, ratSize, ratSize);
 
-       }
-   }
+            } else if (keypoint.size > ui->robotMinSize->value() &&
+                    keypoint.size < ui->robotMaxSize->value()){
 
-   painter.end();
-    */
-   ui->trackingLabel->setPixmap(pixmap);
+                 QPoint robot(keypoint.pt.x, keypoint.pt.y);
+                 int robotSize = (int)(keypoint.size+0.5);
+                 painter.setPen(Qt::blue);
+                 painter.drawEllipse(robot, robotSize, robotSize);
+
+            }
+        }
+
+        painter.end();
+
+        ui->trackingLabel->setPixmap(pixmap);
+    }
 }
 
 void configWindow::on_revertButton_clicked()
@@ -413,10 +425,9 @@ void configWindow::on_okayButton_clicked()
 }
 
 void configWindow::showEvent(QShowEvent *event){
-    if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1 ||
-            videoFilename.isEmpty()){
+    if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
         on_deviceCombobox_activated(ui->deviceCombobox->currentIndex());
-    } else {
+    } else if (!videoFilename.isEmpty()) {
         ui->lengthEdit->setEnabled(false);
         ui->timeoutStopBox->setEnabled(false);
         capture.open(videoFilename.toStdString());
@@ -491,10 +502,12 @@ void configWindow::filteringStateChanged(bool state){
     }
 
     colorFiltering = state;
+    updateTrackingView();
 }
 
 void configWindow::filterRangeChanged(colorRange range){
     filterRange = range;
+    updateTrackingView();
 }
 
 void configWindow::refreshDevices(){
@@ -588,7 +601,28 @@ void configWindow::on_maskButton_toggled(bool checked)
     ui->maskRadiusBox->setDisabled(checked);
 }
 
+void configWindow::on_thresholdEnableBox_toggled(bool checked)
+{
+    (void)checked; // silence warning about unused parameter
+    detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    updateTrackingView();
+}
+
+void configWindow::on_thresholdSlider_valueChanged(int value)
+{
+    (void)value;
+    if (ui->thresholdEnableBox->isChecked()){
+        detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+        updateTrackingView();
+    }
+}
+
 void configWindow::on_trackingCombobox_currentIndexChanged(int index)
 {
     ui->trackingWidget->setCurrentIndex(index);
+    if (index == 0){
+        detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    } else {
+        detector.reset(new DetectorColor(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    }
 }
