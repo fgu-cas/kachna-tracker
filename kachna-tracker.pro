@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     detector.cpp \
     shockspinbox.cpp \
     masklabel.cpp \
-    detector_threshold.cpp
+    detector_threshold.cpp \
+    detector_color.cpp \
+    colordialog.cpp \
+    colorselector.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
@@ -29,7 +32,10 @@ HEADERS  += kachnatracker.h \
     shockspinbox.h \
     detector.h \
     masklabel.h \
-    detector_threshold.h
+    detector_threshold.h \
+    detector_color.h \
+    colordialog.h \
+    colorselector.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

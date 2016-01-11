@@ -12,8 +12,10 @@
 #include <QPainter>
 
 #include "detector_threshold.h"
+#include "detector_color.h"
 
 typedef QMap<QString, QVariant> Settings;
+
 
 using namespace cv;
 
@@ -59,6 +61,12 @@ private slots:
 
     void on_maskButton_toggled(bool checked);
 
+    void on_trackingCombobox_currentIndexChanged(int index);
+
+    void filteringStateChanged(bool state);
+
+    void filterRangeChanged(colorRange range);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;
@@ -73,6 +81,9 @@ private:
     void closeEvent(QCloseEvent*);
     void showEvent(QShowEvent *);
     QString videoFilename;
+
+    bool colorFiltering;
+    colorRange filterRange;
 };
 
 #endif // CONFIGWINDOW_H

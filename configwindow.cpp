@@ -41,6 +41,24 @@ configWindow::configWindow(QWidget *parent) :
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
 
     connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
+
+    ui->ratFrontSelector->setTitle("Rat Front");
+    ui->ratBackSelector->setTitle("Rat Back");
+    ui->robotFrontSelector->setTitle("Robot Front");
+    ui->robotBackSelector->setTitle("Robot Back");
+
+    connect(ui->ratFrontSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
+    connect(ui->ratBackSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
+    connect(ui->robotFrontSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
+    connect(ui->robotBackSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
+
+    connect(ui->ratFrontSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
+    connect(ui->ratBackSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
+    connect(ui->robotFrontSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
+    connect(ui->robotBackSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
+
+
+
     refreshDevices();
 }
 
@@ -76,17 +94,47 @@ void configWindow::load(Settings settings)
     ui->maskRadiusBox->setValue(settings.value("arena/radius").toInt());
     ui->arenaSizeBox->setValue(settings.value("arena/size").toDouble());
 
-    ui->thresholdSpin->setValue(settings.value("tracking/threshold").toInt());
-
     //ui->multipleCombo->setCurrentIndex(settings.value("faults/multipleReaction").toInt());
     ui->skipCombo->setCurrentIndex(settings.value("faults/skipReaction").toInt());
     ui->skipSpin->setValue(settings.value("faults/skipDistance").toInt());
     ui->skipTimeoutBox->setValue(settings.value("faults/skipTimeout").toInt()/1000.0);
 
-    ui->ratMinSize->setValue(settings.value("tracking/minRat").toDouble());
-    ui->ratMaxSize->setValue(settings.value("tracking/maxRat").toDouble());
-    ui->robotMinSize->setValue(settings.value("tracking/minRobot").toDouble());
-    ui->robotMaxSize->setValue(settings.value("tracking/maxRobot").toDouble());
+    ui->trackingCombobox->setCurrentIndex(settings.value("tracking/type").toInt());
+
+    ui->thresholdSpin->setValue(settings.value("tracking/threshold/threshold").toInt());
+    ui->ratMinSize->setValue(settings.value("tracking/threshold/minRat").toDouble());
+    ui->ratMaxSize->setValue(settings.value("tracking/threshold/maxRat").toDouble());
+    ui->robotMinSize->setValue(settings.value("tracking/threshold/minRobot").toDouble());
+    ui->robotMaxSize->setValue(settings.value("tracking/threshold/maxRobot").toDouble());
+
+    //Forgive me.
+    colorRange ratFrontRange;
+    ratFrontRange.hue = settings.value("tracking/color/ratFront/hue").toInt();
+    ratFrontRange.hue_tolerance = settings.value("tracking/color/ratFront/hue_tolerance").toInt();
+    ratFrontRange.saturation_low = settings.value("tracking/color/ratFront/saturation_low").toInt();
+    ratFrontRange.value_low = settings.value("tracking/color/ratFront/value_low").toInt();
+    ui->ratFrontSelector->setRange(ratFrontRange);
+
+    colorRange ratBackRange;
+    ratBackRange.hue = settings.value("tracking/color/ratBack/hue").toInt();
+    ratBackRange.hue_tolerance = settings.value("tracking/color/ratBack/hue_tolerance").toInt();
+    ratBackRange.saturation_low = settings.value("tracking/color/ratBack/saturation_low").toInt();
+    ratBackRange.value_low = settings.value("tracking/color/ratBack/value_low").toInt();
+    ui->ratBackSelector->setRange(ratBackRange);
+
+    colorRange robotFrontRange;
+    robotFrontRange.hue = settings.value("tracking/color/robotFront/hue").toInt();
+    robotFrontRange.hue_tolerance = settings.value("tracking/color/robotFront/hue_tolerance").toInt();
+    robotFrontRange.saturation_low = settings.value("tracking/color/robotFront/saturation_low").toInt();
+    robotFrontRange.value_low = settings.value("tracking/color/robotFront/value_low").toInt();
+    ui->robotFrontSelector->setRange(robotFrontRange);
+
+    colorRange robotBackRange;
+    robotBackRange.hue = settings.value("tracking/color/robotBack/hue").toInt();
+    robotBackRange.hue_tolerance = settings.value("tracking/color/robotBack/hue_tolerance").toInt();
+    robotBackRange.saturation_low = settings.value("tracking/color/robotBack/saturation_low").toInt();
+    robotBackRange.value_low = settings.value("tracking/color/robotBack/value_low").toInt();
+    ui->robotBackSelector->setRange(robotBackRange);
 
     ui->synchroBox->setChecked(settings.value("output/sync_enabled").toBool());
     ui->invertBox->setChecked(settings.value("output/sync_inverted").toBool());
@@ -131,7 +179,6 @@ Settings configWindow::compileSettings()
         settings.insert("video/device", deviceIndex);
     }
 
-    settings.insert("tracking/threshold", ui->thresholdSpin->value());
 
     //settings.insert("faults/multipleReaction", ui->multipleCombo->currentIndex());
     settings.insert("faults/skipReaction", ui->skipCombo->currentIndex());
@@ -143,10 +190,37 @@ Settings configWindow::compileSettings()
     settings.insert("arena/radius", ui->maskRadiusBox->value());
     settings.insert("arena/size", ui->arenaSizeBox->value());
 
-    settings.insert("tracking/minRat", ui->ratMinSize->value());
-    settings.insert("tracking/maxRat", ui->ratMaxSize->value());
-    settings.insert("tracking/minRobot", ui->robotMinSize->value());
-    settings.insert("tracking/maxRobot", ui->robotMaxSize->value());
+    settings.insert("tracking/type", ui->trackingCombobox->currentIndex());
+
+    settings.insert("tracking/threshold/threshold", ui->thresholdSpin->value());
+    settings.insert("tracking/threshold/minRat", ui->ratMinSize->value());
+    settings.insert("tracking/threshold/maxRat", ui->ratMaxSize->value());
+    settings.insert("tracking/threshold/minRobot", ui->robotMinSize->value());
+    settings.insert("tracking/threshold/maxRobot", ui->robotMaxSize->value());
+
+    colorRange ratFrontRange = ui->ratFrontSelector->getColorRange();
+    settings.insert("tracking/color/ratFront/hue", ratFrontRange.hue);
+    settings.insert("tracking/color/ratFront/hue_tolerance", ratFrontRange.hue_tolerance);
+    settings.insert("tracking/color/ratFront/value_low", ratFrontRange.value_low);
+    settings.insert("tracking/color/ratFront/saturation_low", ratFrontRange.saturation_low);
+
+    colorRange ratBackRange = ui->ratBackSelector->getColorRange();
+    settings.insert("tracking/color/ratBack/hue", ratBackRange.hue);
+    settings.insert("tracking/color/ratBack/hue_tolerance", ratBackRange.hue_tolerance);
+    settings.insert("tracking/color/ratBack/value_low", ratBackRange.value_low);
+    settings.insert("tracking/color/ratBack/saturation_low", ratBackRange.saturation_low);
+
+    colorRange robotFrontRange = ui->robotFrontSelector->getColorRange();
+    settings.insert("tracking/color/robotFront/hue", robotFrontRange.hue);
+    settings.insert("tracking/color/robotFront/hue_tolerance", robotFrontRange.hue_tolerance);
+    settings.insert("tracking/color/robotFront/value_low", robotFrontRange.value_low);
+    settings.insert("tracking/color/robotFront/saturation_low", robotFrontRange.saturation_low);
+
+    colorRange robotBackRange = ui->robotBackSelector->getColorRange();
+    settings.insert("tracking/color/robotBack/hue", robotBackRange.hue);
+    settings.insert("tracking/color/robotBack/hue_tolerance", robotBackRange.hue_tolerance);
+    settings.insert("tracking/color/robotBack/value_low", robotBackRange.value_low);
+    settings.insert("tracking/color/robotBack/saturation_low", robotBackRange.saturation_low);
 
     settings.insert("output/sync_enabled", ui->synchroBox->isChecked());
     settings.insert("output/sync_inverted", ui->invertBox->isChecked());
@@ -230,6 +304,7 @@ void configWindow::on_triggerBox_valueChanged(int dist_px)
 void configWindow::on_refreshCheckbox_stateChanged(int state)
 {
     if (state == Qt::Checked){
+        ui->trackingCombobox->setEnabled(false);
         ui->refreshTrackingButton->setEnabled(false);
         ui->thresholdSpin->setEnabled(false);
         ui->thresholdSlider->setEnabled(false);
@@ -244,6 +319,7 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
         refreshTimer.start(ui->updateBox->value());
     } else {
+        ui->trackingCombobox->setEnabled(true);
         ui->refreshTrackingButton->setEnabled(true);
         ui->thresholdSpin->setEnabled(true);
         ui->thresholdSlider->setEnabled(true);
@@ -259,7 +335,13 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
 void configWindow::refreshTracking(){
    Mat frame;
    capture >> frame;
-   std::vector<KeyPoint> keypoints = detector->detect(&frame);
+   if (frame.empty())
+       return;
+   cv::cvtColor(frame, frame, CV_BGR2RGB);
+   if (colorFiltering){
+       frame = dynamic_cast<DetectorColor*>(detector.get())->filter(&frame, filterRange);
+   }
+   // std::vector<KeyPoint> keypoints = detector->detect(&frame);
 
    QPixmap pixmap;
 
@@ -278,6 +360,7 @@ void configWindow::refreshTracking(){
                                                    QImage::Format_RGB888));
    }
 
+   /*
    QPainter painter(&pixmap);
    ui->keypointList->clear();
 
@@ -307,7 +390,7 @@ void configWindow::refreshTracking(){
    }
 
    painter.end();
-
+    */
    ui->trackingLabel->setPixmap(pixmap);
 }
 
@@ -393,6 +476,25 @@ void configWindow::on_deviceCombobox_activated(int index){
         ui->lengthEdit->setEnabled(true);
         capture.open(index);
     }
+}
+
+void configWindow::filteringStateChanged(bool state){
+    ColorSelector* sender = dynamic_cast<ColorSelector*>(QObject::sender());
+    if (state){
+        ui->ratFrontSelector->setShow(false);
+        ui->ratBackSelector->setShow(false);
+        ui->robotFrontSelector->setShow(false);
+        ui->robotBackSelector->setShow(false);
+
+        sender->setShow(true);
+        filterRange = sender->getColorRange();
+    }
+
+    colorFiltering = state;
+}
+
+void configWindow::filterRangeChanged(colorRange range){
+    filterRange = range;
 }
 
 void configWindow::refreshDevices(){
@@ -484,4 +586,9 @@ void configWindow::on_maskButton_toggled(bool checked)
     ui->maskXBox->setDisabled(checked);
     ui->maskYBox->setDisabled(checked);
     ui->maskRadiusBox->setDisabled(checked);
+}
+
+void configWindow::on_trackingCombobox_currentIndexChanged(int index)
+{
+    ui->trackingWidget->setCurrentIndex(index);
 }

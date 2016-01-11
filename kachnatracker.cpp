@@ -16,11 +16,14 @@
 
 using namespace cv;
 
+
 kachnatracker::kachnatracker(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::kachnatracker){
 
     ui->setupUi(this);
+
+
     configWin.setWindowModality(Qt::ApplicationModal);
     connect(&configWin, SIGNAL(configurationUpdated(Settings)), this, SLOT(onConfigurationUpdated(Settings)));
     connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
