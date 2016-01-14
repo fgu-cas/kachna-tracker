@@ -73,9 +73,12 @@ private slots:
 
     void filterRangeChanged(colorRange range);
 
+    void on_resolutionBox_toggled(bool checked);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;
+    void resetDetector();
 
     Settings compileSettings();
     Settings lastSettings;

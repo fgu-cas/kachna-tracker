@@ -32,7 +32,7 @@ public:
     };
 
     struct Update {
-        Detector::keyPoints keypoints;
+        Detector::keypointPair keypoints;
         Stats stats;
     };
 
@@ -52,7 +52,7 @@ private:
     QString startDate;
 
     struct capFrame {
-        Detector::keyPoints keypoints;
+        Detector::keypointPair keypoints;
         int sectors;
         int state;
         int currentLevel;
@@ -70,28 +70,12 @@ private:
 
     // Detection
     std::unique_ptr<Detector> detector;
-    Detector::keyPoints lastPoints;
-    double getDistance(KeyPoint a, KeyPoint b);
-
-    double maxRat;
-    double minRat;
-    double maxRobot;
-    double minRobot;
 
     double triggerDistance;
-
-    QElapsedTimer ratTimer;
-    QElapsedTimer robotTimer;
 
     // Shock
 
     void setShock(double mA);
-
-    int multiple_reaction;
-    int skip_reaction;
-    int skip_distance;
-    int skip_timeout;
-
 
     enum shockStates {
         OUTSIDE,

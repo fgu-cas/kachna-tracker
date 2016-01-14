@@ -15,11 +15,12 @@ using namespace cv;
 class Detector
 {
 public:
-    Detector(QMap<QString, QVariant> settings, int h, int w);
+    Detector(const QMap<QString, QVariant> &settings, int h, int w);
 
-    struct keyPoints { KeyPoint rat; KeyPoint robot; };
+    struct keypointPair { KeyPoint rat; KeyPoint robot; };
 
     virtual Mat process(Mat *frame) = 0;
+    virtual keypointPair find(Mat *frame) = 0;
     virtual std::vector<KeyPoint> detect(Mat *frame) = 0;
 
 protected:

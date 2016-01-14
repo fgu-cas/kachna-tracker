@@ -3,16 +3,17 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include <QDebug>
-
 #include <initguid.h>
 #include <windows.h>
 #include <dshow.h>
+
+#include "detector_color.h"
 
 
 configWindow::configWindow(QWidget *parent) :
@@ -88,6 +89,10 @@ void configWindow::load(Settings settings)
         refreshDevices();
         ui->deviceCombobox->setCurrentIndex(deviceIndex);
     }
+
+    ui->resolutionBox->setChecked(settings.value("video/resolution/enabled").toBool());
+    ui->resolutionWidthSpin->setValue(settings.value("video/resolution/width").toInt());
+    ui->resolutionHeightSpin->setValue(settings.value("video/resolution/height").toInt());
 
     ui->maskXBox->setValue(settings.value("arena/X").toDouble());
     ui->maskYBox->setValue(settings.value("arena/Y").toDouble());
@@ -179,6 +184,9 @@ Settings configWindow::compileSettings()
         settings.insert("video/device", deviceIndex);
     }
 
+    settings.insert("video/resolution/enabled", ui->resolutionBox->isChecked());
+    settings.insert("video/resolution/width", ui->resolutionWidthSpin->value());
+    settings.insert("video/resolution/height", ui->resolutionHeightSpin->value());
 
     //settings.insert("faults/multipleReaction", ui->multipleCombo->currentIndex());
     settings.insert("faults/skipReaction", ui->skipCombo->currentIndex());
@@ -240,6 +248,7 @@ void configWindow::on_testButton_clicked()
     Mat frame;
     capture >> frame;
     if (!frame.empty()){
+        cvtColor(frame, frame, CV_BGR2RGB);
         testFrame = QPixmap::fromImage(QImage((uchar*) frame.data,
                                                   frame.cols,
                                                   frame.rows,
@@ -272,13 +281,7 @@ void configWindow::maskValueChanged(){
 
 void configWindow::on_refreshTrackingButton_clicked()
 {
-   Mat frame;
-   capture >> frame;
-
-   if (ui->trackingCombobox->currentIndex() == 0){
-       detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
-   }
-
+   resetDetector();
    refreshTracking();
 }
 
@@ -314,12 +317,12 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         ui->robotMaxSize->setEnabled(false);
         ui->robotMinSize->setEnabled(false);
 
-        Mat frame;
-        capture >> frame;
+        ui->ratFrontSelector->setEnabled(false);
+        ui->ratBackSelector->setEnabled(false);
+        ui->robotFrontSelector->setEnabled(false);
+        ui->robotBackSelector->setEnabled(false);
 
-        if (ui->trackingCombobox->currentIndex() == 0){
-            detector.reset(new DetectorThreshold(compileSettings(), frame.rows, frame.cols));
-        }
+        resetDetector();
         refreshTimer.start(ui->updateBox->value());
     } else {
         ui->trackingCombobox->setEnabled(true);
@@ -331,6 +334,11 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
         ui->robotMaxSize->setEnabled(true);
         ui->robotMinSize->setEnabled(true);
 
+        ui->ratFrontSelector->setEnabled(true);
+        ui->ratBackSelector->setEnabled(true);
+        ui->robotFrontSelector->setEnabled(true);
+        ui->robotBackSelector->setEnabled(true);
+
         refreshTimer.stop();
     }
 }
@@ -339,50 +347,74 @@ void configWindow::refreshTracking(){
    Mat frame;
    capture >> frame;
    if (!frame.empty()){
-       cv::cvtColor(frame, frame, CV_BGR2RGB);
        trackingFrame = frame;
+       updateTrackingView();
    }
-   updateTrackingView();
 }
 
 void configWindow::updateTrackingView(){
     if (!trackingFrame.empty()){
+        Mat frame;
+        cv::cvtColor(trackingFrame, frame, CV_BGR2RGB);
         QPixmap pixmap;
-        Mat frame = trackingFrame;
+        bool colorTracking = ui->trackingCombobox->currentIndex() == 1;
 
-        if (colorFiltering){
-            DetectorColor* detectorColor = dynamic_cast<DetectorColor*>(detector.get());
-            frame = detectorColor->filter(&frame, filterRange);
-        }
+        if (!colorTracking && ui->thresholdEnableBox->isChecked()){
+                frame = detector->process(&trackingFrame);
+                pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
+                                                            frame.cols,
+                                                            frame.rows,
+                                                            frame.step,
+                                                            QImage::Format_Grayscale8));
 
-        std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
-
-        if (ui->thresholdEnableBox->isChecked()){
-            Mat frame = detector->process(&frame);
-            pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                        frame.cols,
-                                                        frame.rows,
-                                                        frame.step,
-                                                        QImage::Format_Grayscale8));
         } else {
+            if (colorTracking && colorFiltering){
+                DetectorColor* detectorColor = dynamic_cast<DetectorColor*>(detector.get());
+                frame = detectorColor->filter(&frame, filterRange);
+            }
             pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
                                                         frame.cols,
                                                         frame.rows,
                                                         frame.step,
                                                         QImage::Format_RGB888));
+
         }
 
         QPainter painter(&pixmap);
+        std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
         ui->keypointList->clear();
 
         for (unsigned i = 0; i < keypoints.size(); i++){
             KeyPoint keypoint = keypoints[i];
-            ui->keypointList->addItem(QString::number(i) + ": " + QString::number(keypoint.pt.x)
-                                      + ", " + QString::number(keypoint.pt.y) + " (" +
-                                      QString::number(keypoint.size) + ")");
+            QString line = "%5%1: [%2, %3] (%4)";
+            line = line.arg(i);
+            line = line.arg(keypoint.pt.x);
+            line = line.arg(keypoint.pt.y);
+            line = line.arg(keypoint.size);
+            if (colorTracking){
+                switch (keypoint.class_id){
+                case DetectorColor::RAT_FRONT:
+                    line = line.arg("[RAT F] ");
+                    break;
+                case DetectorColor::RAT_BACK:
+                    line = line.arg("[RAT B] ");
+                    break;
+                case DetectorColor::ROBOT_FRONT:
+                    line = line.arg("[ROB F] ");
+                    break;
+                case DetectorColor::ROBOT_BACK:
+                    line = line.arg("[ROB B] ");
+                    break;
+                default:
+                    line = line.arg("[WHAT?] ");
+                }
+            } else {
+                line = line.arg("");
+            }
+            ui->keypointList->addItem(line);
 
-            if (keypoint.size > ui->ratMinSize->value() &&
-                    keypoint.size < ui->ratMaxSize->value()){
+            if (colorTracking || (keypoint.size > ui->ratMinSize->value() &&
+                    keypoint.size < ui->ratMaxSize->value())){
 
                  QPoint rat(keypoint.pt.x, keypoint.pt.y);
                  int ratSize = (int)(keypoint.size+0.5);
@@ -402,6 +434,7 @@ void configWindow::updateTrackingView(){
 
         painter.end();
 
+        if (colorTracking) detector->find(&trackingFrame);
         ui->trackingLabel->setPixmap(pixmap);
     }
 }
@@ -426,13 +459,27 @@ void configWindow::on_okayButton_clicked()
 
 void configWindow::showEvent(QShowEvent *event){
     if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
-        on_deviceCombobox_activated(ui->deviceCombobox->currentIndex());
+        ui->lengthEdit->setEnabled(false);
+        ui->timeoutStopBox->setEnabled(false);
+        ui->resolutionBox->setEnabled(true);
+        capture.open(ui->deviceCombobox->currentIndex());
     } else if (!videoFilename.isEmpty()) {
         ui->lengthEdit->setEnabled(false);
         ui->timeoutStopBox->setEnabled(false);
+        ui->resolutionBox->setChecked(false);
+        ui->resolutionBox->setEnabled(false);
         capture.open(videoFilename.toStdString());
     }
-    event->accept();
+
+    if (ui->resolutionBox->isChecked()){
+        capture.set(CV_CAP_PROP_FRAME_HEIGHT, ui->resolutionHeightSpin->value());
+        capture.set(CV_CAP_PROP_FRAME_WIDTH, ui->resolutionWidthSpin->value());
+    } else {
+        ui->resolutionHeightSpin->setValue(capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+        ui->resolutionWidthSpin->setValue(capture.get(CV_CAP_PROP_FRAME_WIDTH));
+    }
+
+    if (event) event->accept();
 }
 
 void configWindow::closeEvent(QCloseEvent *event){
@@ -472,21 +519,15 @@ void configWindow::on_deviceCombobox_activated(int index){
     int last = ui->deviceCombobox->count()-1;
     if (index == last){
         QString filename = QFileDialog::getOpenFileName(this, "Open Video", QString(), "Videos (*.avi)");
-        if (!filename.isEmpty()){
-            videoFilename = filename;
-            ui->deviceCombobox->removeItem(last);
-            ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
-            ui->deviceCombobox->setCurrentIndex(last);
-
-            ui->lengthEdit->setEnabled(false);
-            ui->timeoutStopBox->setEnabled(false);
-            capture.open(videoFilename.toStdString());
+        if (filename.isEmpty()){
+            return;
         }
-    } else {
-        ui->timeoutStopBox->setEnabled(true);
-        ui->lengthEdit->setEnabled(true);
-        capture.open(index);
+        videoFilename = filename;
+        ui->deviceCombobox->removeItem(last);
+        ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
+        ui->deviceCombobox->setCurrentIndex(last);
     }
+    showEvent(NULL);
 }
 
 void configWindow::filteringStateChanged(bool state){
@@ -601,10 +642,21 @@ void configWindow::on_maskButton_toggled(bool checked)
     ui->maskRadiusBox->setDisabled(checked);
 }
 
+void configWindow::resetDetector(){
+    if (trackingFrame.empty()){
+        capture >> trackingFrame;
+    }
+    if (ui->trackingCombobox->currentIndex() == 0){
+        detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    } else {
+        detector.reset(new DetectorColor(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    }
+}
+
 void configWindow::on_thresholdEnableBox_toggled(bool checked)
 {
     (void)checked; // silence warning about unused parameter
-    detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+    resetDetector();
     updateTrackingView();
 }
 
@@ -612,7 +664,7 @@ void configWindow::on_thresholdSlider_valueChanged(int value)
 {
     (void)value;
     if (ui->thresholdEnableBox->isChecked()){
-        detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
+        resetDetector();
         updateTrackingView();
     }
 }
@@ -620,9 +672,11 @@ void configWindow::on_thresholdSlider_valueChanged(int value)
 void configWindow::on_trackingCombobox_currentIndexChanged(int index)
 {
     ui->trackingWidget->setCurrentIndex(index);
-    if (index == 0){
-        detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
-    } else {
-        detector.reset(new DetectorColor(compileSettings(), trackingFrame.rows, trackingFrame.cols));
-    }
+    resetDetector();
+}
+
+void configWindow::on_resolutionBox_toggled(bool checked)
+{
+    ui->resolutionHeightSpin->setEnabled(checked);
+    ui->resolutionWidthSpin->setEnabled(checked);
 }

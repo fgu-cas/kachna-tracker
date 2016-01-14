@@ -3,7 +3,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <QDateTime>
-#include <qmath.h>
 
 #include "../cbw.h"
 
@@ -19,7 +18,11 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
        isLive = true;
     }
 
-    detector.reset(new DetectorThreshold(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+    if (settings->value("tracking/type").toInt() == 0){
+        detector.reset(new DetectorThreshold(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+    } else {
+        detector.reset(new DetectorColor(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+    }
 
     timer.setInterval(40);
     timer.setTimerType(Qt::PreciseTimer);
@@ -29,18 +32,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     synchInv = settings->value("output/sync_inverted").toBool();
     doShock = settings->value("output/shock").toBool();
 
-
     triggerDistance = settings->value("shock/triggerDistance").toInt();
-
-    maxRat = settings->value("tracking/maxRat").toDouble();
-    minRat = settings->value("tracking/minRat").toDouble();
-    maxRobot = settings->value("tracking/maxRobot").toDouble();
-    minRobot = settings->value("tracking/minRobot").toDouble();
-
-    // multiple_reaction = settings->value("faults/multipleReaction").toInt();
-    skip_reaction = settings->value("faults/skipReaction").toInt();
-    skip_distance = settings->value("faults/skipDistance").toInt();
-    skip_timeout = settings->value("faults/skipTimeout").toInt();
 
     /* MC library init magic */
     if (doShock || doSynch){
@@ -93,12 +85,6 @@ bool Experiment::isRunning(){
     return this->timer.isActive();
 }
 
-double Experiment::getDistance(KeyPoint a, KeyPoint b){
-    double dx = a.pt.x - b.pt.x;
-    double dy = a.pt.y - b.pt.y;
-    return qSqrt(dx*dx + dy*dy);
-}
-
 void Experiment::processFrame(){
     if (doSynch) cbDOut(0, FIRSTPORTB, synchInv ? 0 : 1);
     capFrame capframe;
@@ -112,38 +98,7 @@ void Experiment::processFrame(){
     }
     capframe.timestamp = elapsedTimer.elapsed();
 
-    std::vector<KeyPoint> keypoints = detector->detect(&frame);
-    Detector::keyPoints points;
-
-    for (unsigned i = 0; i<keypoints.size(); i++){
-       KeyPoint keypoint = keypoints[i];
-       if (keypoint.size > minRat && keypoint.size < maxRat){
-           if (skip_reaction == 1){
-               if (lastPoints.rat.size == 0 ||
-               getDistance(lastPoints.rat, keypoint) < skip_distance ||
-               ratTimer.elapsed() > skip_timeout){
-                   points.rat = keypoint;
-                   lastPoints.rat = keypoint;
-                   ratTimer.start();
-               }               } else {
-              points.rat = keypoint;
-           }
-       }
-
-       if (keypoint.size > minRobot && keypoint.size < maxRobot){
-           if (skip_reaction == 1){
-               if (lastPoints.robot.size == 0 ||
-               getDistance(lastPoints.robot, keypoint) < skip_distance ||
-               robotTimer.elapsed() > skip_timeout){
-                   points.robot = keypoint;
-                   lastPoints.robot = keypoint;
-                   robotTimer.start();
-               }
-           } else {
-              points.robot = keypoint;
-           }
-       }
-    }
+    Detector::keypointPair points = detector->find(&frame);
 
     double distance = -1;
     bool badFrame = false;
@@ -288,7 +243,7 @@ QString Experiment::getLog(bool rat){
     log += "                        //%ReinforcedSector.0 ( Radius )\r\n";
     log += "        %%END SETUP_INFORMATION\r\n";
     log += "        %%BEGIN RECORD_FORMAT\r\n";
-    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo )\r\n";
+    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo Angle)\r\n";
     log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\r\n";
     log += "                        //State indicates the Avoidance state: OutsideSector = 0, EntranceLatency = 1, Shock = 2, InterShockLatency = 3, OutsideRefractory = 4, BadSpot = 5\r\n";
     log += "                        //MotorState indicates: NoMove = 0, MoveCW = positive, MoveCCW = negative\r\n";
@@ -317,7 +272,13 @@ QString Experiment::getLog(bool rat){
         log += QString::number(frames[i].state);
         log += "      ";
         log += QString::number(frames[i].currentLevel);
-        log += "      *      *      *\r\n";
+        log += "      *      *      *      ";
+        if (rat){
+            log += QString::number(frames[i].keypoints.rat.angle);
+        } else {
+            log += QString::number(frames[i].keypoints.robot.angle);
+        }
+        log += "\r\n";
     }
 
     return log;

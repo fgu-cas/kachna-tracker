@@ -28,12 +28,14 @@ public slots:
     void rangeChanged(colorRange range);
     void setRange(colorRange range);
     void setShow(bool state);
+    void setEnabled(bool state);
 
 private:
     QLabel* title;
     QLabel* colorLabel;
     QLabel* hsvLabel;
     QPushButton* showButton;
+    QPushButton* setButton;
 
     ColorDialog* colorDialog;
 

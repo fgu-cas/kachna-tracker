@@ -19,7 +19,7 @@ ColorSelector::ColorSelector(QWidget *parent) : QWidget(parent)
     showButton->setMaximumWidth(40);
     showButton->setCheckable(true);
     connect(showButton, SIGNAL(clicked(bool)), this, SLOT(onShowButtonPressed(bool)));
-    QPushButton *setButton = new QPushButton("Set");
+    setButton = new QPushButton("Set");
     setButton->setMaximumWidth(40);
     connect(setButton, SIGNAL(pressed()), this, SLOT(onSetButtonPressed()));
 
@@ -97,4 +97,8 @@ void ColorSelector::setRange(colorRange range){
 
 void ColorSelector::setShow(bool state){
     showButton->setChecked(state);
+}
+
+void ColorSelector::setEnabled(bool state){
+    setButton->setEnabled(state);
 }

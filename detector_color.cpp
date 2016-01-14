@@ -1,9 +1,11 @@
 #include "detector_color.h"
-
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <QtMath>
+#include <math.h>
 
-DetectorColor::DetectorColor(QMap<QString, QVariant> settings, int h, int w)
+
+DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int w)
     : Detector(settings, h, w) {
     cv::SimpleBlobDetector::Params params;
     params.minDistBetweenBlobs = 10.0f;
@@ -15,20 +17,39 @@ DetectorColor::DetectorColor(QMap<QString, QVariant> settings, int h, int w)
     params.filterByArea = true;
     params.minArea = 20;
     params.maxArea = 700;
-
     detector.reset(new SimpleBlobDetector(params));
+
+    // to be replaced w/ a more sensible approach
+    ratFront.hue = settings.value("tracking/color/ratFront/hue").toInt();
+    ratFront.hue_tolerance = settings.value("tracking/color/ratFront/hue_tolerance").toInt();
+    ratFront.saturation_low = settings.value("tracking/color/ratFront/saturation_low").toInt();
+    ratFront.value_low = settings.value("tracking/color/ratFront/value_low").toInt();
+
+    ratBack.hue = settings.value("tracking/color/ratBack/hue").toInt();
+    ratBack.hue_tolerance = settings.value("tracking/color/ratBack/hue_tolerance").toInt();
+    ratBack.saturation_low = settings.value("tracking/color/ratBack/saturation_low").toInt();
+    ratBack.value_low = settings.value("tracking/color/ratBack/value_low").toInt();
+
+    robotFront.hue = settings.value("tracking/color/robotFront/hue").toInt();
+    robotFront.hue_tolerance = settings.value("tracking/color/robotFront/hue_tolerance").toInt();
+    robotFront.saturation_low = settings.value("tracking/color/robotFront/saturation_low").toInt();
+    robotFront.value_low = settings.value("tracking/color/robotFront/value_low").toInt();
+
+    robotBack.hue = settings.value("tracking/color/robotBack/hue").toInt();
+    robotBack.hue_tolerance = settings.value("tracking/color/robotBack/hue_tolerance").toInt();
+    robotBack.saturation_low = settings.value("tracking/color/robotBack/saturation_low").toInt();
+    robotBack.value_low = settings.value("tracking/color/robotBack/value_low").toInt();
 }
 
 Mat DetectorColor::process(Mat *frame){
-    Mat processedFrame;
-    frame->copyTo(processedFrame, mask);
-    cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
-    return processedFrame;
+    Mat result;
+    frame->copyTo(result, mask);
+    cv::cvtColor(result, result, CV_BGR2HSV);
+    return result;
 }
 
 Mat DetectorColor::filter(Mat *frame, colorRange range){
-    Mat in_frame, mask_result;
-    cv::cvtColor(*frame, in_frame, CV_RGB2HSV);
+    Mat mask_result;
     int hue = range.hue;
     int tol = range.hue_tolerance;
     int sat = range.saturation_low;
@@ -36,20 +57,20 @@ Mat DetectorColor::filter(Mat *frame, colorRange range){
 
     if (tol > hue){
         Mat mask_a, mask_b;
-        inRange(in_frame, Scalar(0, sat, val),
+        inRange(*frame, Scalar(0, sat, val),
                            Scalar((hue+tol)/2, 255, 255), mask_a);
-        inRange(in_frame, Scalar((360-(tol-hue))/2, sat, val),
+        inRange(*frame, Scalar((360-(tol-hue))/2, sat, val),
                            Scalar(360/2, 255, 255), mask_b);
         add(mask_a, mask_b, mask_result);
     } else if (hue + tol > 360){
         Mat mask_a, mask_b;
-        inRange(in_frame, Scalar((hue-tol)/2, sat, val),
+        inRange(*frame, Scalar((hue-tol)/2, sat, val),
                            Scalar(360/2, 255, 255), mask_a);
-        inRange(in_frame, Scalar(0, sat, val),
+        inRange(*frame, Scalar(0, sat, val),
                            Scalar((tol-(360-hue))/2, 255, 255), mask_b);
         add(mask_a, mask_b, mask_result);
     } else {
-        inRange(in_frame, Scalar((hue-tol)/2, sat, val),
+        inRange(*frame, Scalar((hue-tol)/2, sat, val),
                            Scalar((hue+tol)/2, 255, 255), mask_result);
     }
 
@@ -60,62 +81,87 @@ Mat DetectorColor::filter(Mat *frame, colorRange range){
 
 std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
     std::vector<KeyPoint> result;
-    /*
+    std::vector<KeyPoint> tmp;
 
-    if (!frame->empty() && frame->channels() == 3){
-        Mat processedFrame = process(frame);
+    if (!frame->empty()){
+        Mat workFrame = process(frame);
 
-        Mat frame_hsv;
-        cvtColor(frame, frame_hsv, CV_RGB2HSV);
+        Mat rat_front = filter(&workFrame, ratFront);
+        detector->detect(rat_front, tmp);
+        for (KeyPoint point : tmp){
+            point.class_id = RAT_FRONT;
+            result.push_back(point);
+        }
 
-        Mat mask;
+        Mat rat_back = filter(&workFrame, ratBack);
+        detector->detect(rat_back, tmp);
+        for (KeyPoint point : tmp){
+            point.class_id = RAT_BACK;
+            result.push_back(point);
+        }
 
-        int hue = ui->hueBox->value();
-        int range = ui->rangeBox->value();
-        int sat_low = ui->saturationBox->value();
-        int val_low = ui->valueBox->value();
+        Mat robot_front = filter(&workFrame, robotFront);
+        detector->detect(robot_front, tmp);
+        for (KeyPoint point : tmp){
+            point.class_id = ROBOT_FRONT;
+            result.push_back(point);
+        }
 
-        detector->detect(processedFrame, result);
+        Mat robot_back = filter(&workFrame, robotBack);
+        detector->detect(robot_back, tmp);
+        for (KeyPoint point : tmp){
+            point.class_id = ROBOT_BACK;
+            result.push_back(point);
+        }
     }
 
     return result;
 }
 
+Detector::keypointPair DetectorColor::find(Mat *frame){
+    keypointPair result;
 
+    std::vector<KeyPoint> points = detect(frame);
 
+    KeyPoint rat_front;
+    KeyPoint rat_back;
+    KeyPoint robot_front;
+    KeyPoint robot_back;
 
-        if (range > hue){
-            Mat mask_a, mask_b;
-            inRange(frame_hsv, Scalar(0, sat_low, val_low),
-                               Scalar((hue+range)/2, 255, 255), mask_a);
-            inRange(frame_hsv, Scalar((360-(range-hue))/2, sat_low, val_low),
-                               Scalar(360/2, 255, 255), mask_b);
-            add(mask_a, mask_b, mask);
-        } else if (hue + range > 360){
-            Mat mask_a, mask_b;
-            inRange(frame_hsv, Scalar((hue-range)/2, sat_low, val_low),
-                               Scalar(360/2, 255, 255), mask_a);
-            inRange(frame_hsv, Scalar(0, sat_low, val_low),
-                               Scalar((range-(360-hue))/2, 255, 255), mask_b);
-            add(mask_a, mask_b, mask);
-        } else {
-            inRange(frame_hsv, Scalar((hue-range)/2, sat_low, val_low),
-                               Scalar((hue+range)/2, 255, 255), mask);
+    for (KeyPoint point : points){
+        switch (point.class_id){
+            case RAT_FRONT:
+                rat_front = point;
+                break;
+            case RAT_BACK:
+                rat_back = point;
+                break;
+           case ROBOT_FRONT:
+                robot_front = point;
+                break;
+           case ROBOT_BACK:
+                robot_back = point;
+                break;
+           default:
+                break;
         }
-
-        frame.copyTo(displayFrame, mask);
-    } else {
-        displayFrame = frame;
     }
 
-    QPixmap pixmap = QPixmap::fromImage(QImage((uchar*) displayFrame.data,
-                                               displayFrame.cols,
-                                               displayFrame.rows,
-                                               displayFrame.step,
-                                               QImage::Format_RGB888));
+    if (rat_front.size > 0 && rat_back.size > 0){
+        result.rat.pt.x = (rat_front.pt.x + rat_back.pt.x) / 2;
+        result.rat.pt.y = (rat_front.pt.y + rat_back.pt.y) / 2;
+        result.rat.angle = qRadiansToDegrees(qAtan2(rat_back.pt.y - rat_front.pt.y,
+                                             rat_back.pt.x - rat_front.pt.x));
+        result.rat.angle = fmod(result.rat.angle + 270, 360);
+    }
 
+    if (robot_front.size > 0 && robot_back.size > 0){
+        result.robot.pt.x = (robot_front.pt.x + robot_back.pt.x) / 2;
+        result.robot.pt.y = (robot_front.pt.y + robot_back.pt.y) / 2;
+        result.robot.angle = qRadiansToDegrees(qAtan2(robot_back.pt.y - robot_front.pt.y,
+                                   robot_back.pt.x - robot_front.pt.x));
+        result.robot.angle = fmod(result.robot.angle + 270, 360);
+    }
 
-    ui->label->setPixmap(pixmap);
-    */
     return result;
 }

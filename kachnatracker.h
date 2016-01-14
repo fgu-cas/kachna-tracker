@@ -10,7 +10,7 @@
 #include "detector.h"
 class Experiment;
 
-#define MAJOR_VERSION 2
+#define MAJOR_VERSION 3
 #define MINOR_VERSION 0
 
 namespace Ui {
@@ -68,7 +68,7 @@ private:
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
     QPixmap pixmap;
-    Detector::keyPoints lastKeypoints;
+    Detector::keypointPair lastKeypoints;
 
     bool dirty = false;
 };
