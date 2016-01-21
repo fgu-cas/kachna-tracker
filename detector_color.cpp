@@ -19,6 +19,9 @@ DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int
     params.maxArea = 700;
     detector.reset(new SimpleBlobDetector(params));
 
+    if (maskRect.x + maskRect.width > w) maskRect.width = w - maskRect.x;
+    if (maskRect.y + maskRect.height > h) maskRect.height = h - maskRect.y;
+
     // to be replaced w/ a more sensible approach
     ratFront.hue = settings.value("tracking/color/ratFront/hue").toInt();
     ratFront.hue_tolerance = settings.value("tracking/color/ratFront/hue_tolerance").toInt();
@@ -44,6 +47,7 @@ DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int
 Mat DetectorColor::process(Mat *frame){
     Mat result;
     frame->copyTo(result, mask);
+    result = result(maskRect);
     cv::cvtColor(result, result, CV_BGR2HSV);
     return result;
 }
@@ -113,6 +117,11 @@ std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
             point.class_id = ROBOT_BACK;
             result.push_back(point);
         }
+    }
+
+    for (KeyPoint& point : result){
+        point.pt.x += maskRect.x;
+        point.pt.y += maskRect.y;
     }
 
     return result;

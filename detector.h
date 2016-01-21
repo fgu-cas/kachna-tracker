@@ -25,6 +25,7 @@ public:
 
 protected:
     Mat mask;
+    cv::Rect maskRect;
 };
 
 
