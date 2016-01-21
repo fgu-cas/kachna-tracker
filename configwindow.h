@@ -75,6 +75,8 @@ private slots:
 
     void on_resolutionBox_toggled(bool checked);
 
+    void captureResolutionChanged();
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;

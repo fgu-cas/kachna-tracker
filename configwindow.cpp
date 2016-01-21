@@ -58,7 +58,8 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->robotFrontSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
     connect(ui->robotBackSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
 
-
+    connect(ui->resolutionHeightSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
+    connect(ui->resolutionWidthSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
 
     refreshDevices();
 }
@@ -679,4 +680,14 @@ void configWindow::on_resolutionBox_toggled(bool checked)
 {
     ui->resolutionHeightSpin->setEnabled(checked);
     ui->resolutionWidthSpin->setEnabled(checked);
+
+    if (!checked){
+        ui->resolutionHeightSpin->setValue(capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+        ui->resolutionWidthSpin->setValue(capture.get(CV_CAP_PROP_FRAME_WIDTH));
+    }
+}
+
+void configWindow::captureResolutionChanged(){
+    capture.set(CV_CAP_PROP_FRAME_HEIGHT, ui->resolutionHeightSpin->value());
+    capture.set(CV_CAP_PROP_FRAME_WIDTH, ui->resolutionWidthSpin->value());
 }
