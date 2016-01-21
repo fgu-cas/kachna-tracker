@@ -196,9 +196,17 @@ void kachnatracker::saveTracks(){
 void kachnatracker::on_startButton_clicked(){
 
     if (updateTimer.isActive()){
-        updateTimer.stop();
-        experiment->stop();
-        saveTracks();
+        QMessageBox reallyDialog;
+        reallyDialog.setIcon(QMessageBox::Warning);
+        reallyDialog.setModal(true);
+        reallyDialog.setText("Wait! There's an unfinished experiment in progress.");
+        reallyDialog.setInformativeText("Are you sure you want to stop it?");
+        reallyDialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        if (reallyDialog.exec() == QMessageBox::Yes){
+            updateTimer.stop();
+            experiment->stop();
+            saveTracks();
+        }
     } else {
         VideoCapture capture;
         int deviceIndex = currentSettings.value("video/device").toInt();
