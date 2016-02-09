@@ -1,12 +1,11 @@
-#include "colordialog.h"
+#include "pointdialog.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
-#include <QSpinBox>
 
-ColorDialog::ColorDialog(QWidget *parent) : QDialog(parent)
+PointDialog::PointDialog(QWidget *parent) : QDialog(parent)
 {
     QHBoxLayout *hueLayout = new QHBoxLayout();
     hueSlider = new QSlider(Qt::Horizontal);
@@ -20,6 +19,7 @@ ColorDialog::ColorDialog(QWidget *parent) : QDialog(parent)
     hueLayout->addWidget(hueSlider);
     hueLayout->addWidget(hueSpinbox);
 
+    /*
     QHBoxLayout *hueTolLayout = new QHBoxLayout();
     hueTolSlider = new QSlider(Qt::Horizontal);
     QSpinBox *hueTolSpinbox = new QSpinBox();
@@ -32,36 +32,26 @@ ColorDialog::ColorDialog(QWidget *parent) : QDialog(parent)
     connect(hueTolSlider, SIGNAL(valueChanged(int)), this, SLOT(onControlsChanged()));
     hueTolLayout->addWidget(hueTolSlider);
     hueTolLayout->addWidget(hueTolSpinbox);
+    */
 
-    QHBoxLayout *satLayout = new QHBoxLayout();
-    satSlider = new QSlider(Qt::Horizontal);
-    QSpinBox *satSpinbox = new QSpinBox();
-    satSlider->setRange(0,255);
-    satSpinbox->setRange(0,255);
-    satSpinbox->setSuffix("-255");
-    connect(satSlider, SIGNAL(valueChanged(int)), satSpinbox, SLOT(setValue(int)));
-    connect(satSpinbox, SIGNAL(valueChanged(int)), satSlider, SLOT(setValue(int)));
-    connect(satSlider, SIGNAL(valueChanged(int)), this, SLOT(onControlsChanged()));
-    satLayout->addWidget(satSlider);
-    satLayout->addWidget(satSpinbox);
+    sizeCheckbox = new QCheckBox("Specific size limits", this);
+    connect(sizeCheckbox, SIGNAL(toggled(bool)), this, SLOT(limitsToggled(bool)));
 
-    QHBoxLayout *valLayout = new QHBoxLayout();
-    valSlider = new QSlider(Qt::Horizontal);
-    QSpinBox *valSpinbox = new QSpinBox();
-    valSlider->setRange(0,255);
-    valSpinbox->setRange(0,255);
-    valSpinbox->setSuffix("-255");
-    connect(valSlider, SIGNAL(valueChanged(int)), valSpinbox, SLOT(setValue(int)));
-    connect(valSpinbox, SIGNAL(valueChanged(int)), valSlider, SLOT(setValue(int)));
-    connect(valSlider, SIGNAL(valueChanged(int)), this, SLOT(onControlsChanged()));
-    valLayout->addWidget(valSlider);
-    valLayout->addWidget(valSpinbox);
+    minSpinbox = new QSpinBox();
+    minSpinbox->setRange(0,255);
+    minSpinbox->setEnabled(false);
+    connect(minSpinbox, SIGNAL(valueChanged(int)), this, SLOT(onControlsChanged()));
+
+    maxSpinbox = new QSpinBox();
+    maxSpinbox->setRange(0,255);
+    maxSpinbox->setEnabled(false);
+    connect(maxSpinbox, SIGNAL(valueChanged(int)), this, SLOT(onControlsChanged()));
 
     QFormLayout *formLayout = new QFormLayout;
     formLayout->addRow("Hue value", hueLayout);
-    formLayout->addRow("Hue tolerance", hueTolLayout);
-    formLayout->addRow("Saturation range", satLayout);
-    formLayout->addRow("Value range", valLayout);
+    formLayout->addWidget(sizeCheckbox);
+    formLayout->addRow("Minimum size", minSpinbox);
+    formLayout->addRow("Maximum size", maxSpinbox);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     QPushButton *revertButton = new QPushButton("Revert");
@@ -78,30 +68,38 @@ ColorDialog::ColorDialog(QWidget *parent) : QDialog(parent)
     setLayout(layout);
 }
 
-colorRange ColorDialog::getRange(){
-    colorRange result;
+pointRange PointDialog::getRange(){
+    pointRange result;
     result.hue = hueSlider->value();
-    result.hue_tolerance = hueTolSlider->value();
-    result.saturation_low = satSlider->value();
-    result.value_low = valSlider->value();
+    if (sizeCheckbox->isChecked()){
+        result.minimum_size = minSpinbox->value();
+        result.maximum_size = maxSpinbox->value();
+    } else {
+        result.minimum_size = -1;
+        result.maximum_size = -1;
+    }
     return result;
 }
 
-void ColorDialog::setRange(colorRange range){
+void PointDialog::setRange(pointRange range){
     hueSlider->setValue(range.hue);
-    hueTolSlider->setValue(range.hue_tolerance );
-    satSlider->setValue(range.saturation_low);
-    valSlider->setValue(range.value_low);
+    minSpinbox->setValue(range.minimum_size);
+    maxSpinbox->setValue(range.maximum_size);
 }
 
-void ColorDialog::setTitle(QString title){
-    setWindowTitle(QString("%1 - Color Selection").arg(title));
+void PointDialog::setTitle(QString title){
+    setWindowTitle(QString("%1 - Selection").arg(title));
 }
 
-void ColorDialog::onControlsChanged(){
+void PointDialog::onControlsChanged(){
     emit rangeChanged(getRange());
 }
 
-void ColorDialog::onRevertButtonPressed(){
+void PointDialog::onRevertButtonPressed(){
 
+}
+
+void PointDialog::limitsToggled(bool state){
+    minSpinbox->setEnabled(state);
+    maxSpinbox->setEnabled(state);
 }

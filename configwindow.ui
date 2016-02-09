@@ -20,7 +20,7 @@
    <string>Configuration Window</string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>2</number>
   </property>
   <widget class="QWidget" name="general_tab">
    <attribute name="title">
@@ -680,7 +680,7 @@
       <item>
        <widget class="QStackedWidget" name="trackingWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -740,7 +740,7 @@
           <item>
            <widget class="QCheckBox" name="thresholdEnableBox">
             <property name="text">
-             <string>Show thresholded image</string>
+             <string>Show processed image</string>
             </property>
            </widget>
           </item>
@@ -985,16 +985,184 @@
         <widget class="QWidget" name="page_2">
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <widget class="ColorSelector" name="ratFrontSelector" native="true"/>
+           <layout class="QFormLayout" name="formLayout_5">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Saturation threshold</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item>
+               <widget class="QSlider" name="satSlider">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="satBox">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Value threshold</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_16">
+              <item>
+               <widget class="QSlider" name="valSlider">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="valBox">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="ColorSelector" name="ratBackSelector" native="true"/>
+           <widget class="QCheckBox" name="colorthresholdBox">
+            <property name="text">
+             <string>Show processed image</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="ColorSelector" name="robotFrontSelector" native="true"/>
+           <widget class="Line" name="line_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="ColorSelector" name="robotBackSelector" native="true"/>
+           <widget class="QLabel" name="label_37">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Global limits&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_6">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>Minimum size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_17">
+              <item>
+               <widget class="QDoubleSpinBox" name="globminBox">
+                <property name="maximum">
+                 <double>25.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_38">
+              <property name="text">
+               <string>Maximum size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <item>
+               <widget class="QDoubleSpinBox" name="globmaxBox">
+                <property name="maximum">
+                 <double>25.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QLabel" name="label_39">
+              <property name="text">
+               <string>Hue tolerance</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="hueToleranceSlider">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="hueToleranceBox">
+              <property name="suffix">
+               <string>°</string>
+              </property>
+              <property name="prefix">
+               <string>± </string>
+              </property>
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_11">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="PointSelector" name="ratFrontSelector" native="true"/>
+          </item>
+          <item>
+           <widget class="PointSelector" name="ratBackSelector" native="true"/>
+          </item>
+          <item>
+           <widget class="PointSelector" name="robotFrontSelector" native="true"/>
+          </item>
+          <item>
+           <widget class="PointSelector" name="robotBackSelector" native="true"/>
           </item>
           <item>
            <spacer name="verticalSpacer_5">
@@ -1051,17 +1219,198 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>PointSelector</class>
+   <extends>QWidget</extends>
+   <header>pointselector.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>MaskLabel</class>
    <extends>QLabel</extends>
    <header>masklabel.h</header>
   </customwidget>
-  <customwidget>
-   <class>ColorSelector</class>
-   <extends>QWidget</extends>
-   <header>colorselector.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>satSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>satBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>253</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>satBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>satSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>181</x>
+     <y>91</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>valSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>valBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>207</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>valBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>valSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>246</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>valSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>configWindow</receiver>
+   <slot>trackingParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>satSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>configWindow</receiver>
+   <slot>trackingParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresholdSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>configWindow</receiver>
+   <slot>trackingParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresholdEnableBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>configWindow</receiver>
+   <slot>updateTrackingView()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorthresholdBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>configWindow</receiver>
+   <slot>updateTrackingView()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>48</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hueToleranceBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>hueToleranceSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>246</x>
+     <y>255</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>183</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hueToleranceSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>hueToleranceBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>123</x>
+     <y>255</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>245</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateTrackingView()</slot>
+  <slot>trackingParamsChanged()</slot>
+ </slots>
 </ui>

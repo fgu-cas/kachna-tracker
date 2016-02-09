@@ -4,6 +4,7 @@
 #include <QtMath>
 #include <math.h>
 
+#include <QDebug>
 
 DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int w)
     : Detector(settings, h, w) {
@@ -22,26 +23,29 @@ DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int
     if (maskRect.x + maskRect.width > w) maskRect.width = w - maskRect.x;
     if (maskRect.y + maskRect.height > h) maskRect.height = h - maskRect.y;
 
+    min = settings.value("tracking/color/global_minimum_size").toDouble();
+    max = settings.value("tracking/color/global_maximum_size").toDouble();
+
+    hue_tol = settings.value("tracking/color/hue_tolerance").toInt();
+    sat = settings.value("tracking/color/saturation_threshold").toInt();
+    val = settings.value("tracking/color/value_threshold").toInt();
+
     // to be replaced w/ a more sensible approach
     ratFront.hue = settings.value("tracking/color/ratFront/hue").toInt();
-    ratFront.hue_tolerance = settings.value("tracking/color/ratFront/hue_tolerance").toInt();
-    ratFront.saturation_low = settings.value("tracking/color/ratFront/saturation_low").toInt();
-    ratFront.value_low = settings.value("tracking/color/ratFront/value_low").toInt();
+    ratFront.minimum_size = settings.value("tracking/color/ratFront/minimum_size").toInt();
+    ratFront.maximum_size = settings.value("tracking/color/ratFront/maximum_size").toInt();
 
     ratBack.hue = settings.value("tracking/color/ratBack/hue").toInt();
-    ratBack.hue_tolerance = settings.value("tracking/color/ratBack/hue_tolerance").toInt();
-    ratBack.saturation_low = settings.value("tracking/color/ratBack/saturation_low").toInt();
-    ratBack.value_low = settings.value("tracking/color/ratBack/value_low").toInt();
+    ratBack.minimum_size = settings.value("tracking/color/ratBack/minimum_size").toInt();
+    ratBack.maximum_size = settings.value("tracking/color/ratBack/maximum_size").toInt();
 
     robotFront.hue = settings.value("tracking/color/robotFront/hue").toInt();
-    robotFront.hue_tolerance = settings.value("tracking/color/robotFront/hue_tolerance").toInt();
-    robotFront.saturation_low = settings.value("tracking/color/robotFront/saturation_low").toInt();
-    robotFront.value_low = settings.value("tracking/color/robotFront/value_low").toInt();
+    robotFront.minimum_size = settings.value("tracking/color/robotFront/minimum_size").toInt();
+    robotFront.maximum_size = settings.value("tracking/color/robotFront/maximum_size").toInt();
 
     robotBack.hue = settings.value("tracking/color/robotBack/hue").toInt();
-    robotBack.hue_tolerance = settings.value("tracking/color/robotBack/hue_tolerance").toInt();
-    robotBack.saturation_low = settings.value("tracking/color/robotBack/saturation_low").toInt();
-    robotBack.value_low = settings.value("tracking/color/robotBack/value_low").toInt();
+    robotBack.minimum_size = settings.value("tracking/color/robotBack/minimum_size").toInt();
+    robotBack.maximum_size = settings.value("tracking/color/robotBack/maximum_size").toInt();
 }
 
 Mat DetectorColor::process(Mat *frame){
@@ -52,76 +56,95 @@ Mat DetectorColor::process(Mat *frame){
     return result;
 }
 
-Mat DetectorColor::filter(Mat *frame, colorRange range){
-    Mat mask_result;
-    int hue = range.hue;
-    int tol = range.hue_tolerance;
-    int sat = range.saturation_low;
-    int val = range.value_low;
-
-    if (tol > hue){
-        Mat mask_a, mask_b;
-        inRange(*frame, Scalar(0, sat, val),
-                           Scalar((hue+tol)/2, 255, 255), mask_a);
-        inRange(*frame, Scalar((360-(tol-hue))/2, sat, val),
-                           Scalar(360/2, 255, 255), mask_b);
-        add(mask_a, mask_b, mask_result);
-    } else if (hue + tol > 360){
-        Mat mask_a, mask_b;
-        inRange(*frame, Scalar((hue-tol)/2, sat, val),
-                           Scalar(360/2, 255, 255), mask_a);
-        inRange(*frame, Scalar(0, sat, val),
-                           Scalar((tol-(360-hue))/2, 255, 255), mask_b);
-        add(mask_a, mask_b, mask_result);
-    } else {
-        inRange(*frame, Scalar((hue-tol)/2, sat, val),
-                           Scalar((hue+tol)/2, 255, 255), mask_result);
-    }
-
-    Mat result;
-    frame->copyTo(result, mask_result);
-    return result;
+Mat DetectorColor::analyze(Mat *frame){
+    Mat threshMask;
+    inRange(*frame, Scalar(0, sat, val),
+                       Scalar(255, 255, 255), threshMask);
+    return threshMask;
 }
 
 std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
     std::vector<KeyPoint> result;
-    std::vector<KeyPoint> tmp;
 
     if (!frame->empty()){
-        Mat workFrame = process(frame);
+        Mat HSVFrame = process(frame);
+        Mat binarizedFrame = analyze(&HSVFrame);
 
-        Mat rat_front = filter(&workFrame, ratFront);
-        detector->detect(rat_front, tmp);
-        for (KeyPoint point : tmp){
-            point.class_id = RAT_FRONT;
-            result.push_back(point);
+        std::vector< std::vector<Point> > contours;
+        findContours(binarizedFrame, contours, RETR_LIST, CHAIN_APPROX_NONE);
+
+        for (uint i = 0; i < contours.size();  i++){
+            Moments moms = moments(Mat(contours[i]));
+            if (moms.m00 == 0) continue;
+            KeyPoint point;
+            point.pt.x = (moms.m10 / moms.m00) + maskRect.x;
+            point.pt.y = (moms.m01 / moms.m00) + maskRect.y;
+            point.size = std::sqrt(moms.m00/CV_PI);
+            if (point.size > min && point.size < max){
+                Rect bounding = boundingRect(contours[i]);
+                Mat tmp_mat = HSVFrame(bounding);
+                /*
+                Mat tmp_mask = binarizedFrame(bounding);
+                Mat tmp_mat;
+                tmp__mat.copyTo(tmp_mat, tmp_mask);
+                */
+                uint8_t* pixels = (uint8_t*)tmp_mat.data;
+                int sum = 0;
+                int cnt = 0;
+                int dbgcnt = 0;
+                for (int i = 0; i < tmp_mat.rows; i++){
+                    for (int j = 0; j < tmp_mat.cols; j++){
+                        dbgcnt++;
+                        int h = pixels[i*tmp_mat.cols*3 + j*3 + 0];
+                        int s = pixels[i*tmp_mat.cols*3 + j*3 + 1];
+                        int v = pixels[i*tmp_mat.cols*3 + j*3 + 2];
+                        if (s >= sat && v >= val){
+                            cnt++;
+                            sum += h*2;
+                        }
+                    }
+                }
+                if (cnt == 0){
+                    point.class_id = -1;
+                    result.push_back(point);
+                } else {
+                    int average = sum / cnt;
+                    int distance;
+
+                    distance = abs(ratFront.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = RAT_FRONT;
+                        result.push_back(point);
+                        continue;
+                    }
+                    distance = abs(ratBack.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = RAT_BACK;
+                        result.push_back(point);
+                        continue;
+                    }
+                    distance = abs(robotFront.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = ROBOT_FRONT;
+                        result.push_back(point);
+                        continue;
+                    }
+                    distance = abs(robotBack.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = ROBOT_BACK;
+                        result.push_back(point);
+                        continue;
+                    }
+
+                    point.class_id = -1;
+                    result.push_back(point);
+                }
+            }
         }
-
-        Mat rat_back = filter(&workFrame, ratBack);
-        detector->detect(rat_back, tmp);
-        for (KeyPoint point : tmp){
-            point.class_id = RAT_BACK;
-            result.push_back(point);
-        }
-
-        Mat robot_front = filter(&workFrame, robotFront);
-        detector->detect(robot_front, tmp);
-        for (KeyPoint point : tmp){
-            point.class_id = ROBOT_FRONT;
-            result.push_back(point);
-        }
-
-        Mat robot_back = filter(&workFrame, robotBack);
-        detector->detect(robot_back, tmp);
-        for (KeyPoint point : tmp){
-            point.class_id = ROBOT_BACK;
-            result.push_back(point);
-        }
-    }
-
-    for (KeyPoint& point : result){
-        point.pt.x += maskRect.x;
-        point.pt.y += maskRect.y;
     }
 
     return result;

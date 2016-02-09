@@ -12,12 +12,10 @@
 #include <opencv2/core/core.hpp>
 
 
-struct colorRange {
+struct pointRange {
     int hue = 0;
-    int hue_tolerance = 0;
-
-    int saturation_low = 0;
-    int value_low = 0;
+    double minimum_size = -1;
+    double maximum_size = -1;
 };
 
 using namespace cv;
@@ -28,7 +26,7 @@ public:
     DetectorColor(const QMap<QString, QVariant> &settings, int h, int w);
 
     Mat process(Mat *frame);
-    Mat filter(Mat* frame, colorRange range);
+    Mat analyze(Mat *frame);
     std::vector<KeyPoint> detect(Mat *frame);
     keypointPair find(Mat *frame);
 
@@ -41,10 +39,13 @@ public:
 private:
     std::unique_ptr<SimpleBlobDetector> detector;
 
-    colorRange ratFront;
-    colorRange ratBack;
-    colorRange robotFront;
-    colorRange robotBack;
+    double min, max;
+    int hue_tol, val, sat;
+
+    pointRange ratFront;
+    pointRange ratBack;
+    pointRange robotFront;
+    pointRange robotBack;
 };
 
 #endif // DETECTORCOLOR_H

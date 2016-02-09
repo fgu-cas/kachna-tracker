@@ -1,24 +1,21 @@
-#include "colorselector.h"
+#include "pointselector.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QColor>
 #include <QPixmap>
 
+#include <QDebug>
 
 
-ColorSelector::ColorSelector(QWidget *parent) : QWidget(parent)
+
+PointSelector::PointSelector(QWidget *parent) : QWidget(parent)
 {
     title = new QLabel();
     title->setTextFormat(Qt::RichText);
     colorLabel = new QLabel;
     hsvLabel = new QLabel();
 
-    showButton = new QPushButton("Show");
-    showButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    showButton->setMaximumWidth(40);
-    showButton->setCheckable(true);
-    connect(showButton, SIGNAL(clicked(bool)), this, SLOT(onShowButtonPressed(bool)));
     setButton = new QPushButton("Set");
     setButton->setMaximumWidth(40);
     connect(setButton, SIGNAL(pressed()), this, SLOT(onSetButtonPressed()));
@@ -36,7 +33,6 @@ ColorSelector::ColorSelector(QWidget *parent) : QWidget(parent)
 
     bot_layout->addWidget(hsvLabel);
     bot_layout->addStretch();
-    bot_layout->addWidget(showButton);
     bot_layout->addWidget(setButton);
 
     glob_layout->addLayout(top_layout);
@@ -44,34 +40,38 @@ ColorSelector::ColorSelector(QWidget *parent) : QWidget(parent)
 
     setLayout(glob_layout);
 
-    colorDialog = new ColorDialog(this);
-    connect(colorDialog, SIGNAL(rangeChanged(colorRange)), this, SLOT(rangeChanged(colorRange)));
+    colorDialog = new PointDialog(this);
+    connect(colorDialog, SIGNAL(rangeChanged(pointRange)), this, SLOT(rangeChanged(pointRange)));
 
     rangeChanged(range);
 }
 
-void ColorSelector::setTitle(QString title){
+void PointSelector::setTitle(QString title){
    this->title->setText(QString("<b>%1</b>").arg(title));
    colorDialog->setTitle(title);
 }
 
-colorRange ColorSelector::getColorRange(){
+pointRange PointSelector::getColorRange(){
     return range;
 }
 
-void ColorSelector::rangeChanged(colorRange range){
+void PointSelector::rangeChanged(pointRange range){
     QPixmap range_p(40, 20);
     QColor range_c;
-    QString range_s("H: %1° (+/- %2°), S: %3->, V: %4->");
+    QString range_s("Hue: %1°, Size: %3-%4");
 
 
     range_c.setHsv(range.hue, 255, 255);
     range_p.fill(range_c);
 
     range_s = range_s.arg(range.hue, 3, 10, QChar('0'));
-    range_s = range_s.arg(range.hue_tolerance, 3, 10, QChar('0'));
-    range_s = range_s.arg(range.saturation_low, 3, 10, QChar('0'));
-    range_s = range_s.arg(range.value_low, 3, 10, QChar('0'));
+    if (range.minimum_size == -1){
+        range_s = range_s.arg("-");
+        range_s = range_s.arg("-");
+    } else {
+        range_s = range_s.arg(range.minimum_size);
+        range_s = range_s.arg(range.maximum_size);
+    }
 
     hsvLabel->setText(range_s);
     colorLabel->setPixmap(range_p);
@@ -80,25 +80,17 @@ void ColorSelector::rangeChanged(colorRange range){
     emit colorRangeChanged(range);
 }
 
-void ColorSelector::onShowButtonPressed(bool state){
-    emit showStateChanged(state);
-}
-
-void ColorSelector::onSetButtonPressed(){
+void PointSelector::onSetButtonPressed(){
    colorDialog->show();
    colorDialog->raise();
    colorDialog->activateWindow();
 }
 
-void ColorSelector::setRange(colorRange range){
+void PointSelector::setRange(pointRange range){
     rangeChanged(range);
     colorDialog->setRange(range);
 }
 
-void ColorSelector::setShow(bool state){
-    showButton->setChecked(state);
-}
-
-void ColorSelector::setEnabled(bool state){
+void PointSelector::setEnabled(bool state){
     setButton->setEnabled(state);
 }

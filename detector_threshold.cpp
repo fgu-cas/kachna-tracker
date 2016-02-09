@@ -35,9 +35,14 @@ DetectorThreshold::DetectorThreshold(const QMap<QString, QVariant> &settings, in
 Mat DetectorThreshold::process(Mat *frame){
     Mat processedFrame;
     frame->copyTo(processedFrame, mask);
-    cv::cvtColor(processedFrame, processedFrame, CV_RGB2GRAY);
-    threshold(processedFrame, processedFrame, img_threshold, 255, THRESH_BINARY);
+    cv::cvtColor(processedFrame, processedFrame, CV_BGR2GRAY);
     return processedFrame;
+}
+
+Mat DetectorThreshold::analyze(Mat *frame){
+    Mat result;
+    threshold(*frame, result, img_threshold, 255, THRESH_BINARY);
+    return result;
 }
 
 std::vector<KeyPoint> DetectorThreshold::detect(Mat *frame){
@@ -45,6 +50,7 @@ std::vector<KeyPoint> DetectorThreshold::detect(Mat *frame){
 
     if (!frame->empty() && frame->channels() == 3){
         Mat workFrame = process(frame);
+        workFrame = analyze(&workFrame);
         detector->detect(workFrame, result);
     }
 

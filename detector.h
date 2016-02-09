@@ -20,6 +20,7 @@ public:
     struct keypointPair { KeyPoint rat; KeyPoint robot; };
 
     virtual Mat process(Mat *frame) = 0;
+    virtual Mat analyze(Mat *frame) = 0;
     virtual keypointPair find(Mat *frame) = 0;
     virtual std::vector<KeyPoint> detect(Mat *frame) = 0;
 

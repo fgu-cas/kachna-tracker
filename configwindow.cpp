@@ -39,7 +39,7 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->videoLabel, SIGNAL(posChangedY(int)), ui->maskYBox, SLOT(setValue(int)));
     connect(ui->videoLabel, SIGNAL(radiusChanged(int)), ui->maskRadiusBox, SLOT(setValue(int)));
 
-    connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(refreshTracking()));
+    connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(trackFrame()));
 
     connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
 
@@ -47,16 +47,6 @@ configWindow::configWindow(QWidget *parent) :
     ui->ratBackSelector->setTitle("Rat Back");
     ui->robotFrontSelector->setTitle("Robot Front");
     ui->robotBackSelector->setTitle("Robot Back");
-
-    connect(ui->ratFrontSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
-    connect(ui->ratBackSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
-    connect(ui->robotFrontSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
-    connect(ui->robotBackSelector, SIGNAL(showStateChanged(bool)), this, SLOT(filteringStateChanged(bool)));
-
-    connect(ui->ratFrontSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
-    connect(ui->ratBackSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
-    connect(ui->robotFrontSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
-    connect(ui->robotBackSelector, SIGNAL(colorRangeChanged(colorRange)), this, SLOT(filterRangeChanged(colorRange)));
 
     connect(ui->resolutionHeightSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
     connect(ui->resolutionWidthSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
@@ -113,33 +103,35 @@ void configWindow::load(Settings settings)
     ui->robotMinSize->setValue(settings.value("tracking/threshold/minRobot").toDouble());
     ui->robotMaxSize->setValue(settings.value("tracking/threshold/maxRobot").toDouble());
 
-    //Forgive me.
-    colorRange ratFrontRange;
+    ui->globminBox->setValue(settings.value("tracking/color/global_minimum_size").toDouble());
+    ui->globmaxBox->setValue(settings.value("tracking/color/global_maximum_size").toDouble());
+    ui->hueToleranceSlider->setValue(settings.value("tracking/color/hue_tolerance").toInt());
+
+    ui->valSlider->setValue(settings.value("tracking/color/value_threshold").toInt());
+    ui->satSlider->setValue(settings.value("tracking/color/saturation_threshold").toInt());
+
+    pointRange ratFrontRange;
     ratFrontRange.hue = settings.value("tracking/color/ratFront/hue").toInt();
-    ratFrontRange.hue_tolerance = settings.value("tracking/color/ratFront/hue_tolerance").toInt();
-    ratFrontRange.saturation_low = settings.value("tracking/color/ratFront/saturation_low").toInt();
-    ratFrontRange.value_low = settings.value("tracking/color/ratFront/value_low").toInt();
+    ratFrontRange.minimum_size = settings.value("tracking/color/ratFront/minimum_size").toDouble();
+    ratFrontRange.maximum_size = settings.value("tracking/color/ratFront/maximum_size").toDouble();
     ui->ratFrontSelector->setRange(ratFrontRange);
 
-    colorRange ratBackRange;
+    pointRange ratBackRange;
     ratBackRange.hue = settings.value("tracking/color/ratBack/hue").toInt();
-    ratBackRange.hue_tolerance = settings.value("tracking/color/ratBack/hue_tolerance").toInt();
-    ratBackRange.saturation_low = settings.value("tracking/color/ratBack/saturation_low").toInt();
-    ratBackRange.value_low = settings.value("tracking/color/ratBack/value_low").toInt();
+    ratBackRange.minimum_size = settings.value("tracking/color/ratBack/minimum_size").toDouble();
+    ratBackRange.maximum_size = settings.value("tracking/color/ratBack/maximum_size").toDouble();
     ui->ratBackSelector->setRange(ratBackRange);
 
-    colorRange robotFrontRange;
+    pointRange robotFrontRange;
     robotFrontRange.hue = settings.value("tracking/color/robotFront/hue").toInt();
-    robotFrontRange.hue_tolerance = settings.value("tracking/color/robotFront/hue_tolerance").toInt();
-    robotFrontRange.saturation_low = settings.value("tracking/color/robotFront/saturation_low").toInt();
-    robotFrontRange.value_low = settings.value("tracking/color/robotFront/value_low").toInt();
+    robotFrontRange.minimum_size = settings.value("tracking/color/robotFront/minimum_size").toDouble();
+    robotFrontRange.maximum_size = settings.value("tracking/color/robotFront/maximum_size").toDouble();
     ui->robotFrontSelector->setRange(robotFrontRange);
 
-    colorRange robotBackRange;
+    pointRange robotBackRange;
     robotBackRange.hue = settings.value("tracking/color/robotBack/hue").toInt();
-    robotBackRange.hue_tolerance = settings.value("tracking/color/robotBack/hue_tolerance").toInt();
-    robotBackRange.saturation_low = settings.value("tracking/color/robotBack/saturation_low").toInt();
-    robotBackRange.value_low = settings.value("tracking/color/robotBack/value_low").toInt();
+    robotBackRange.minimum_size = settings.value("tracking/color/robotBack/minimum_size").toDouble();
+    robotBackRange.maximum_size = settings.value("tracking/color/robotBack/maximum_size").toDouble();
     ui->robotBackSelector->setRange(robotBackRange);
 
     ui->synchroBox->setChecked(settings.value("output/sync_enabled").toBool());
@@ -207,29 +199,32 @@ Settings configWindow::compileSettings()
     settings.insert("tracking/threshold/minRobot", ui->robotMinSize->value());
     settings.insert("tracking/threshold/maxRobot", ui->robotMaxSize->value());
 
-    colorRange ratFrontRange = ui->ratFrontSelector->getColorRange();
+    settings.insert("tracking/color/global_minimum_size", ui->globminBox->value());
+    settings.insert("tracking/color/global_maximum_size", ui->globmaxBox->value());
+    settings.insert("tracking/color/hue_tolerance", ui->hueToleranceSlider->value());
+
+    settings.insert("tracking/color/saturation_threshold", ui->satSlider->value());
+    settings.insert("tracking/color/value_threshold", ui->valSlider->value());
+
+    pointRange ratFrontRange = ui->ratFrontSelector->getColorRange();
     settings.insert("tracking/color/ratFront/hue", ratFrontRange.hue);
-    settings.insert("tracking/color/ratFront/hue_tolerance", ratFrontRange.hue_tolerance);
-    settings.insert("tracking/color/ratFront/value_low", ratFrontRange.value_low);
-    settings.insert("tracking/color/ratFront/saturation_low", ratFrontRange.saturation_low);
+    settings.insert("tracking/color/ratFront/maximum_size", ratFrontRange.maximum_size);
+    settings.insert("tracking/color/ratFront/minimum_size", ratFrontRange.minimum_size);
 
-    colorRange ratBackRange = ui->ratBackSelector->getColorRange();
+    pointRange ratBackRange = ui->ratBackSelector->getColorRange();
     settings.insert("tracking/color/ratBack/hue", ratBackRange.hue);
-    settings.insert("tracking/color/ratBack/hue_tolerance", ratBackRange.hue_tolerance);
-    settings.insert("tracking/color/ratBack/value_low", ratBackRange.value_low);
-    settings.insert("tracking/color/ratBack/saturation_low", ratBackRange.saturation_low);
+    settings.insert("tracking/color/ratBack/maximum_size", ratBackRange.maximum_size);
+    settings.insert("tracking/color/ratBack/minimum_size", ratBackRange.minimum_size);
 
-    colorRange robotFrontRange = ui->robotFrontSelector->getColorRange();
+    pointRange robotFrontRange = ui->robotFrontSelector->getColorRange();
     settings.insert("tracking/color/robotFront/hue", robotFrontRange.hue);
-    settings.insert("tracking/color/robotFront/hue_tolerance", robotFrontRange.hue_tolerance);
-    settings.insert("tracking/color/robotFront/value_low", robotFrontRange.value_low);
-    settings.insert("tracking/color/robotFront/saturation_low", robotFrontRange.saturation_low);
+    settings.insert("tracking/color/robotFront/maximum_size", robotFrontRange.maximum_size);
+    settings.insert("tracking/color/robotFront/minimum_size", robotFrontRange.minimum_size);
 
-    colorRange robotBackRange = ui->robotBackSelector->getColorRange();
+    pointRange robotBackRange = ui->robotBackSelector->getColorRange();
     settings.insert("tracking/color/robotBack/hue", robotBackRange.hue);
-    settings.insert("tracking/color/robotBack/hue_tolerance", robotBackRange.hue_tolerance);
-    settings.insert("tracking/color/robotBack/value_low", robotBackRange.value_low);
-    settings.insert("tracking/color/robotBack/saturation_low", robotBackRange.saturation_low);
+    settings.insert("tracking/color/robotBack/maximum_size", robotBackRange.maximum_size);
+    settings.insert("tracking/color/robotBack/minimum_size", robotBackRange.minimum_size);
 
     settings.insert("output/sync_enabled", ui->synchroBox->isChecked());
     settings.insert("output/sync_inverted", ui->invertBox->isChecked());
@@ -283,7 +278,7 @@ void configWindow::maskValueChanged(){
 void configWindow::on_refreshTrackingButton_clicked()
 {
    resetDetector();
-   refreshTracking();
+   trackFrame();
 }
 
 void configWindow::on_browseButton_clicked()
@@ -344,7 +339,7 @@ void configWindow::on_refreshCheckbox_stateChanged(int state)
     }
 }
 
-void configWindow::refreshTracking(){
+void configWindow::trackFrame(){
    Mat frame;
    capture >> frame;
    if (!frame.empty()){
@@ -355,31 +350,29 @@ void configWindow::refreshTracking(){
 
 void configWindow::updateTrackingView(){
     if (!trackingFrame.empty()){
-        Mat frame;
-        cv::cvtColor(trackingFrame, frame, CV_BGR2RGB);
+        Mat displayFrame, rgbFrame;
         QPixmap pixmap;
+
+        cv::cvtColor(trackingFrame, rgbFrame, CV_BGR2RGB);
+
         bool colorTracking = ui->trackingCombobox->currentIndex() == 1;
-
         if (!colorTracking && ui->thresholdEnableBox->isChecked()){
-                frame = detector->process(&trackingFrame);
-                pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                            frame.cols,
-                                                            frame.rows,
-                                                            frame.step,
-                                                            QImage::Format_Grayscale8));
-
+            Mat processedFrame = detector->process(&trackingFrame);
+            rgbFrame.copyTo(displayFrame, detector->analyze(&processedFrame));
+        } else if (colorTracking && ui->colorthresholdBox->isChecked()){
+            Mat processedFrame, tmpFrame;
+            processedFrame = detector->process(&trackingFrame);
+            processedFrame.copyTo(tmpFrame, detector->analyze(&processedFrame));
+            cv::cvtColor(tmpFrame, displayFrame, CV_HSV2RGB);
         } else {
-            if (colorTracking && colorFiltering){
-                DetectorColor* detectorColor = dynamic_cast<DetectorColor*>(detector.get());
-                frame = detectorColor->filter(&frame, filterRange);
-            }
-            pixmap = QPixmap::fromImage(QImage((uchar*) frame.data,
-                                                        frame.cols,
-                                                        frame.rows,
-                                                        frame.step,
-                                                        QImage::Format_RGB888));
-
+            displayFrame = rgbFrame;
         }
+
+        pixmap = QPixmap::fromImage(QImage((uchar*) displayFrame.data,
+                                                    displayFrame.cols,
+                                                    displayFrame.rows,
+                                                    displayFrame.step,
+                                                    QImage::Format_RGB888));
 
         QPainter painter(&pixmap);
         std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
@@ -387,7 +380,7 @@ void configWindow::updateTrackingView(){
 
         for (unsigned i = 0; i < keypoints.size(); i++){
             KeyPoint keypoint = keypoints[i];
-            QString line = "%5%1: [%2, %3] (%4)";
+            QString line = "%5 %1: [%2, %3] (%4)";
             line = line.arg(i);
             line = line.arg(keypoint.pt.x);
             line = line.arg(keypoint.pt.y);
@@ -435,9 +428,17 @@ void configWindow::updateTrackingView(){
 
         painter.end();
 
-        if (colorTracking) detector->find(&trackingFrame);
         ui->trackingLabel->setPixmap(pixmap);
     }
+}
+
+void configWindow::trackingParamsChanged(){
+   bool colorTracking = ui->trackingCombobox->currentIndex() == 1;
+   if ((!colorTracking && ui->thresholdEnableBox->isChecked()) ||
+        (colorTracking && ui->colorthresholdBox->isChecked())){
+       resetDetector();
+       updateTrackingView();
+   }
 }
 
 void configWindow::on_revertButton_clicked()
@@ -529,27 +530,6 @@ void configWindow::on_deviceCombobox_activated(int index){
         ui->deviceCombobox->setCurrentIndex(last);
     }
     showEvent(NULL);
-}
-
-void configWindow::filteringStateChanged(bool state){
-    ColorSelector* sender = dynamic_cast<ColorSelector*>(QObject::sender());
-    if (state){
-        ui->ratFrontSelector->setShow(false);
-        ui->ratBackSelector->setShow(false);
-        ui->robotFrontSelector->setShow(false);
-        ui->robotBackSelector->setShow(false);
-
-        sender->setShow(true);
-        filterRange = sender->getColorRange();
-    }
-
-    colorFiltering = state;
-    updateTrackingView();
-}
-
-void configWindow::filterRangeChanged(colorRange range){
-    filterRange = range;
-    updateTrackingView();
 }
 
 void configWindow::refreshDevices(){
@@ -654,26 +634,11 @@ void configWindow::resetDetector(){
     }
 }
 
-void configWindow::on_thresholdEnableBox_toggled(bool checked)
-{
-    (void)checked; // silence warning about unused parameter
-    resetDetector();
-    updateTrackingView();
-}
-
-void configWindow::on_thresholdSlider_valueChanged(int value)
-{
-    (void)value;
-    if (ui->thresholdEnableBox->isChecked()){
-        resetDetector();
-        updateTrackingView();
-    }
-}
-
 void configWindow::on_trackingCombobox_currentIndexChanged(int index)
 {
     ui->trackingWidget->setCurrentIndex(index);
     resetDetector();
+    updateTrackingView();
 }
 
 void configWindow::on_resolutionBox_toggled(bool checked)

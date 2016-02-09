@@ -18,6 +18,7 @@ public:
     DetectorThreshold(const QMap<QString, QVariant> &settings, int h, int w);
 
     Mat process(Mat *frame);
+    Mat analyze(Mat *frame);
     std::vector<KeyPoint> detect(Mat *frame);
     keypointPair find(Mat *frame);
 

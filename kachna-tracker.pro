@@ -23,8 +23,8 @@ SOURCES += main.cpp\
     masklabel.cpp \
     detector_threshold.cpp \
     detector_color.cpp \
-    colordialog.cpp \
-    colorselector.cpp
+    pointdialog.cpp \
+    pointselector.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
@@ -34,8 +34,8 @@ HEADERS  += kachnatracker.h \
     masklabel.h \
     detector_threshold.h \
     detector_color.h \
-    colordialog.h \
-    colorselector.h
+    pointselector.h \
+    pointdialog.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

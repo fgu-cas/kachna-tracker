@@ -7,42 +7,39 @@
 #include <QLabel>
 #include <QPushButton>
 
-class ColorDialog;
+class PointDialog;
 
-class ColorSelector: public QWidget
+class PointSelector: public QWidget
 {
     Q_OBJECT
 public:
-    explicit ColorSelector(QWidget *parent = 0);
+    explicit PointSelector(QWidget *parent = 0);
 
     void setTitle(QString title);
-    colorRange getColorRange();
+    pointRange getColorRange();
 
 signals:
     void showStateChanged(bool state);
-    void colorRangeChanged(colorRange range);
+    void colorRangeChanged(pointRange range);
 
 public slots:
-    void onShowButtonPressed(bool);
     void onSetButtonPressed();
-    void rangeChanged(colorRange range);
-    void setRange(colorRange range);
-    void setShow(bool state);
+    void rangeChanged(pointRange range);
+    void setRange(pointRange range);
     void setEnabled(bool state);
 
 private:
     QLabel* title;
     QLabel* colorLabel;
     QLabel* hsvLabel;
-    QPushButton* showButton;
     QPushButton* setButton;
 
-    ColorDialog* colorDialog;
+    PointDialog* colorDialog;
 
-    colorRange range;
+    pointRange range;
 
 
 };
 
-#include "colordialog.h"
+#include "pointdialog.h"
 #endif // COLORSELECTOR_H

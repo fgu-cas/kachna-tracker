@@ -55,7 +55,9 @@ private slots:
 
     void on_skipCombo_currentIndexChanged(int index);
 
-    void refreshTracking();
+    void trackFrame();
+
+    void trackingParamsChanged();
 
     void updateTrackingView();
 
@@ -64,14 +66,6 @@ private slots:
     void on_maskButton_toggled(bool checked);
 
     void on_trackingCombobox_currentIndexChanged(int index);
-
-    void on_thresholdEnableBox_toggled(bool checked);
-
-    void on_thresholdSlider_valueChanged(int value);
-
-    void filteringStateChanged(bool state);
-
-    void filterRangeChanged(colorRange range);
 
     void on_resolutionBox_toggled(bool checked);
 
@@ -93,9 +87,6 @@ private:
     void closeEvent(QCloseEvent*);
     void showEvent(QShowEvent *);
     QString videoFilename;
-
-    bool colorFiltering;
-    colorRange filterRange;
 };
 
 #endif // CONFIGWINDOW_H
