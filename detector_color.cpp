@@ -82,33 +82,32 @@ std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
             point.size = std::sqrt(moms.m00/CV_PI);
             if (point.size > min && point.size < max){
                 Rect bounding = boundingRect(contours[i]);
-                Mat tmp_mat = HSVFrame(bounding);
-                /*
-                Mat tmp_mask = binarizedFrame(bounding);
+                Mat cropped_hsv = HSVFrame(bounding);
+                Mat cropped_mask = binarizedFrame(bounding);
                 Mat tmp_mat;
-                tmp__mat.copyTo(tmp_mat, tmp_mask);
-                */
+                cropped_hsv.copyTo(tmp_mat, cropped_mask);
                 uint8_t* pixels = (uint8_t*)tmp_mat.data;
-                int sum = 0;
-                int cnt = 0;
-                int dbgcnt = 0;
+                double sum_cos = 0;
+                double sum_sin = 0;
+                int count = 0;
                 for (int i = 0; i < tmp_mat.rows; i++){
                     for (int j = 0; j < tmp_mat.cols; j++){
-                        dbgcnt++;
                         int h = pixels[i*tmp_mat.cols*3 + j*3 + 0];
                         int s = pixels[i*tmp_mat.cols*3 + j*3 + 1];
                         int v = pixels[i*tmp_mat.cols*3 + j*3 + 2];
                         if (s >= sat && v >= val){
-                            cnt++;
-                            sum += h*2;
+                            count++;
+                            sum_cos += cos((h*2)*CV_PI/180);
+                            sum_sin += sin((h*2)*CV_PI/180);
                         }
                     }
                 }
-                if (cnt == 0){
+                if (count == 0){
                     point.class_id = -1;
                     result.push_back(point);
                 } else {
-                    int average = sum / cnt;
+                    int average = atan2(sum_sin/count, sum_cos/count)*180/CV_PI;
+                    if (average < 0) average = 360+average;
                     int distance;
 
                     distance = abs(ratFront.hue-average);
