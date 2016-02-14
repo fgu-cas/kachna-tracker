@@ -6,7 +6,6 @@
 
 #include "../cbw.h"
 
-#define PI 3.14159265358979323846
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
@@ -117,8 +116,8 @@ void Experiment::processFrame(){
         Point2f shock_point = points.robot.pt;
         if (shockIsOffset){
             // !!!
-            shock_point.x += shockDistance * sin((points.robot.angle + shockAngle)*PI/180);
-            shock_point.y -= shockDistance * cos((points.robot.angle + shockAngle)*PI/180);
+            shock_point.x += shockDistance * sin((points.robot.angle + shockAngle)*CV_PI/180);
+            shock_point.y -= shockDistance * cos((points.robot.angle + shockAngle)*CV_PI/180);
         }
         distance = cv::norm(points.rat.pt - shock_point);
     }

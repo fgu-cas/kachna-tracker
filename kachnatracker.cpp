@@ -13,8 +13,6 @@
 #include <QPainter>
 #include <cmath>
 
-#define PI 3.14159265358979323846
-
 using namespace cv;
 
 
@@ -303,9 +301,9 @@ void kachnatracker::requestUpdate(){
             int angle = currentSettings.value("shock/offsetAngle").toInt();
             QPoint shockPoint;
             shockPoint.setX(robot.x() + distance *
-                            sin((angle+update.keypoints.robot.angle)*PI/180));
+                            sin((angle+update.keypoints.robot.angle)*CV_PI/180));
             shockPoint.setY(robot.y() - distance *
-                            cos((angle+update.keypoints.robot.angle)*PI/180));
+                            cos((angle+update.keypoints.robot.angle)*CV_PI/180));
             painter.drawEllipse(shockPoint, radius, radius);
         }
         painter.end();
