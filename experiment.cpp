@@ -6,6 +6,8 @@
 
 #include "../cbw.h"
 
+#define PI 3.14159265358979323846
+
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
 {
@@ -20,8 +22,12 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
     if (settings->value("tracking/type").toInt() == 0){
         detector.reset(new DetectorThreshold(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+        shockIsOffset = false;
     } else {
         detector.reset(new DetectorColor(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+        shockIsOffset = true;
+        shockDistance = settings->value("shock/offsetDistance").toInt();
+        shockAngle = settings->value("shock/offsetAngle").toInt();
     }
 
     timer.setInterval(40);
@@ -107,7 +113,14 @@ void Experiment::processFrame(){
         badFrame = true;
     } else {
         stats.goodFrames++;
-        distance = cv::norm(points.rat.pt - points.robot.pt);
+
+        Point2f shock_point = points.robot.pt;
+        if (shockIsOffset){
+            // !!!
+            shock_point.x += shockDistance * sin((points.robot.angle + shockAngle)*PI/180);
+            shock_point.y -= shockDistance * cos((points.robot.angle + shockAngle)*PI/180);
+        }
+        distance = cv::norm(points.rat.pt - shock_point);
     }
 
     capframe.keypoints = points;

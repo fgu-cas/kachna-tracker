@@ -143,6 +143,8 @@ void configWindow::load(Settings settings)
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
     ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
+    ui->angleBox->setValue(settings.value("shock/offsetAngle").toInt());
+    ui->distanceBox->setValue(settings.value("shock/offsetDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
@@ -235,6 +237,8 @@ Settings configWindow::compileSettings()
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
     settings.insert("shock/triggerDistance", ui->triggerBox->value());
+    settings.insert("shock/offsetAngle", ui->angleBox->value());
+    settings.insert("shock/offsetDistance", ui->distanceBox->value());
 
     return settings;
 }
@@ -299,6 +303,18 @@ void configWindow::on_triggerBox_valueChanged(int dist_px)
    QString result("%1 m");
 
    ui->triggerRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
+}
+
+void configWindow::on_distanceBox_valueChanged(int dist_px)
+{
+   double diameter_real = ui->arenaSizeBox->value();
+   double radius_px = ui->maskRadiusBox->value();
+
+   double dist_real = diameter_real * (dist_px/(radius_px*2));
+
+   QString result("%1 m");
+
+   ui->distanceRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
 }
 
 void configWindow::on_refreshCheckbox_stateChanged(int state)
@@ -648,6 +664,20 @@ void configWindow::on_trackingCombobox_currentIndexChanged(int index)
     ui->trackingWidget->setCurrentIndex(index);
     resetDetector();
     updateTrackingView();
+
+    if (index == 0){
+        ui->angleBox->setEnabled(false);
+        ui->angleSlider->setEnabled(false);
+        ui->distanceSlider->setEnabled(false);
+        ui->distanceBox->setEnabled(false);
+        ui->shockLocationLabel->setCentered(true);
+    } else {
+        ui->angleBox->setEnabled(true);
+        ui->angleSlider->setEnabled(true);
+        ui->distanceSlider->setEnabled(true);
+        ui->distanceBox->setEnabled(true);
+        ui->shockLocationLabel->setCentered(false);
+    }
 }
 
 void configWindow::on_resolutionBox_toggled(bool checked)

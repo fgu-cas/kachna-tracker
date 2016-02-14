@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     detector_threshold.cpp \
     detector_color.cpp \
     pointdialog.cpp \
-    pointselector.cpp
+    pointselector.cpp \
+    shocklocationlabel.cpp
 
 HEADERS  += kachnatracker.h \
     configwindow.h \
@@ -35,7 +36,8 @@ HEADERS  += kachnatracker.h \
     detector_threshold.h \
     detector_color.h \
     pointselector.h \
-    pointdialog.h
+    pointdialog.h \
+    shocklocationlabel.h
 
 FORMS    += configwindow.ui \
     kachnatracker.ui

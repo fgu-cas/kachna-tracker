@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <cmath>
 
+#define PI 3.14159265358979323846
 
 using namespace cv;
 
@@ -295,7 +296,18 @@ void kachnatracker::requestUpdate(){
         painter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
         int radius = currentSettings.value("shock/triggerDistance").toInt();
-        painter.drawEllipse(robot, radius, radius);
+        if (currentSettings.value("tracking/type").toInt() == 0){
+            painter.drawEllipse(robot, radius, radius);
+        } else {
+            int distance = currentSettings.value("shock/offsetDistance").toInt();
+            int angle = currentSettings.value("shock/offsetAngle").toInt();
+            QPoint shockPoint;
+            shockPoint.setX(robot.x() + distance *
+                            sin((angle+update.keypoints.robot.angle)*PI/180));
+            shockPoint.setY(robot.y() - distance *
+                            cos((angle+update.keypoints.robot.angle)*PI/180));
+            painter.drawEllipse(shockPoint, radius, radius);
+        }
         painter.end();
         ui->displayLabel->setPixmap(tempPixmap);
     } else {

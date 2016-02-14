@@ -71,6 +71,8 @@ private slots:
 
     void captureResolutionChanged();
 
+    void on_distanceBox_valueChanged(int arg1);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;

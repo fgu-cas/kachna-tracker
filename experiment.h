@@ -74,6 +74,9 @@ private:
     double triggerDistance;
 
     // Shock
+    bool shockIsOffset = false;
+    int shockDistance;
+    int shockAngle;
 
     void setShock(double mA);
 
