@@ -520,14 +520,23 @@ void configWindow::closeEvent(QCloseEvent *event){
 void configWindow::on_deviceCombobox_activated(int index){
     int last = ui->deviceCombobox->count()-1;
     if (index == last){
-        QString filename = QFileDialog::getOpenFileName(this, "Open Video", QString(), "Videos (*.avi)");
-        if (filename.isEmpty()){
-            return;
+        QString dir;
+        if (!videoFilename.isEmpty()){
+            QStringList list = videoFilename.split("/");
+            list.removeLast();
+            dir = list.join('/');
         }
-        videoFilename = filename;
-        ui->deviceCombobox->removeItem(last);
-        ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
-        ui->deviceCombobox->setCurrentIndex(last);
+        QString filename = QFileDialog::getOpenFileName(this, "Open Video", dir, "Videos (*.avi)");
+        if (!filename.isEmpty()){
+            videoFilename = filename;
+            ui->deviceCombobox->removeItem(last);
+            ui->deviceCombobox->addItem(QString("File... \"%1\"").arg(videoFilename));
+            ui->deviceCombobox->setCurrentIndex(last);
+
+            ui->lengthEdit->setEnabled(false);
+            ui->timeoutStopBox->setEnabled(false);
+            capture.open(videoFilename.toStdString());
+        }
     }
     showEvent(NULL);
 }
