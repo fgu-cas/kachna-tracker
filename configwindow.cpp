@@ -416,7 +416,7 @@ void configWindow::updateTrackingView(){
                     line = line.arg("[ROB B] ");
                     break;
                 default:
-                    line = line.arg("[WHAT?] ");
+                    line = line.arg("[?????] ");
                 }
             } else {
                 line = line.arg("");
