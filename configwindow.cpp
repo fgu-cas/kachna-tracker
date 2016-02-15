@@ -423,22 +423,26 @@ void configWindow::updateTrackingView(){
             }
             ui->keypointList->addItem(line);
 
-            if (colorTracking || (keypoint.size > ui->ratMinSize->value() &&
-                    keypoint.size < ui->ratMaxSize->value())){
+            if (colorTracking )
+            if ((colorTracking && !ui->colorthresholdBox->isChecked()) ||
+                (!colorTracking && !ui->thresholdEnableBox->isChecked())){
 
-                 QPoint rat(keypoint.pt.x, keypoint.pt.y);
-                 int ratSize = (int)(keypoint.size+0.5);
-                 painter.setPen(Qt::red);
-                 painter.drawEllipse(rat, ratSize, ratSize);
+                if (colorTracking ||
+                        (keypoint.size > ui->ratMinSize->value() && keypoint.size < ui->ratMaxSize->value())){
 
-            } else if (keypoint.size > ui->robotMinSize->value() &&
-                    keypoint.size < ui->robotMaxSize->value()){
+                     QPoint rat(keypoint.pt.x, keypoint.pt.y);
+                     int ratSize = (int)(keypoint.size+0.5);
+                     painter.setPen(Qt::red);
+                     painter.drawEllipse(rat, ratSize, ratSize);
 
-                 QPoint robot(keypoint.pt.x, keypoint.pt.y);
-                 int robotSize = (int)(keypoint.size+0.5);
-                 painter.setPen(Qt::blue);
-                 painter.drawEllipse(robot, robotSize, robotSize);
+                } else if (keypoint.size > ui->robotMinSize->value() && keypoint.size < ui->robotMaxSize->value()){
 
+                     QPoint robot(keypoint.pt.x, keypoint.pt.y);
+                     int robotSize = (int)(keypoint.size+0.5);
+                     painter.setPen(Qt::blue);
+                     painter.drawEllipse(robot, robotSize, robotSize);
+
+                }
             }
         }
 
