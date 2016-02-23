@@ -1325,18 +1325,18 @@
   <customwidget>
    <class>PointSelector</class>
    <extends>QWidget</extends>
-   <header>pointselector.h</header>
+   <header>gui/pointselector.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>MaskLabel</class>
    <extends>QLabel</extends>
-   <header>masklabel.h</header>
+   <header>gui/masklabel.h</header>
   </customwidget>
   <customwidget>
    <class>ShockLocationLabel</class>
    <extends>QLabel</extends>
-   <header>shocklocationlabel.h</header>
+   <header>gui/shocklocationlabel.h</header>
    <slots>
     <slot>setAngle(int)</slot>
     <slot>setDistance(int)</slot>

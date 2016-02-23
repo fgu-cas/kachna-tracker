@@ -1,8 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2014-01-28T15:46:17
-#
-#-------------------------------------------------
 
 QT       += core gui
 
@@ -14,33 +9,12 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += "-std=c++11"
 CXXFLAGS = "-std=c++0x"
 
-SOURCES += main.cpp\
-        kachnatracker.cpp \
-    configwindow.cpp \
-    experiment.cpp \
-    detector.cpp \
-    shockspinbox.cpp \
-    masklabel.cpp \
-    detector_threshold.cpp \
-    detector_color.cpp \
-    pointdialog.cpp \
-    pointselector.cpp \
-    shocklocationlabel.cpp
 
-HEADERS  += kachnatracker.h \
-    configwindow.h \
-    experiment.h \
-    shockspinbox.h \
-    detector.h \
-    masklabel.h \
-    detector_threshold.h \
-    detector_color.h \
-    pointselector.h \
-    pointdialog.h \
-    shocklocationlabel.h
+SOURCES += main.cpp
 
-FORMS    += configwindow.ui \
-    kachnatracker.ui
+include($$PWD/gui/gui.pri)
+
+include($$PWD/experiment/experiment.pri)
 
 INCLUDEPATH += C:\\dev\\opencv\\build\\include
 
