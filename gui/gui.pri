@@ -7,7 +7,10 @@ SOURCES += $$PWD/configwindow.cpp \
     $$PWD/pointdialog.cpp \
     $$PWD/pointselector.cpp \
     $$PWD/shocklocationlabel.cpp \
-    $$PWD/shockspinbox.cpp
+    $$PWD/shockspinbox.cpp \
+    $$PWD/configwindow_general.cpp \
+    $$PWD/configwindow_tracking.cpp \
+    $$PWD/configwindow_capture.cpp
 
 HEADERS  += $$PWD/configwindow.h \
     $$PWD/mainwindow.h \
