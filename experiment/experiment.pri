@@ -9,4 +9,5 @@ SOURCES +=  $$PWD/detector.cpp \
 HEADERS += $$PWD/detector.h \
     $$PWD/detector_color.h \
     $$PWD/detector_threshold.h \
-    $$PWD/experiment.h
+    $$PWD/experiment.h \
+    $$PWD/actions.h

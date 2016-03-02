@@ -10,7 +10,11 @@ SOURCES += $$PWD/configwindow.cpp \
     $$PWD/shockspinbox.cpp \
     $$PWD/configwindow_general.cpp \
     $$PWD/configwindow_tracking.cpp \
-    $$PWD/configwindow_capture.cpp
+    $$PWD/configwindow_capture.cpp \
+    $$PWD/configwindow_actions.cpp \
+    $$PWD/actions_actionwidget.cpp \
+    $$PWD/actions_areawidget.cpp \
+    $$PWD/actions_counterwidget.cpp
 
 HEADERS  += $$PWD/configwindow.h \
     $$PWD/mainwindow.h \
@@ -18,7 +22,10 @@ HEADERS  += $$PWD/configwindow.h \
     $$PWD/pointdialog.h \
     $$PWD/pointselector.h \
     $$PWD/shocklocationlabel.h \
-    $$PWD/shockspinbox.h
+    $$PWD/shockspinbox.h \
+    $$PWD/actions_actionwidget.h \
+    $$PWD/actions_areawidget.h \
+    $$PWD/actions_counterwidget.h
 
 FORMS    += $$PWD/configwindow.ui \
     $$PWD/mainwindow.ui

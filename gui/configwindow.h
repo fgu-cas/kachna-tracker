@@ -1,5 +1,6 @@
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
+#include "ui_configwindow.h"
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -11,8 +12,11 @@
 #include <QPixmap>
 #include <QPainter>
 
+#include <QStringListModel>
+
 #include "detector_threshold.h"
 #include "detector_color.h"
+#include "actions.h"
 
 typedef QMap<QString, QVariant> Settings;
 
@@ -73,6 +77,15 @@ private slots:
 
     void on_distanceBox_valueChanged(int arg1);
 
+    void addAction();
+    void addAction(QString trigger, Action action, QString target);
+    void removeActionWidget();
+    void addArea();
+    void addCounter();
+    void clearAllActions();
+
+    void triggersChanged(QString id);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;
@@ -89,6 +102,8 @@ private:
     void closeEvent(QCloseEvent*);
     void showEvent(QShowEvent *);
     QString videoFilename;
+
+    QStringListModel actionTriggers;
 };
 
 #endif // CONFIGWINDOW_H

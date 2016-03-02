@@ -1,3 +1,5 @@
+#include "configwindow.h"
+
 void configWindow::on_refreshTrackingButton_clicked()
 {
    resetDetector();
