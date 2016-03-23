@@ -48,8 +48,8 @@ configWindow::configWindow(QWidget *parent) :
     ui->robotFrontSelector->setTitle("Robot Front");
     ui->robotBackSelector->setTitle("Robot Back");
 
-    connect(ui->resolutionHeightSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
-    connect(ui->resolutionWidthSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
+    connect(ui->resolutionHeightSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
+    connect(ui->resolutionWidthSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
 
     refreshDevices();
 }

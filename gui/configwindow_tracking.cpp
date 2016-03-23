@@ -151,9 +151,8 @@ void configWindow::trackingParamsChanged(){
 }
 
 void configWindow::resetDetector(){
-    if (trackingFrame.empty()){
-        capture >> trackingFrame;
-    }
+    capture >> trackingFrame;
+
     if (ui->trackingCombobox->currentIndex() == 0){
         detector.reset(new DetectorThreshold(compileSettings(), trackingFrame.rows, trackingFrame.cols));
     } else {

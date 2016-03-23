@@ -50,6 +50,11 @@ void configWindow::on_resolutionBox_toggled(bool checked)
 void configWindow::captureResolutionChanged(){
     capture.set(CV_CAP_PROP_FRAME_HEIGHT, ui->resolutionHeightSpin->value());
     capture.set(CV_CAP_PROP_FRAME_WIDTH, ui->resolutionWidthSpin->value());
+
+    ui->resolutionHeightSpin->setValue(capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+    ui->resolutionWidthSpin->setValue(capture.get(CV_CAP_PROP_FRAME_WIDTH));
+
+    resetDetector();
 }
 
 void configWindow::on_deviceCombobox_activated(int index){
