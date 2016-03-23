@@ -263,16 +263,17 @@ void configWindow::on_okayButton_clicked()
 
 void configWindow::showEvent(QShowEvent *event){
     if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
-        ui->lengthEdit->setEnabled(false);
-        ui->timeoutStopBox->setEnabled(false);
+        ui->lengthEdit->setEnabled(true);
+        ui->timeoutStopBox->setEnabled(true);
         ui->resolutionBox->setEnabled(true);
         capture.open(ui->deviceCombobox->currentIndex());
-    } else if (!videoFilename.isEmpty()) {
+    } else {
         ui->lengthEdit->setEnabled(false);
         ui->timeoutStopBox->setEnabled(false);
         ui->resolutionBox->setChecked(false);
         ui->resolutionBox->setEnabled(false);
-        capture.open(videoFilename.toStdString());
+        if (!videoFilename.isEmpty())
+            capture.open(videoFilename.toStdString());
     }
 
     if (ui->resolutionBox->isChecked()){
