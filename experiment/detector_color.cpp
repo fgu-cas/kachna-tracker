@@ -184,6 +184,7 @@ Detector::keypointPair DetectorColor::find(Mat *frame){
         result.rat.angle = qRadiansToDegrees(qAtan2(rat_back.pt.y - rat_front.pt.y,
                                              rat_back.pt.x - rat_front.pt.x));
         result.rat.angle = fmod(result.rat.angle + 270, 360);
+        result.rat.size = 1;
     }
 
     if (robot_front.size > 0 && robot_back.size > 0){
@@ -192,6 +193,7 @@ Detector::keypointPair DetectorColor::find(Mat *frame){
         result.robot.angle = qRadiansToDegrees(qAtan2(robot_back.pt.y - robot_front.pt.y,
                                    robot_back.pt.x - robot_front.pt.x));
         result.robot.angle = fmod(result.robot.angle + 270, 360);
+        result.robot.size = 1;
     }
 
     return result;
