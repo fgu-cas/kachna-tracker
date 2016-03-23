@@ -2,8 +2,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include "kachnatracker.h"
-#include "ui_kachnatracker.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include <iostream>
 #include <QFileDialog>
 #include <QFile>
@@ -218,10 +218,10 @@ void kachnatracker::on_startButton_clicked(){
             capture.open(deviceIndex);
             isLive = true;
         }
-        appSettings->setValue("lastSize", QSize(capture.get(CV_CAP_PROP_FRAME_WIDTH),
-                                                capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
-        pixmap = QPixmap(capture.get(CV_CAP_PROP_FRAME_WIDTH),
-                         capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+        int cap_w = currentSettings.value("video/resolution/width").toInt();
+        int cap_h = currentSettings.value("video/resolution/height").toInt();
+        appSettings->setValue("lastSize", QSize(cap_w, cap_h));
+        pixmap = QPixmap(cap_w, cap_h);
         pixmap.fill(Qt::white);
         capture.release();
 
@@ -418,6 +418,6 @@ void kachnatracker::on_actionAbout_triggered()
 {
     QMessageBox aboutBox;
     aboutBox.setText("<b>Kachna Tracker</b>");
-    aboutBox.setInformativeText("Version 2.0-experimental<br><br>https://www.github.com/tmladek/kachna-tracker");
+    aboutBox.setInformativeText("Version 3.1<br><br>https://github.com/tmladek/kachna-tracker");
     aboutBox.exec();
 }
