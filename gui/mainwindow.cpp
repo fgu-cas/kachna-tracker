@@ -193,7 +193,6 @@ void kachnatracker::saveTracks(){
 
 
 void kachnatracker::on_startButton_clicked(){
-
     if (updateTimer.isActive()){
         QMessageBox reallyDialog;
         reallyDialog.setIcon(QMessageBox::Warning);
@@ -204,6 +203,7 @@ void kachnatracker::on_startButton_clicked(){
         if (reallyDialog.exec() == QMessageBox::Yes){
             updateTimer.stop();
             experiment->stop();
+            ui->actionConfigure->setEnabled(true);
             saveTracks();
         }
     } else {
@@ -232,6 +232,8 @@ void kachnatracker::on_startButton_clicked(){
         painter.end();
 
         reset();
+
+        ui->actionConfigure->setEnabled(false);
 
         experiment.reset(new Experiment(this, &currentSettings));
         experiment->start();
