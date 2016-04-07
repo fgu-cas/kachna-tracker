@@ -27,6 +27,7 @@ public slots:
     void rangeChanged(pointRange range);
     void setRange(pointRange range);
     void setEnabled(bool state);
+    void closeDialog();
 
 private:
     QLabel* title;

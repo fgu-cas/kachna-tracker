@@ -94,3 +94,7 @@ void PointSelector::setRange(pointRange range){
 void PointSelector::setEnabled(bool state){
     setButton->setEnabled(state);
 }
+
+void PointSelector::closeDialog(){
+    colorDialog->hide();
+}
