@@ -103,7 +103,7 @@ void Experiment::processFrame(){
     }
     capframe.timestamp = elapsedTimer.elapsed();
 
-    Detector::keypointPair points = detector->find(&frame);
+    Detector::pointPair points = detector->find(&frame);
 
     double distance = -1;
     bool badFrame = false;

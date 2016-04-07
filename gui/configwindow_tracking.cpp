@@ -80,18 +80,18 @@ void configWindow::updateTrackingView(){
                                                     QImage::Format_RGB888));
 
         QPainter painter(&pixmap);
-        std::vector<KeyPoint> keypoints = detector->detect(&trackingFrame);
+        std::vector<Detector::Point> points = detector->detect(&trackingFrame);
         ui->keypointList->clear();
 
-        for (unsigned i = 0; i < keypoints.size(); i++){
-            KeyPoint keypoint = keypoints[i];
+        for (unsigned i = 0; i < points.size(); i++){
+            Detector::Point point = points[i];
             QString line = "%5 %1: [%2, %3] (%4)";
             line = line.arg(i);
-            line = line.arg(keypoint.pt.x);
-            line = line.arg(keypoint.pt.y);
-            line = line.arg(keypoint.size);
+            line = line.arg(point.pt.x);
+            line = line.arg(point.pt.y);
+            line = line.arg(point.size);
             if (colorTracking){
-                switch (keypoint.class_id){
+                switch (point.class_id){
                 case DetectorColor::RAT_FRONT:
                     line = line.arg("[RAT F] ");
                     break;
@@ -117,17 +117,17 @@ void configWindow::updateTrackingView(){
                 (!colorTracking && !ui->thresholdEnableBox->isChecked())){
 
                 if (colorTracking ||
-                        (keypoint.size > ui->ratMinSize->value() && keypoint.size < ui->ratMaxSize->value())){
+                        (point.size > ui->ratMinSize->value() && point.size < ui->ratMaxSize->value())){
 
-                     QPoint rat(keypoint.pt.x, keypoint.pt.y);
-                     int ratSize = (int)(keypoint.size+0.5);
+                     QPoint rat(point.pt.x, point.pt.y);
+                     int ratSize = (int)(point.size+0.5);
                      painter.setPen(Qt::red);
                      painter.drawEllipse(rat, ratSize, ratSize);
 
-                } else if (keypoint.size > ui->robotMinSize->value() && keypoint.size < ui->robotMaxSize->value()){
+                } else if (point.size > ui->robotMinSize->value() && point.size < ui->robotMaxSize->value()){
 
-                     QPoint robot(keypoint.pt.x, keypoint.pt.y);
-                     int robotSize = (int)(keypoint.size+0.5);
+                     QPoint robot(point.pt.x, point.pt.y);
+                     int robotSize = (int)(point.size+0.5);
                      painter.setPen(Qt::blue);
                      painter.drawEllipse(robot, robotSize, robotSize);
 

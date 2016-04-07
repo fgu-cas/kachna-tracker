@@ -68,7 +68,7 @@ private:
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
     QPixmap pixmap;
-    Detector::keypointPair lastKeypoints;
+    Detector::pointPair lastKeypoints;
 
     bool dirty = false;
 };

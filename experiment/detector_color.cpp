@@ -63,8 +63,8 @@ Mat DetectorColor::analyze(Mat *frame){
     return threshMask;
 }
 
-std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
-    std::vector<KeyPoint> result;
+std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
+    std::vector<Point> result;
 
     if (!frame->empty()){
         Mat HSVFrame = process(frame);
@@ -76,7 +76,7 @@ std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
         for (uint i = 0; i < contours.size();  i++){
             Moments moms = moments(Mat(contours[i]));
             if (moms.m00 == 0) continue;
-            KeyPoint point;
+            Detector::Point point;
             point.pt.x = (moms.m10 / moms.m00) + maskRect.x;
             point.pt.y = (moms.m01 / moms.m00) + maskRect.y;
             point.size = std::sqrt(moms.m00/CV_PI);
@@ -149,17 +149,17 @@ std::vector<KeyPoint> DetectorColor::detect(Mat *frame){
     return result;
 }
 
-Detector::keypointPair DetectorColor::find(Mat *frame){
-    keypointPair result;
+Detector::pointPair DetectorColor::find(Mat *frame){
+    pointPair result;
 
-    std::vector<KeyPoint> points = detect(frame);
+    std::vector<Detector::Point> points = detect(frame);
 
-    KeyPoint rat_front;
-    KeyPoint rat_back;
-    KeyPoint robot_front;
-    KeyPoint robot_back;
+    Detector::Point rat_front;
+    Detector::Point rat_back;
+    Detector::Point robot_front;
+    Detector::Point robot_back;
 
-    for (KeyPoint point : points){
+    for (Detector::Point point : points){
         switch (point.class_id){
             case RAT_FRONT:
                 rat_front = point;

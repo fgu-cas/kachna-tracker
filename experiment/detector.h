@@ -17,12 +17,25 @@ class Detector
 public:
     Detector(const QMap<QString, QVariant> &settings, int h, int w);
 
-    struct keypointPair { KeyPoint rat; KeyPoint robot; };
+    class Point {
+    public:
+        Point();
+
+        Point2f pt;
+        float angle;
+        float size;
+        float hue;
+        int class_id;
+
+        void operator=(cv::KeyPoint point);
+    };
+    struct pointPair { Detector::Point rat; Detector::Point robot; };
+
 
     virtual Mat process(Mat *frame) = 0;
     virtual Mat analyze(Mat *frame) = 0;
-    virtual keypointPair find(Mat *frame) = 0;
-    virtual std::vector<KeyPoint> detect(Mat *frame) = 0;
+    virtual pointPair find(Mat *frame) = 0;
+    virtual std::vector<Point> detect(Mat *frame) = 0;
 
 protected:
     Mat mask;

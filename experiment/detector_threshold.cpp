@@ -45,25 +45,31 @@ Mat DetectorThreshold::analyze(Mat *frame){
     return result;
 }
 
-std::vector<KeyPoint> DetectorThreshold::detect(Mat *frame){
-    std::vector<KeyPoint> result;
+std::vector<Detector::Point> DetectorThreshold::detect(Mat *frame){
+    std::vector<Detector::Point> result;
 
     if (!frame->empty() && frame->channels() == 3){
         Mat workFrame = process(frame);
         workFrame = analyze(&workFrame);
-        detector->detect(workFrame, result);
+        std::vector<KeyPoint> keyPoints;
+        detector->detect(workFrame, keyPoints);
+        for (KeyPoint keyPoint : keyPoints){
+            Detector::Point point;
+            point = keyPoint;
+            result.push_back(point);
+        }
     }
 
     return result;
 }
 
-Detector::keypointPair DetectorThreshold::find(Mat *frame){
-    keypointPair result;
+Detector::pointPair DetectorThreshold::find(Mat *frame){
+    pointPair result;
 
-    std::vector<KeyPoint> keypoints = detect(frame);
+    std::vector<Detector::Point> keypoints = detect(frame);
 
     for (unsigned i = 0; i<keypoints.size(); i++){
-       KeyPoint keypoint = keypoints[i];
+       Detector::Point keypoint = keypoints[i];
        if (keypoint.size > minRat && keypoint.size < maxRat){
            if (skip_reaction == 1){
                if (lastPoints.rat.size == 0 ||
