@@ -37,7 +37,6 @@ private:
     int skip_distance;
     int skip_timeout;
 
-    double getDistance(KeyPoint a, KeyPoint b);
     keypointPair lastPoints;
 
     QElapsedTimer ratTimer;
