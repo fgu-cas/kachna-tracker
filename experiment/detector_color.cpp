@@ -64,13 +64,13 @@ Mat DetectorColor::analyze(Mat *frame){
 }
 
 std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
-    std::vector<Point> result;
+    std::vector<Detector::Point> result;
 
     if (!frame->empty()){
         Mat HSVFrame = process(frame);
         Mat binarizedFrame = analyze(&HSVFrame);
 
-        std::vector< std::vector<Point> > contours;
+        std::vector< std::vector<cv::Point> > contours;
         findContours(binarizedFrame, contours, RETR_LIST, CHAIN_APPROX_NONE);
 
         for (uint i = 0; i < contours.size();  i++){
