@@ -110,6 +110,8 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     if (average < 0) average = 360+average;
                     int distance;
 
+                    point.hue = average;
+
                     distance = abs(ratFront.hue-average);
                     if (distance > 180) distance = 360 - distance;
                     if (distance < hue_tol){

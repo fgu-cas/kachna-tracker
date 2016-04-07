@@ -85,7 +85,7 @@ void configWindow::updateTrackingView(){
 
         for (unsigned i = 0; i < points.size(); i++){
             Detector::Point point = points[i];
-            QString line = "%5 %1: [%2, %3] (%4)";
+            QString line = "%5 %1 | Pos: [%2, %3], Size: %4";
             line = line.arg(i);
             line = line.arg(point.pt.x);
             line = line.arg(point.pt.y);
@@ -107,6 +107,8 @@ void configWindow::updateTrackingView(){
                 default:
                     line = line.arg("[?????] ");
                 }
+
+                line += QString(", Hue: %1°").arg(point.hue);
             } else {
                 line = line.arg("");
             }
