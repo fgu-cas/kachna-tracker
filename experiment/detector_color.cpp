@@ -66,84 +66,86 @@ Mat DetectorColor::analyze(Mat *frame){
 std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
     std::vector<Detector::Point> result;
 
-    if (!frame->empty()){
-        Mat HSVFrame = process(frame);
-        Mat binarizedFrame = analyze(&HSVFrame);
+    if (frame->empty()) return result;
 
-        std::vector< std::vector<cv::Point> > contours;
-        findContours(binarizedFrame, contours, RETR_LIST, CHAIN_APPROX_NONE);
+    Mat HSVFrame = process(frame);
+    Mat binarizedFrame = analyze(&HSVFrame);
 
-        for (uint i = 0; i < contours.size();  i++){
-            Moments moms = moments(Mat(contours[i]));
-            if (moms.m00 == 0) continue;
-            Detector::Point point;
-            point.pt.x = (moms.m10 / moms.m00) + maskRect.x;
-            point.pt.y = (moms.m01 / moms.m00) + maskRect.y;
-            point.size = std::sqrt(moms.m00/CV_PI);
-            if (point.size > min && point.size < max){
-                Rect bounding = boundingRect(contours[i]);
-                Mat cropped_hsv = HSVFrame(bounding);
-                Mat cropped_mask = binarizedFrame(bounding);
-                Mat tmp_mat;
-                cropped_hsv.copyTo(tmp_mat, cropped_mask);
-                uint8_t* pixels = (uint8_t*)tmp_mat.data;
-                double sum_cos = 0;
-                double sum_sin = 0;
-                int count = 0;
-                for (int i = 0; i < tmp_mat.rows; i++){
-                    for (int j = 0; j < tmp_mat.cols; j++){
-                        int h = pixels[i*tmp_mat.cols*3 + j*3 + 0];
-                        int s = pixels[i*tmp_mat.cols*3 + j*3 + 1];
-                        int v = pixels[i*tmp_mat.cols*3 + j*3 + 2];
-                        if (s >= sat && v >= val){
-                            count++;
-                            sum_cos += cos((h*2)*CV_PI/180);
-                            sum_sin += sin((h*2)*CV_PI/180);
-                        }
+    if (binarizedFrame.empty()) return result;
+
+    std::vector< std::vector<cv::Point> > contours;
+    findContours(binarizedFrame, contours, RETR_LIST, CHAIN_APPROX_NONE);
+
+    for (uint i = 0; i < contours.size();  i++){
+        Moments moms = moments(Mat(contours[i]));
+        if (moms.m00 == 0) continue;
+        Detector::Point point;
+        point.pt.x = (moms.m10 / moms.m00) + maskRect.x;
+        point.pt.y = (moms.m01 / moms.m00) + maskRect.y;
+        point.size = std::sqrt(moms.m00/CV_PI);
+        if (point.size > min && point.size < max){
+            Rect bounding = boundingRect(contours[i]);
+            Mat cropped_hsv = HSVFrame(bounding);
+            Mat cropped_mask = binarizedFrame(bounding);
+            Mat tmp_mat;
+            cropped_hsv.copyTo(tmp_mat, cropped_mask);
+            uint8_t* pixels = (uint8_t*)tmp_mat.data;
+            double sum_cos = 0;
+            double sum_sin = 0;
+            int count = 0;
+            for (int i = 0; i < tmp_mat.rows; i++){
+                for (int j = 0; j < tmp_mat.cols; j++){
+                    int h = pixels[i*tmp_mat.cols*3 + j*3 + 0];
+                    int s = pixels[i*tmp_mat.cols*3 + j*3 + 1];
+                    int v = pixels[i*tmp_mat.cols*3 + j*3 + 2];
+                    if (s >= sat && v >= val){
+                        count++;
+                        sum_cos += cos((h*2)*CV_PI/180);
+                        sum_sin += sin((h*2)*CV_PI/180);
                     }
                 }
-                if (count == 0){
-                    point.class_id = -1;
+            }
+            if (count == 0){
+                point.class_id = -1;
+                result.push_back(point);
+            } else {
+                int average = atan2(sum_sin/count, sum_cos/count)*180/CV_PI;
+                if (average < 0) average = 360+average;
+                int distance;
+
+                point.hue = average;
+
+                distance = abs(ratFront.hue-average);
+                if (distance > 180) distance = 360 - distance;
+                if (distance < hue_tol){
+                    point.class_id = RAT_FRONT;
                     result.push_back(point);
-                } else {
-                    int average = atan2(sum_sin/count, sum_cos/count)*180/CV_PI;
-                    if (average < 0) average = 360+average;
-                    int distance;
-
-                    point.hue = average;
-
-                    distance = abs(ratFront.hue-average);
-                    if (distance > 180) distance = 360 - distance;
-                    if (distance < hue_tol){
-                        point.class_id = RAT_FRONT;
-                        result.push_back(point);
-                        continue;
-                    }
-                    distance = abs(ratBack.hue-average);
-                    if (distance > 180) distance = 360 - distance;
-                    if (distance < hue_tol){
-                        point.class_id = RAT_BACK;
-                        result.push_back(point);
-                        continue;
-                    }
-                    distance = abs(robotFront.hue-average);
-                    if (distance > 180) distance = 360 - distance;
-                    if (distance < hue_tol){
-                        point.class_id = ROBOT_FRONT;
-                        result.push_back(point);
-                        continue;
-                    }
-                    distance = abs(robotBack.hue-average);
-                    if (distance > 180) distance = 360 - distance;
-                    if (distance < hue_tol){
-                        point.class_id = ROBOT_BACK;
-                        result.push_back(point);
-                        continue;
-                    }
-
-                    point.class_id = -1;
-                    result.push_back(point);
+                    continue;
                 }
+                distance = abs(ratBack.hue-average);
+                if (distance > 180) distance = 360 - distance;
+                if (distance < hue_tol){
+                    point.class_id = RAT_BACK;
+                    result.push_back(point);
+                    continue;
+                }
+                distance = abs(robotFront.hue-average);
+                if (distance > 180) distance = 360 - distance;
+                if (distance < hue_tol){
+                    point.class_id = ROBOT_FRONT;
+                    result.push_back(point);
+                    continue;
+                }
+                distance = abs(robotBack.hue-average);
+                if (distance > 180) distance = 360 - distance;
+                if (distance < hue_tol){
+                    point.class_id = ROBOT_BACK;
+                    result.push_back(point);
+                    continue;
+                }
+
+                point.class_id = -1;
+                result.push_back(point);
             }
         }
     }
