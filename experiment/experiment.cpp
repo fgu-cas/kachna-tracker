@@ -4,7 +4,7 @@
 
 #include <QDateTime>
 
-#include "../cbw.h"
+#include "cbw.h"
 
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :

@@ -16,9 +16,9 @@ include($$PWD/gui/gui.pri)
 
 include($$PWD/experiment/experiment.pri)
 
-INCLUDEPATH += C:\\dev\\opencv\\build\\include
+INCLUDEPATH += "$$PWD\\..\\opencv\\build\\include"
 
-LIBS += -LC:\\dev\\opencv\\build\\bin \
+LIBS += -L"$$PWD\\..\\opencv\\build\\bin" \
     libopencv_core2411d \
     libopencv_highgui2411d \
     libopencv_imgproc2411d \
