@@ -1,4 +1,3 @@
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -16,9 +15,9 @@ include($$PWD/gui/gui.pri)
 
 include($$PWD/experiment/experiment.pri)
 
-INCLUDEPATH += C:\\dev\\opencv\\build\\include
+INCLUDEPATH += "$$PWD\\..\\opencv\\build\\include"
 
-LIBS += -LC:\\dev\\opencv\\build\\bin \
+LIBS += -L"$$PWD\\..\\opencv\\build\\bin" \
     libopencv_core2412d \
     libopencv_highgui2412d \
     libopencv_imgproc2412d \
