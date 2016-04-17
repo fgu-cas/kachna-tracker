@@ -4,6 +4,7 @@
 #include <QPushButton>
 
 #include "actions_area_robot_dialog.h"
+#include "actions_area_sector_dialog.h"
 
 #include <QDebug>
 
@@ -51,10 +52,10 @@ void AreaWidget::onAnchorChanged(int index){
 
     switch(index){
         case 0:
+            newWidget = new AreaSectorDialog(this);
             break;
         case 1:
-            AreaRobotDialog* widget = new AreaRobotDialog(this, configWin);
-            newWidget = widget;
+            newWidget = new AreaRobotDialog(this, configWin);
             break;
     }
 

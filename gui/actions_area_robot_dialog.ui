@@ -143,7 +143,7 @@
     </layout>
    </item>
    <item>
-    <widget class="ShockLocationLabel" name="shockLocationLabel">
+    <widget class="ShockRobotLabel" name="shockLocationLabel">
      <property name="text">
       <string/>
      </property>
@@ -153,9 +153,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ShockLocationLabel</class>
+   <class>ShockRobotLabel</class>
    <extends>QLabel</extends>
-   <header>gui/shocklocationlabel.h</header>
+   <header>gui/shockrobotlabel.h</header>
    <slots>
     <slot>setAngle(int)</slot>
     <slot>setDistance(int)</slot>
