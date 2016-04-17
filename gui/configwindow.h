@@ -33,6 +33,7 @@ class configWindow : public QTabWidget
 
 public:
     explicit configWindow(QWidget *parent = 0);
+    double pixelsToMeters(int px);
     ~configWindow();
 
 signals:
@@ -65,8 +66,6 @@ private slots:
 
     void updateTrackingView();
 
-    void on_triggerBox_valueChanged(int);
-
     void on_maskButton_toggled(bool checked);
 
     void on_trackingCombobox_currentIndexChanged(int index);
@@ -74,8 +73,6 @@ private slots:
     void on_resolutionBox_toggled(bool checked);
 
     void captureResolutionChanged();
-
-    void on_distanceBox_valueChanged(int arg1);
 
     void addAction();
     void addAction(QString trigger, Action action, QString target);

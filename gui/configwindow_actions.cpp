@@ -17,7 +17,7 @@ void configWindow::addAction(QString trigger, Action action, QString target){
 }
 
 void configWindow::addArea(){
-    AreaWidget* widget = new AreaWidget();
+    AreaWidget* widget = new AreaWidget(this);
     connect(widget, SIGNAL(deleteMe()), this, SLOT(removeActionWidget()));
     connect(widget, SIGNAL(idChanged(QString)), this, SLOT(triggersChanged(QString)));
     ui->areasLayout->addWidget(widget);
