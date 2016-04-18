@@ -17,7 +17,8 @@ SOURCES += $$PWD/configwindow.cpp \
     $$PWD/actions_area_robot_dialog.cpp \
     $$PWD/actions_area_sector_dialog.cpp \
     $$PWD/shockrobotlabel.cpp \
-    $$PWD/shocksectorlabel.cpp
+    $$PWD/shocksectorlabel.cpp \
+    $$PWD/actions_modifycounter_dialog.cpp
 
 HEADERS  += $$PWD/configwindow.h \
     $$PWD/mainwindow.h \
@@ -31,9 +32,11 @@ HEADERS  += $$PWD/configwindow.h \
     $$PWD/actions_area_robot_dialog.h \
     $$PWD/actions_area_sector_dialog.h \
     $$PWD/shockrobotlabel.h \
-    $$PWD/shocksectorlabel.h
+    $$PWD/shocksectorlabel.h \
+    $$PWD/actions_modifycounter_dialog.h
 
 FORMS    += $$PWD/configwindow.ui \
     $$PWD/mainwindow.ui \
     $$PWD/actions_area_robot_dialog.ui \
-    $$PWD/actions_area_sector_dialog.ui
+    $$PWD/actions_area_sector_dialog.ui \
+    $$PWD/actions_modifycounter_dialog.ui
