@@ -12,9 +12,11 @@ CounterWidget::CounterWidget(QWidget *parent) : QWidget(parent)
 
     limit = new QDoubleSpinBox(this);
     limit->setMinimum(0);
+    limit->setDecimals(1);
 
     frequency = new QDoubleSpinBox(this);
     frequency->setSuffix("/s");
+    frequency->setDecimals(1);
 
     enabled = new QCheckBox("Enabled", this);
 
