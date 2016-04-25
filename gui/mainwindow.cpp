@@ -263,7 +263,7 @@ void kachnatracker::requestUpdate(){
 
     QPainter painter(&pixmap);
 
-    if (rat.x() != 0 || rat.y() != 0){
+    if (rat.x() != -1 || rat.y() != -1){
         painter.setPen(Qt::red);
         painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
 
@@ -275,7 +275,7 @@ void kachnatracker::requestUpdate(){
         lastKeypoints.rat = update.keypoints.rat;
     }
 
-    if (robot.x() != 0 || robot.y() != 0){
+    if (robot.x() != -1 || robot.y() != -1){
         painter.setPen(Qt::blue);
         painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
 
