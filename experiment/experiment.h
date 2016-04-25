@@ -32,7 +32,7 @@ public:
     };
 
     struct Update {
-        Detector::keypointPair keypoints;
+        Detector::pointPair keypoints;
         Stats stats;
     };
 
@@ -52,7 +52,7 @@ private:
     QString startDate;
 
     struct capFrame {
-        Detector::keypointPair keypoints;
+        Detector::pointPair keypoints;
         int sectors;
         int state;
         int currentLevel;

@@ -193,7 +193,6 @@ void kachnatracker::saveTracks(){
 
 
 void kachnatracker::on_startButton_clicked(){
-
     if (updateTimer.isActive()){
         QMessageBox reallyDialog;
         reallyDialog.setIcon(QMessageBox::Warning);
@@ -204,6 +203,7 @@ void kachnatracker::on_startButton_clicked(){
         if (reallyDialog.exec() == QMessageBox::Yes){
             updateTimer.stop();
             experiment->stop();
+            ui->actionConfigure->setEnabled(true);
             saveTracks();
         }
     } else {
@@ -233,6 +233,8 @@ void kachnatracker::on_startButton_clicked(){
 
         reset();
 
+        ui->actionConfigure->setEnabled(false);
+
         experiment.reset(new Experiment(this, &currentSettings));
         experiment->start();
 
@@ -261,7 +263,7 @@ void kachnatracker::requestUpdate(){
 
     QPainter painter(&pixmap);
 
-    if (rat.x() != 0 || rat.y() != 0){
+    if (rat.x() != -1 || rat.y() != -1){
         painter.setPen(Qt::red);
         painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
 
@@ -273,7 +275,7 @@ void kachnatracker::requestUpdate(){
         lastKeypoints.rat = update.keypoints.rat;
     }
 
-    if (robot.x() != 0 || robot.y() != 0){
+    if (robot.x() != -1 || robot.y() != -1){
         painter.setPen(Qt::blue);
         painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
 
@@ -418,6 +420,6 @@ void kachnatracker::on_actionAbout_triggered()
 {
     QMessageBox aboutBox;
     aboutBox.setText("<b>Kachna Tracker</b>");
-    aboutBox.setInformativeText("Version 3.1<br><br>https://github.com/tmladek/kachna-tracker");
+    aboutBox.setInformativeText("Version 3.2<br><br>https://github.com/fgu-cas/kachna-tracker");
     aboutBox.exec();
 }
