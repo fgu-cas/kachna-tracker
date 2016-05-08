@@ -125,8 +125,7 @@ void kachnatracker::on_actionExportConfig_triggered(){
             settings.setValue(key, currentSettings.value(key));
         }
         settings.setValue("general/version", QString("%1.%2")
-                          .arg(MAJOR_VERSION)
-                          .arg(MINOR_VERSION));
+                          .arg(MAJOR_VERSION));
         appSettings->setValue("lastUsedSettings", fileName);
     }
 
