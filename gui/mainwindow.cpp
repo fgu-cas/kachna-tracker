@@ -220,11 +220,11 @@ void kachnatracker::on_startButton_clicked(){
         int cap_w = currentSettings.value("video/resolution/width").toInt();
         int cap_h = currentSettings.value("video/resolution/height").toInt();
         appSettings->setValue("lastSize", QSize(cap_w, cap_h));
-        pixmap = QPixmap(cap_w, cap_h);
-        pixmap.fill(Qt::white);
+        trackImage = QImage(cap_w, cap_h, QImage::Format_ARGB32_Premultiplied);
+        //trackPixmap.fill(Qt::white);
         capture.release();
 
-        QPainter painter(&pixmap);
+        QPainter painter(&trackImage);
         painter.setPen(Qt::black);
         painter.drawEllipse(QPoint(currentSettings.value("arena/X").toInt(), currentSettings.value("arena/Y").toInt()),
                             currentSettings.value("arena/radius").toInt(), currentSettings.value("arena/radius").toInt());
@@ -245,7 +245,6 @@ void kachnatracker::on_startButton_clicked(){
 }
 
 void kachnatracker::requestUpdate(){
-
     Experiment::Update update = experiment->getUpdate();
 
     QPoint rat(update.keypoints.rat.pt.x, update.keypoints.rat.pt.y);
@@ -253,14 +252,14 @@ void kachnatracker::requestUpdate(){
     if (lastKeypoints.rat.size != 0){
         lastRat = QPoint(lastKeypoints.rat.pt.x, lastKeypoints.rat.pt.y);
     }
+
     QPoint robot(update.keypoints.robot.pt.x, update.keypoints.robot.pt.y);
     QPoint lastRobot;
     if (lastKeypoints.robot.size != 0){
         lastRobot = QPoint(lastKeypoints.robot.pt.x, lastKeypoints.robot.pt.y);
     }
 
-
-    QPainter painter(&pixmap);
+    QPainter painter(&trackImage);
 
     if (rat.x() != -1 || rat.y() != -1){
         painter.setPen(Qt::red);
@@ -288,15 +287,29 @@ void kachnatracker::requestUpdate(){
 
     painter.end();
 
-    if (robot.x() != 0 || robot.y() != 0){
-        QPixmap tempPixmap(pixmap);
-        QPainter painter(&tempPixmap);
-        painter.setPen(Qt::yellow);
-        painter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
+    QPixmap showPixmap(trackImage.size());
+
+    if (showVideo) {
+        showPixmap = QPixmap::fromImage(QImage((uchar*) update.frame.data,
+                                                        update.frame.cols,
+                                                        update.frame.rows,
+                                                        update.frame.step,
+                                                        QImage::Format_RGB888));
+
+    } else {
+        showPixmap.fill(Qt::white);
+    }
+
+    QPainter showPainter(&showPixmap);
+    showPainter.drawImage(QPoint(0, 0), trackImage);
+
+    if (robot.x() != 0 || robot.y() != 0){;
+        showPainter.setPen(Qt::yellow);
+        showPainter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
         int radius = currentSettings.value("shock/triggerDistance").toInt();
         if (currentSettings.value("tracking/type").toInt() == 0){
-            painter.drawEllipse(robot, radius, radius);
+            showPainter.drawEllipse(robot, radius, radius);
         } else {
             int distance = currentSettings.value("shock/offsetDistance").toInt();
             int angle = currentSettings.value("shock/offsetAngle").toInt();
@@ -305,13 +318,13 @@ void kachnatracker::requestUpdate(){
                             sin((angle+update.keypoints.robot.angle)*CV_PI/180));
             shockPoint.setY(robot.y() - distance *
                             cos((angle+update.keypoints.robot.angle)*CV_PI/180));
-            painter.drawEllipse(shockPoint, radius, radius);
+            showPainter.drawEllipse(shockPoint, radius, radius);
         }
-        painter.end();
-        ui->displayLabel->setPixmap(tempPixmap);
-    } else {
-        ui->displayLabel->setPixmap(pixmap);
     }
+
+    showPainter.end();
+    ui->displayLabel->setPixmap(showPixmap);
+
 
     ui->goodFramesLCD->display(update.stats.goodFrames);
     ui->badFramesLCD->display(update.stats.badFrames);
@@ -411,8 +424,13 @@ void kachnatracker::on_actionSave_screenshot_triggered(){
         if (!fileName.endsWith(".png")){
             fileName += ".png";
         }
-        pixmap.save(fileName);
+        trackImage.save(fileName);
     }
+}
+
+void kachnatracker::on_actionVideo_tracking_toggled(bool state)
+{
+    showVideo = state;
 }
 
 void kachnatracker::on_actionAbout_triggered()

@@ -102,6 +102,7 @@ void Experiment::processFrame(){
         return;
     }
     capframe.timestamp = elapsedTimer.elapsed();
+    lastFrame = frame;
 
     Detector::pointPair points = detector->find(&frame);
 
@@ -211,6 +212,7 @@ Experiment::Update Experiment::getUpdate(){
         update.keypoints = frames.at(frames.size()-1).keypoints;
     }
     update.stats = stats;
+    update.frame = lastFrame;
 
     return update;
 }

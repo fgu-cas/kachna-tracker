@@ -34,6 +34,7 @@ public:
     struct Update {
         Detector::pointPair keypoints;
         Stats stats;
+        Mat frame;
     };
 
     Update getUpdate();
@@ -67,6 +68,7 @@ private:
     // Capture
     VideoCapture capture;
     bool isLive;
+    Mat lastFrame;
 
     // Detection
     std::unique_ptr<Detector> detector;
