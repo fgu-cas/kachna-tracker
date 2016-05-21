@@ -290,10 +290,12 @@ void kachnatracker::requestUpdate(){
     QPixmap showPixmap(trackImage.size());
 
     if (showVideo) {
-        showPixmap = QPixmap::fromImage(QImage((uchar*) update.frame.data,
-                                                        update.frame.cols,
-                                                        update.frame.rows,
-                                                        update.frame.step,
+        Mat rgbFrame;
+        cv::cvtColor(update.frame, rgbFrame, CV_BGR2RGB);
+        showPixmap = QPixmap::fromImage(QImage((uchar*) rgbFrame.data,
+                                                        rgbFrame.cols,
+                                                        rgbFrame.rows,
+                                                        rgbFrame.step,
                                                         QImage::Format_RGB888));
 
     } else {
