@@ -305,7 +305,7 @@ void kachnatracker::requestUpdate(){
     QPainter showPainter(&showPixmap);
     showPainter.drawImage(QPoint(0, 0), trackImage);
 
-    if (robot.x() != 0 || robot.y() != 0){;
+    if (robot.x() != -1 || robot.y() != -1){;
         showPainter.setPen(Qt::yellow);
         showPainter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 

@@ -73,9 +73,16 @@ private:
     // Detection
     std::unique_ptr<Detector> detector;
 
-    double triggerDistance;
+    int multiple_reaction;
+    int skip_reaction;
+    int skip_distance;
+    int skip_timeout;
+    Detector::pointPair lastPoints;
+    QElapsedTimer ratTimer;
+    QElapsedTimer robotTimer;
 
     // Shock
+    double triggerDistance;
     bool shockIsOffset = false;
     int shockDistance;
     int shockAngle;

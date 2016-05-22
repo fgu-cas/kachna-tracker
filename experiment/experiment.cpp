@@ -48,6 +48,12 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
         cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
     }
 
+
+    // multiple_reaction = settings->value("faults/multipleReaction").toInt();
+    skip_reaction = settings->value("faults/skipReaction").toInt();
+    skip_distance = settings->value("faults/skipDistance").toInt();
+    skip_timeout = settings->value("faults/skipTimeout").toInt();
+
     arena.x = settings->value("arena/X").toInt();
     arena.y = settings->value("arena/Y").toInt();
     arena.size = settings->value("arena/size").toDouble();
@@ -105,6 +111,27 @@ void Experiment::processFrame(){
     lastFrame = frame;
 
     Detector::pointPair points = detector->find(&frame);
+
+
+    if (skip_reaction == 1){
+       if (lastPoints.rat.size == -1 ||
+           cv::norm(lastPoints.rat.pt - points.rat.pt) < skip_distance ||
+           ratTimer.elapsed() > skip_timeout){
+               lastPoints.rat = points.rat;
+               ratTimer.start();
+       } else {
+           points.rat = Detector::Point();
+       }
+
+       if (lastPoints.robot.size == -1 ||
+           cv::norm(lastPoints.robot.pt - points.robot.pt) < skip_distance ||
+           robotTimer.elapsed() > skip_timeout){
+               lastPoints.robot = points.robot;
+               robotTimer.start();
+       } else {
+           points.robot = Detector::Point();
+       }
+   }
 
     double distance = -1;
     bool badFrame = false;
