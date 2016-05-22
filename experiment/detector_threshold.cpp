@@ -45,29 +45,35 @@ Mat DetectorThreshold::analyze(Mat *frame){
     return result;
 }
 
-std::vector<KeyPoint> DetectorThreshold::detect(Mat *frame){
-    std::vector<KeyPoint> result;
+std::vector<Detector::Point> DetectorThreshold::detect(Mat *frame){
+    std::vector<Detector::Point> result;
 
     if (!frame->empty() && frame->channels() == 3){
         Mat workFrame = process(frame);
         workFrame = analyze(&workFrame);
-        detector->detect(workFrame, result);
+        std::vector<KeyPoint> keyPoints;
+        detector->detect(workFrame, keyPoints);
+        for (KeyPoint keyPoint : keyPoints){
+            Detector::Point point;
+            point = keyPoint;
+            result.push_back(point);
+        }
     }
 
     return result;
 }
 
-Detector::keypointPair DetectorThreshold::find(Mat *frame){
-    keypointPair result;
+Detector::pointPair DetectorThreshold::find(Mat *frame){
+    pointPair result;
 
-    std::vector<KeyPoint> keypoints = detect(frame);
+    std::vector<Detector::Point> keypoints = detect(frame);
 
     for (unsigned i = 0; i<keypoints.size(); i++){
-       KeyPoint keypoint = keypoints[i];
+       Detector::Point keypoint = keypoints[i];
        if (keypoint.size > minRat && keypoint.size < maxRat){
            if (skip_reaction == 1){
                if (lastPoints.rat.size == 0 ||
-                   getDistance(lastPoints.rat, keypoint) < skip_distance ||
+                   cv::norm(lastPoints.rat.pt - keypoint.pt) < skip_distance ||
                    ratTimer.elapsed() > skip_timeout){
                        result.rat = keypoint;
                        lastPoints.rat = keypoint;
@@ -81,7 +87,7 @@ Detector::keypointPair DetectorThreshold::find(Mat *frame){
        if (keypoint.size > minRobot && keypoint.size < maxRobot){
            if (skip_reaction == 1){
                if (lastPoints.robot.size == 0 ||
-                   getDistance(lastPoints.robot, keypoint) < skip_distance ||
+                   cv::norm(lastPoints.robot.pt - keypoint.pt) < skip_distance ||
                    robotTimer.elapsed() > skip_timeout){
                        result.robot = keypoint;
                        lastPoints.robot = keypoint;
@@ -95,10 +101,3 @@ Detector::keypointPair DetectorThreshold::find(Mat *frame){
 
     return result;
 }
-
-double DetectorThreshold::getDistance(KeyPoint a, KeyPoint b){
-    double dx = a.pt.x - b.pt.x;
-    double dy = a.pt.y - b.pt.y;
-    return qSqrt(dx*dx + dy*dy);
-}
-

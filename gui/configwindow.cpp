@@ -44,8 +44,9 @@ configWindow::configWindow(QWidget *parent) :
     ui->robotFrontSelector->setTitle("Robot Front");
     ui->robotBackSelector->setTitle("Robot Back");
 
-    connect(ui->resolutionHeightSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
-    connect(ui->resolutionWidthSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
+    connect(ui->resolutionHeightSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
+    connect(ui->resolutionWidthSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
+
     refreshDevices();
 }
 
@@ -252,16 +253,17 @@ void configWindow::on_okayButton_clicked()
 
 void configWindow::showEvent(QShowEvent *event){
     if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
-        ui->lengthEdit->setEnabled(false);
-        ui->timeoutStopBox->setEnabled(false);
+        ui->lengthEdit->setEnabled(true);
+        ui->timeoutStopBox->setEnabled(true);
         ui->resolutionBox->setEnabled(true);
         capture.open(ui->deviceCombobox->currentIndex());
-    } else if (!videoFilename.isEmpty()) {
+    } else {
         ui->lengthEdit->setEnabled(false);
         ui->timeoutStopBox->setEnabled(false);
         ui->resolutionBox->setChecked(false);
         ui->resolutionBox->setEnabled(false);
-        capture.open(videoFilename.toStdString());
+        if (!videoFilename.isEmpty())
+            capture.open(videoFilename.toStdString());
     }
 
     if (ui->resolutionBox->isChecked()){
@@ -278,36 +280,38 @@ void configWindow::showEvent(QShowEvent *event){
 
 
 void configWindow::closeEvent(QCloseEvent *event){
-    if (ui->refreshCheckbox->isChecked()){
-       ui->refreshCheckbox->setChecked(false);
+    ui->refreshCheckbox->setChecked(false);
+
+    if (compileSettings() != lastSettings){
+        QMessageBox reallyDialog;
+        reallyDialog.setIcon(QMessageBox::Warning);
+        reallyDialog.setModal(true);
+        reallyDialog.setText("Wait! You've got unsaved changes in experiment configuration.");
+        reallyDialog.setInformativeText("Do you want to save the changes?");
+        reallyDialog.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
+        switch (reallyDialog.exec()){
+            case QMessageBox::Save:
+                on_applyButton_clicked();
+                break;
+            case QMessageBox::Discard:
+                on_revertButton_clicked();
+                break;
+            case QMessageBox::Cancel:
+                setCurrentIndex(0);
+                event->ignore();
+                return;
+                break;
+        }
     }
-    if (compileSettings() == lastSettings){
-        capture.release();
-        event->accept();
-        return;
-    }
-    QMessageBox reallyDialog;
-    reallyDialog.setIcon(QMessageBox::Warning);
-    reallyDialog.setModal(true);
-    reallyDialog.setText("Wait! You've got unsaved changes in experiment configuration.");
-    reallyDialog.setInformativeText("Do you want to save the changes?");
-    reallyDialog.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
-    switch (reallyDialog.exec()){
-        case QMessageBox::Save:
-            on_applyButton_clicked();
-            capture.release();
-            event->accept();
-            break;
-        case QMessageBox::Discard:
-            on_revertButton_clicked();
-            capture.release();
-            event->accept();
-            break;
-        case QMessageBox::Cancel:
-            setCurrentIndex(0);
-            event->ignore();
-            break;
-    }
+
+    capture.release();
+
+    ui->ratFrontSelector->closeDialog();
+    ui->ratBackSelector->closeDialog();
+    ui->robotFrontSelector->closeDialog();
+    ui->robotBackSelector->closeDialog();
+
+    event->accept();
 }
 
 double configWindow::pixelsToMeters(int px){

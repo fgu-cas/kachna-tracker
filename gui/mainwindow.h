@@ -6,12 +6,12 @@
 #include <QSettings>
 #include <QElapsedTimer>
 #include <QCloseEvent>
+#include <QImage>
 #include "configwindow.h"
 #include "detector.h"
 class Experiment;
 
 #define MAJOR_VERSION 3
-#define MINOR_VERSION 0
 
 namespace Ui {
 class kachnatracker;
@@ -49,6 +49,8 @@ public slots:
 private slots:
     void on_actionAbout_triggered();
 
+    void on_actionVideo_tracking_toggled(bool arg1);
+
 private:
     void reset();
 
@@ -63,14 +65,14 @@ private:
     bool experimentEnded;
     bool isLive;
 
-
     Ui::kachnatracker *ui;
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
-    QPixmap pixmap;
-    Detector::keypointPair lastKeypoints;
+    QImage trackImage;
+    Detector::pointPair lastKeypoints;
 
     bool dirty = false;
+    bool showVideo = false;
 };
 
 #include "experiment.h"

@@ -16,3 +16,18 @@ Detector::Detector(const QMap<QString, QVariant> &settings, int h, int w){
     maskRect.width = r*2;
     maskRect.height = r*2;
 }
+
+Detector::Point::Point(){
+    pt.x = -1;
+    pt.y = -1;
+    angle = -1;
+    size = -1;
+    hue = -1;
+    class_id = -1;
+}
+
+void Detector::Point::operator=(KeyPoint point){
+    pt = point.pt;
+    angle = point.angle;
+    size = point.size;
+}

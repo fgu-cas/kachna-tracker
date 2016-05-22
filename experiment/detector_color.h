@@ -27,8 +27,8 @@ public:
 
     Mat process(Mat *frame);
     Mat analyze(Mat *frame);
-    std::vector<KeyPoint> detect(Mat *frame);
-    keypointPair find(Mat *frame);
+    std::vector<Detector::Point> detect(Mat *frame);
+    pointPair find(Mat *frame);
 
     enum CLASS_ID {
         RAT_FRONT,

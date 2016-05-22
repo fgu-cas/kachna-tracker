@@ -105,8 +105,9 @@ void Experiment::processFrame(){
         return;
     }
     capframe.timestamp = elapsedTimer.elapsed();
+    lastFrame = frame;
 
-    Detector::keypointPair points = detector->find(&frame);
+    Detector::pointPair points = detector->find(&frame);
 
     double distance = -1;
     bool badFrame = false;
@@ -214,6 +215,7 @@ Experiment::Update Experiment::getUpdate(){
         update.keypoints = frames.at(frames.size()-1).keypoints;
     }
     update.stats = stats;
+    update.frame = lastFrame;
 
     return update;
 }
@@ -254,9 +256,11 @@ QString Experiment::getLog(bool rat){
     log += "                %TrackerResolution_PixPerCM.0 ( "+QString::number((2*arena.radius)/(arena.size*100))+" )\r\n";
     log += QString("                %ArenaCenterXY.0 ( %1 %2 )\r\n").arg(QString::number(arena.x), QString::number(arena.y));
     log += "                %Frame.0 ( RoomFrame )\r\n";
-    log += "                %ReinforcedSector.0 ( "+QString::number(triggerDistance)+" )\r\n";
-    log += "                        //%ReinforcedSector.0 ( Radius )\r\n";
-    log += "        %%END SETUP_INFORMATION\r\n";
+    log += QString("                %ReinforcedSector.0 ( %1 %2 %3 )\r\n").arg(QString::number(triggerDistance),
+                                                                               QString::number(shockDistance),
+                                                                               QString::number(shockAngle));
+    log += "                        //%ReinforcedSector.0 ( Radius Distance Angle)\r\n";
+    log += "        %%END SETUP_INFORMATION\r\n";\
     log += "        %%BEGIN RECORD_FORMAT\r\n";
     log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo Angle)\r\n";
     log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\r\n";

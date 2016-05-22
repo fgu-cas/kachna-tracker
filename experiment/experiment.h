@@ -32,8 +32,9 @@ public:
     };
 
     struct Update {
-        Detector::keypointPair keypoints;
+        Detector::pointPair keypoints;
         Stats stats;
+        Mat frame;
     };
 
     Update getUpdate();
@@ -52,7 +53,7 @@ private:
     QString startDate;
 
     struct capFrame {
-        Detector::keypointPair keypoints;
+        Detector::pointPair keypoints;
         int sectors;
         int state;
         int currentLevel;
@@ -67,6 +68,7 @@ private:
     // Capture
     VideoCapture capture;
     bool isLive;
+    Mat lastFrame;
 
     // Detection
     std::unique_ptr<Detector> detector;
