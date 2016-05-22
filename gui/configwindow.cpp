@@ -46,23 +46,7 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(ui->resolutionHeightSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
     connect(ui->resolutionWidthSpin, SIGNAL(valueChanged(int)), this, SLOT(captureResolutionChanged()));
-
     refreshDevices();
-
-    ui->actionsLayout->setDirection(QBoxLayout::BottomToTop);
-    QPushButton* addActionButton = new QPushButton("+");
-    connect(addActionButton, SIGNAL(pressed()), this, SLOT(addAction()));
-    ui->actionsLayout->addWidget(addActionButton);
-
-    ui->counterLayout->setDirection(QBoxLayout::BottomToTop);
-    QPushButton* addCounterButton = new QPushButton("+");
-    connect(addCounterButton, SIGNAL(pressed()), this, SLOT(addCounter()));
-    ui->counterLayout->addWidget(addCounterButton);
-
-    ui->areasLayout->setDirection(QBoxLayout::BottomToTop);
-    QPushButton* addAreaButton = new QPushButton("+");
-    connect(addAreaButton, SIGNAL(pressed()), this, SLOT(addArea()));
-    ui->areasLayout->addWidget(addAreaButton);
 }
 
 configWindow::~configWindow()

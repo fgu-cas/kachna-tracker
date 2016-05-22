@@ -16,7 +16,8 @@
 
 #include "detector_threshold.h"
 #include "detector_color.h"
-#include "actions.h"
+#include "action.h"
+#include "models.h"
 
 typedef QMap<QString, QVariant> Settings;
 
@@ -75,11 +76,19 @@ private slots:
     void captureResolutionChanged();
 
     void addAction();
-    void addAction(QString trigger, Action action, QString target);
-    void removeActionWidget();
+    void addAction(QString trigger, Action *action);
     void addArea();
+    void addArea(QString title, AreaSectorSettings settings, bool enabled);
+    void addArea(QString title, AreaRobotSettings settings, bool enabled);
     void addCounter();
+    void addCounter(QString title, double limit, double frequency, bool enabled);
+    void removeThisActionRow();
+    void removeThisAreaRow();
+    void removeThisCounterRow();
     void clearAllActions();
+
+    void actionAreaSetPressed();
+    void actionActionSetPressed();
 
     void triggersChanged(QString id);
 

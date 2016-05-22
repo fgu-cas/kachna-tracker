@@ -28,4 +28,5 @@ private:
     Ui::AreaSectorDialog *ui;
 };
 
+
 #endif // ACTIONS_AREA_SECTOR_DIALOG_H

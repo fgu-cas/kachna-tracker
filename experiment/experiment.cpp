@@ -1,11 +1,11 @@
 #include "experiment.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "action.h"
 
 #include <QDateTime>
 
 #include "cbw.h"
-
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent)
@@ -91,7 +91,10 @@ bool Experiment::isRunning(){
 }
 
 void Experiment::processFrame(){
+    // Output sync signal
     if (doSynch) cbDOut(0, FIRSTPORTB, synchInv ? 0 : 1);
+
+    //Start processing the frame
     capFrame capframe;
 
     Mat frame;

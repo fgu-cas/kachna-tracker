@@ -2,6 +2,7 @@
 #define ACTION_MODIFY_COUNTER_DIALOG_H
 
 #include <QDialog>
+#include <QStringListModel>
 
 namespace Ui {
 class ActionModifyCounterDialog;
@@ -12,7 +13,7 @@ class ActionModifyCounterDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ActionModifyCounterDialog(QWidget *parent = 0);
+    explicit ActionModifyCounterDialog(QStringListModel &counters, QWidget *parent = 0);
     ~ActionModifyCounterDialog();
 
 private:
