@@ -7,15 +7,15 @@
 #include "actions_area_robot_dialog.h"
 #include "actions_modifycounter_dialog.h"
 #include "actions_enabledisabledialog.h"
+#include "actionssounddialog.h"
+
 
 #include <QDebug>
 
 void configWindow::addAction(){
     QStringList list = actionTriggers.stringList();
-    if (list.count() > 0){
-        QString first = list.at(0);
-        addAction(first, 0);
-    }
+    QString first = list.at(0);
+    addAction(first, 0);
 }
 
 void configWindow::addAction(QString trigger, Action *action){
@@ -143,6 +143,9 @@ void configWindow::actionActionSetPressed(){
     } else if (box->currentIndex() == Action::COUNTER){
         ActionModifyCounterDialog dialog(actionTriggers, this);
         dialog.exec();
+    } else if (box->currentIndex() == Action::SOUND){
+        ActionsSoundDialog dialog(this);
+        dialog.exec();
     }
 }
 
@@ -203,6 +206,8 @@ void configWindow::triggersChanged(QString id){
 
 
     QStringList newList;
+    newList.append("[START]");
+    newList.append("[END]");
 
     for (int i = ui->areaLayout->columnCount(); i < ui->areaLayout->count(); i++){
         int col, x;

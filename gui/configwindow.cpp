@@ -47,6 +47,11 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->resolutionHeightSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
     connect(ui->resolutionWidthSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
 
+    QStringList list;
+    list.append("[START]");
+    list.append("[END]");
+    actionTriggers.setStringList(list);
+
     refreshDevices();
 }
 
