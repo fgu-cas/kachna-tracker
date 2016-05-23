@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Kachna Tracker"
-#define MyAppVersion "3.2"
+#define MyAppVersion "3.3"
 #define MyAppPublisher "Tomáš Mládek"
-#define MyAppURL "https://github.com/tmladek/kachna-tracker"
+#define MyAppURL "https://github.com/fgu-cas/kachna-tracker"
 #define MyAppExeName "kachna-tracker.exe"
 
 [Setup]
@@ -21,7 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputDir=C:\dev\build\kachna
+OutputDir=D:\dev\build\kachna
 OutputBaseFilename=kachna-tracker_setup
 Compression=lzma2
 SolidCompression=yes
@@ -33,28 +33,28 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\dev\build\kachna\release\kachna-tracker.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\dev\build\kachna\release\cbw32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Qt\5.5\mingw492_32\bin\icudt54.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\icuin54.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\icuuc54.dll"; DestDir: "{app}"; 
-Source: "C:\dev\opencv\build\bin\libopencv_core2411d.dll"; DestDir: "{app}"; 
-Source: "C:\dev\opencv\build\bin\libopencv_features2d2411d.dll"; DestDir: "{app}"; 
-Source: "C:\dev\opencv\build\bin\libopencv_flann2411d.dll"; DestDir: "{app}"; 
-Source: "C:\dev\opencv\build\bin\libopencv_highgui2411d.dll"; DestDir: "{app}"; 
-Source: "C:\dev\opencv\build\bin\libopencv_imgproc2411d.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Core.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Cored.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Gui.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Guid.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Testd.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Widgets.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\Qt5Widgetsd.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\libwinpthread-1.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\bin\libstdc++-6.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.5\mingw492_32\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; 
-Source: "C:\Qt\5.5\mingw492_32\plugins\platforms\qwindowsd.dll"; DestDir: "{app}\platforms"; 
+Source: "D:\dev\build\kachna\release\kachna-tracker.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\dev\build\kachna\release\cbw32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Qt\5.6\mingw49_32\bin\icudt54.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\icuin54.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\icuuc54.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_core2412d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_features2d2412d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_flann2412d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_highgui2412d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_imgproc2412d.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Core.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Cored.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Gui.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Guid.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Testd.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Widgets.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Widgetsd.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\libwinpthread-1.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\bin\libstdc++-6.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\5.6\mingw49_32\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; 
+Source: "C:\Qt\5.6\mingw49_32\plugins\platforms\qwindowsd.dll"; DestDir: "{app}\platforms"; 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
