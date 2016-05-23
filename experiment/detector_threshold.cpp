@@ -25,11 +25,6 @@ DetectorThreshold::DetectorThreshold(const QMap<QString, QVariant> &settings, in
     minRat = settings.value("tracking/threshold/minRat").toDouble();
     maxRobot = settings.value("tracking/threshold/maxRobot").toDouble();
     minRobot = settings.value("tracking/threshold/minRobot").toDouble();
-
-    // multiple_reaction = settings->value("faults/multipleReaction").toInt();
-    skip_reaction = settings.value("faults/skipReaction").toInt();
-    skip_distance = settings.value("faults/skipDistance").toInt();
-    skip_timeout = settings.value("faults/skipTimeout").toInt();
 }
 
 Mat DetectorThreshold::process(Mat *frame){
@@ -70,32 +65,12 @@ Detector::pointPair DetectorThreshold::find(Mat *frame){
 
     for (unsigned i = 0; i<keypoints.size(); i++){
        Detector::Point keypoint = keypoints[i];
-       if (keypoint.size > minRat && keypoint.size < maxRat){
-           if (skip_reaction == 1){
-               if (lastPoints.rat.size == 0 ||
-                   cv::norm(lastPoints.rat.pt - keypoint.pt) < skip_distance ||
-                   ratTimer.elapsed() > skip_timeout){
-                       result.rat = keypoint;
-                       lastPoints.rat = keypoint;
-                       ratTimer.start();
-                }
-           } else {
-              result.rat = keypoint;
-           }
+       if (keypoint.size > minRat && keypoint.size < maxRat){    
+           result.rat = keypoint;
        }
 
        if (keypoint.size > minRobot && keypoint.size < maxRobot){
-           if (skip_reaction == 1){
-               if (lastPoints.robot.size == 0 ||
-                   cv::norm(lastPoints.robot.pt - keypoint.pt) < skip_distance ||
-                   robotTimer.elapsed() > skip_timeout){
-                       result.robot = keypoint;
-                       lastPoints.robot = keypoint;
-                       robotTimer.start();
-               }
-           } else {
-              result.robot = keypoint;
-           }
+           result.robot = keypoint;
        }
     }
 

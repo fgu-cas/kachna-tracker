@@ -31,16 +31,6 @@ private:
     double minRobot;
 
     double img_threshold;
-
-    int multiple_reaction;
-    int skip_reaction;
-    int skip_distance;
-    int skip_timeout;
-
-    pointPair lastPoints;
-
-    QElapsedTimer ratTimer;
-    QElapsedTimer robotTimer;
 };
 
 #endif // DETECTOR_THRESHOLD_H

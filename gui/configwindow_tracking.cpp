@@ -114,7 +114,6 @@ void configWindow::updateTrackingView(){
             }
             ui->keypointList->addItem(line);
 
-            if (colorTracking )
             if ((colorTracking && !ui->colorthresholdBox->isChecked()) ||
                 (!colorTracking && !ui->thresholdEnableBox->isChecked())){
 

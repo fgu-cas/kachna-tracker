@@ -34,6 +34,7 @@ public:
     struct Update {
         Detector::pointPair keypoints;
         Stats stats;
+        Mat frame;
     };
 
     Update getUpdate();
@@ -67,13 +68,21 @@ private:
     // Capture
     VideoCapture capture;
     bool isLive;
+    Mat lastFrame;
 
     // Detection
     std::unique_ptr<Detector> detector;
 
-    double triggerDistance;
+    int multiple_reaction;
+    int skip_reaction;
+    int skip_distance;
+    int skip_timeout;
+    Detector::pointPair lastPoints;
+    QElapsedTimer ratTimer;
+    QElapsedTimer robotTimer;
 
     // Shock
+    double triggerDistance;
     bool shockIsOffset = false;
     int shockDistance;
     int shockAngle;
