@@ -261,26 +261,31 @@ void kachnatracker::requestUpdate(){
 
     QPainter painter(&trackImage);
 
-    if (rat.x() != -1 || rat.y() != -1){
+    if (rat.x() != -1){
+        if (!lastRat.isNull()){
+            painter.setPen(QColor(255, 140, 140));
+            painter.setBrush(QBrush(QColor(255, 140, 140), Qt::SolidPattern));
+            painter.drawLine(lastRat, rat);
+            painter.drawEllipse(lastRat, 2, 2);
+        }
         painter.setPen(Qt::red);
         painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
-
         painter.drawEllipse(rat, 2, 2);
-        if (lastRat.x() != 0){
-            painter.drawLine(lastRat, rat);
-        }
 
         lastKeypoints.rat = update.keypoints.rat;
     }
 
-    if (robot.x() != -1 || robot.y() != -1){
+
+    if (robot.x() != -1){
+        if (!lastRobot.isNull()){
+            painter.setPen(QColor(140, 140, 255));
+            painter.setBrush(QBrush(QColor(140, 140, 255), Qt::SolidPattern));
+            painter.drawLine(lastRobot, robot);
+            painter.drawEllipse(lastRobot, 2, 2);
+        }
         painter.setPen(Qt::blue);
         painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
-
         painter.drawEllipse(robot, 2, 2);
-        if (lastRobot.x() != 0){
-            painter.drawLine(lastRobot, robot);
-        }
 
         lastKeypoints.robot = update.keypoints.robot;
     }
