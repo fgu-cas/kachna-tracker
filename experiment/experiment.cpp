@@ -135,7 +135,7 @@ void Experiment::processFrame(){
 
     double distance = -1;
     bool badFrame = false;
-    if (points.rat.size == 0 || points.robot.size == 0){
+    if (points.rat.size == -1 || points.robot.size == -1){
         stats.badFrames++;
         badFrame = true;
     } else {
