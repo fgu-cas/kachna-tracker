@@ -143,6 +143,7 @@ void kachnatracker::experimentTimeout(){
             updateTimer.stop();
             experiment->stop();
             alert->exec();
+            ui->actionConfigure->setEnabled(true);
             saveTracks();
         } else {
             alert->setModal(false);
