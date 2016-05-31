@@ -294,6 +294,8 @@ void kachnatracker::requestUpdate(){
     painter.end();
 
     QPixmap showPixmap(trackImage.size());
+    QPainter *showPainter;
+
 
     if (showVideo) {
         Mat rgbFrame;
@@ -303,21 +305,22 @@ void kachnatracker::requestUpdate(){
                                                         rgbFrame.rows,
                                                         rgbFrame.step,
                                                         QImage::Format_RGB888));
-
+        showPainter = new QPainter(&showPixmap);
+        showPainter->setOpacity(0.4);
     } else {
+        showPainter = new QPainter(&showPixmap);
         showPixmap.fill(Qt::white);
     }
 
-    QPainter showPainter(&showPixmap);
-    showPainter.drawImage(QPoint(0, 0), trackImage);
+    showPainter->drawImage(QPoint(0, 0), trackImage);
 
     if (robot.x() != -1 || robot.y() != -1){;
-        showPainter.setPen(Qt::yellow);
-        showPainter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
+        showPainter->setPen(Qt::yellow);
+        showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
         int radius = currentSettings.value("shock/triggerDistance").toInt();
         if (currentSettings.value("tracking/type").toInt() == 0){
-            showPainter.drawEllipse(robot, radius, radius);
+            showPainter->drawEllipse(robot, radius, radius);
         } else {
             int distance = currentSettings.value("shock/offsetDistance").toInt();
             int angle = currentSettings.value("shock/offsetAngle").toInt();
@@ -326,11 +329,11 @@ void kachnatracker::requestUpdate(){
                             sin((angle+update.keypoints.robot.angle)*CV_PI/180));
             shockPoint.setY(robot.y() - distance *
                             cos((angle+update.keypoints.robot.angle)*CV_PI/180));
-            showPainter.drawEllipse(shockPoint, radius, radius);
+            showPainter->drawEllipse(shockPoint, radius, radius);
         }
     }
 
-    showPainter.end();
+    showPainter->end();
     ui->displayLabel->setPixmap(showPixmap);
 
 
