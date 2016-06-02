@@ -448,6 +448,6 @@ void kachnatracker::on_actionAbout_triggered()
 {
     QMessageBox aboutBox;
     aboutBox.setText("<b>Kachna Tracker</b>");
-    aboutBox.setInformativeText("Version 3.3<br><br>https://github.com/fgu-cas/kachna-tracker");
+    aboutBox.setInformativeText("Version 3.4<br><br>https://github.com/fgu-cas/kachna-tracker");
     aboutBox.exec();
 }
