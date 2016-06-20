@@ -6,17 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
-    <height>406</height>
+    <width>686</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Kachna Tracker</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/resources/duck.png</normaloff>:/icons/resources/duck.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
       <item>
        <widget class="QLabel" name="displayLabel">
         <property name="text">
@@ -122,7 +126,7 @@
            <double>0.100000000000000</double>
           </property>
           <property name="value">
-           <double>0.100000000000000</double>
+           <double>0.500000000000000</double>
           </property>
          </widget>
         </item>
@@ -184,7 +188,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>639</width>
+     <width>686</width>
      <height>21</height>
     </rect>
    </property>
@@ -204,6 +208,7 @@
     <addaction name="actionSave_tracks"/>
     <addaction name="actionSave_screenshot"/>
     <addaction name="separator"/>
+    <addaction name="actionDebug"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -260,6 +265,11 @@
     <string>Track over video</string>
    </property>
   </action>
+  <action name="actionDebug">
+   <property name="text">
+    <string>Debug</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -269,6 +279,8 @@
    <header>shockspinbox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

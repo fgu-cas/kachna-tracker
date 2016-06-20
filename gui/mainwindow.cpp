@@ -4,6 +4,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "debugwindow.h"
 #include <iostream>
 #include <QFileDialog>
 #include <QFile>
@@ -441,4 +442,10 @@ void kachnatracker::on_actionAbout_triggered()
     aboutBox.setText("<b>Kachna Tracker</b>");
     aboutBox.setInformativeText("Version 3.2<br><br>https://github.com/fgu-cas/kachna-tracker");
     aboutBox.exec();
+}
+
+void kachnatracker::on_actionDebug_triggered()
+{
+    DebugWindow debugWindow;
+    debugWindow.exec();
 }
