@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
-    <height>410</height>
+    <width>566</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,6 +195,168 @@
        </property>
        <property name="value">
         <number>100</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Turntable rotate rate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
+     <item>
+      <widget class="QPushButton" name="rateButton">
+       <property name="text">
+        <string>Set</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="rateSpinbox">
+       <property name="suffix">
+        <string> s</string>
+       </property>
+       <property name="prefix">
+        <string>1 rotation per </string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Turntable direction</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QComboBox" name="directionCombobox">
+     <item>
+      <property name="text">
+       <string>OFF</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CLOCKWISE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>COUNTERCLOCKWISE</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>PID values</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
+       <item>
+        <widget class="QPushButton" name="setPButton">
+         <property name="text">
+          <string>Set P</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="pSpinbox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>0.000100000000000</double>
+         </property>
+         <property name="maximum">
+          <double>6.553500000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
+       <item>
+        <widget class="QPushButton" name="setIButton">
+         <property name="text">
+          <string>Set I</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="iSpinbox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>0.000100000000000</double>
+         </property>
+         <property name="maximum">
+          <double>6.553500000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
+       <item>
+        <widget class="QPushButton" name="setDButton">
+         <property name="text">
+          <string>Set D</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="dSpinbox">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>0.000100000000000</double>
+         </property>
+         <property name="maximum">
+          <double>6.553500000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Set turntable PWM</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
+     <item>
+      <widget class="QPushButton" name="pwmButton">
+       <property name="text">
+        <string>Set</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="pwmSpinbox">
+       <property name="maximum">
+        <number>255</number>
        </property>
       </widget>
      </item>

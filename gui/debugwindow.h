@@ -35,6 +35,18 @@ private slots:
 
     void on_delayButton_clicked();
 
+    void on_directionCombobox_currentIndexChanged(int index);
+
+    void on_rateButton_clicked();
+
+    void on_setPButton_clicked();
+
+    void on_setIButton_clicked();
+
+    void on_setDButton_clicked();
+
+    void on_pwmButton_clicked();
+
 private:
     Ui::DebugWindow *ui;
     std::unique_ptr<Arenomat> arenomat;

@@ -8,7 +8,13 @@ enum COMMANDS {
     SHOCK_LEVEL = 20,
     SHOCK_LENGTH = 21,
     SHOCK_DELAY = 22,
-    LED = 30
+    LED = 30,
+    TURNTABLE_SPEED = 40,
+    TURNTABLE_DIRECTION = 41,
+    UPDATE_P = 42,
+    UPDATE_I = 43,
+    UPDATE_D = 44,
+    SET_PWM = 45
 };
 
 
@@ -87,6 +93,55 @@ void Arenomat::setShockDelay(int length){
     command.append(SHOCK_DELAY);
     command.append(length & 0xff);
     command.append(length >> 8 & 0xff);
+
+    serial.write(command);
+}
+
+void Arenomat::setTurntableDirection(int direction){
+    if (direction >= 0 && direction <= 2){
+        QByteArray command(3, 0x00);
+        command[0] = TURNTABLE_DIRECTION;
+        command[1] = (uint) direction;
+
+        serial.write(command);
+    }
+}
+
+void Arenomat::setTurntableSpeed(int speed){
+    QByteArray command;
+    command.append(TURNTABLE_SPEED);
+    command.append(speed & 0xff);
+    command.append(speed >> 8 & 0xff);
+
+    serial.write(command);
+}
+
+void Arenomat::setPIDValue(int constant, double value){
+    QByteArray command;
+    switch (constant){
+        case 0:
+            command.append(UPDATE_P);
+            break;
+        case 1:
+            command.append(UPDATE_I);
+            break;
+        case 2:
+            command.append(UPDATE_D);
+            break;
+        default:
+            return;
+    }
+    int value_fixed = value*10000;
+    command.append(value_fixed & 0xff);
+    command.append(value_fixed >> 8 & 0xff);
+
+    serial.write(command);
+}
+
+void Arenomat::setTurntablePWM(uint8_t pwm){
+    QByteArray command(3, 0x00);
+    command[0] = SET_PWM;
+    command[1] = pwm;
 
     serial.write(command);
 }

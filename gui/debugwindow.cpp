@@ -71,3 +71,33 @@ void DebugWindow::on_delayButton_clicked()
 {
     if (arenomat != 0) arenomat->setShockDelay(ui->delaySpinbox->value());
 }
+
+void DebugWindow::on_directionCombobox_currentIndexChanged(int index)
+{
+    if (arenomat != 0) arenomat->setTurntableDirection(index);
+}
+
+void DebugWindow::on_rateButton_clicked()
+{
+    if (arenomat != 0) arenomat->setTurntableSpeed(ui->rateSpinbox->value());
+}
+
+void DebugWindow::on_setPButton_clicked()
+{
+    if (arenomat != 0) arenomat->setPIDValue(0, ui->pSpinbox->value());
+}
+
+void DebugWindow::on_setIButton_clicked()
+{
+    if (arenomat != 0) arenomat->setPIDValue(1, ui->iSpinbox->value());
+}
+
+void DebugWindow::on_setDButton_clicked()
+{
+    if (arenomat != 0) arenomat->setPIDValue(2, ui->dSpinbox->value());
+}
+
+void DebugWindow::on_pwmButton_clicked()
+{
+    if (arenomat != 0) arenomat->setTurntablePWM(ui->pwmSpinbox->value());
+}

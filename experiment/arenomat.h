@@ -16,6 +16,10 @@ public:
     void setShock(double level);
     void setShockLength(int length);
     void setShockDelay(int length);
+    void setTurntableDirection(int direction);
+    void setTurntableSpeed(int speed);
+    void setPIDValue(int constant, double value);
+    void setTurntablePWM(uint8_t pwm);
 
 signals:
     void messageReceived(QByteArray message);
