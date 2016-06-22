@@ -595,20 +595,52 @@
    </attribute>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,5,2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,1,0,0,0">
       <item>
-       <widget class="QComboBox" name="trackingCombobox">
-        <item>
-         <property name="text">
-          <string>Threshold tracking</string>
-         </property>
+       <layout class="QFormLayout" name="formLayout_11">
+        <item row="1" column="1">
+         <widget class="QComboBox" name="trackingCombobox">
+          <item>
+           <property name="text">
+            <string>Threshold tracking</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Color tracking</string>
+           </property>
+          </item>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Color tracking</string>
-         </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_56">
+          <property name="text">
+           <string>Tracking type</string>
+          </property>
+         </widget>
         </item>
-       </widget>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_57">
+          <property name="text">
+           <string>Experiment mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="modeCombobox">
+          <item>
+           <property name="text">
+            <string>Rat</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Rat + Robot</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="Line" name="line_5">
@@ -755,13 +787,6 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Minimal Size</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="robotMaxSize">
               <property name="maximum">
@@ -769,6 +794,13 @@
               </property>
               <property name="singleStep">
                <double>0.100000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Minimal Size</string>
               </property>
              </widget>
             </item>
@@ -1403,11 +1435,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>100</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -1419,11 +1451,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>100</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -1435,11 +1467,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>100</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -1451,11 +1483,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>100</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -1467,7 +1499,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>7</x>
@@ -1483,7 +1515,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -1498,8 +1530,8 @@
    <slot>trackingParamsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>82</x>
-     <y>91</y>
+     <x>140</x>
+     <y>130</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1514,8 +1546,8 @@
    <slot>updateTrackingView()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>113</y>
+     <x>67</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1530,8 +1562,8 @@
    <slot>updateTrackingView()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>72</x>
-     <y>77</y>
+     <x>84</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -1547,11 +1579,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>102</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>67</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
@@ -1563,11 +1595,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>67</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>102</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
