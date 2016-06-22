@@ -13,7 +13,7 @@ public:
 
     bool check();
     void setLed(bool state);
-    void setShock(double level);
+    void setShock(int level);
     void setShockLength(int length);
     void setShockDelay(int length);
     void setTurntableDirection(int direction);

@@ -115,24 +115,15 @@
       </widget>
      </item>
      <item>
-      <widget class="ShockSpinbox" name="shockSpinbox">
+      <widget class="QSpinBox" name="shockSpinbox">
        <property name="suffix">
-        <string notr="true"> mA</string>
+        <string> mA</string>
        </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>0.100000000000000</double>
+       <property name="prefix">
+        <string>0,</string>
        </property>
        <property name="maximum">
-        <double>0.700000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.100000000000000</double>
+        <number>7</number>
        </property>
       </widget>
      </item>
@@ -364,13 +355,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ShockSpinbox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>shockspinbox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

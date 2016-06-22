@@ -71,10 +71,10 @@ void Arenomat::setLed(bool state){
     serial.write(command);
 }
 
-void Arenomat::setShock(double level){
+void Arenomat::setShock(int level){
     QByteArray command(3, 0x00);
     command[0] = SHOCK_LEVEL;
-    command[1] = (uint) (level*10);
+    command[1] = level;
 
     serial.write(command);
 }
