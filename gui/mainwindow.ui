@@ -109,24 +109,18 @@
          </widget>
         </item>
         <item>
-         <widget class="ShockSpinbox" name="shockBox">
+         <widget class="QSpinBox" name="shockBox">
           <property name="suffix">
-           <string notr="true"> mA</string>
+           <string> mA</string>
           </property>
-          <property name="decimals">
-           <number>1</number>
-          </property>
-          <property name="minimum">
-           <double>0.100000000000000</double>
+          <property name="prefix">
+           <string>0,</string>
           </property>
           <property name="maximum">
-           <double>0.700000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.100000000000000</double>
+           <number>7</number>
           </property>
           <property name="value">
-           <double>0.500000000000000</double>
+           <number>2</number>
           </property>
          </widget>
         </item>
@@ -209,6 +203,7 @@
     <addaction name="actionSave_screenshot"/>
     <addaction name="separator"/>
     <addaction name="actionDebug"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -272,13 +267,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>ShockSpinbox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>shockspinbox.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

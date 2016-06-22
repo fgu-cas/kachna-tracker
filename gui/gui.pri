@@ -6,7 +6,6 @@ SOURCES += $$PWD/configwindow.cpp \
     $$PWD/masklabel.cpp \
     $$PWD/pointdialog.cpp \
     $$PWD/pointselector.cpp \
-    $$PWD/shockspinbox.cpp \
     $$PWD/configwindow_general.cpp \
     $$PWD/configwindow_tracking.cpp \
     $$PWD/configwindow_capture.cpp \
@@ -25,7 +24,6 @@ HEADERS  += $$PWD/configwindow.h \
     $$PWD/masklabel.h \
     $$PWD/pointdialog.h \
     $$PWD/pointselector.h \
-    $$PWD/shockspinbox.h \
     $$PWD/actions_area_robot_dialog.h \
     $$PWD/actions_area_sector_dialog.h \
     $$PWD/shockrobotlabel.h \

@@ -198,7 +198,7 @@ void Experiment::processFrame(){
     if (doSynch) cbDOut(0, FIRSTPORTB, synchInv ? 1 : 0);
 }
 
-void Experiment::changeShock(double shockLevel){
+void Experiment::setShock(double shockLevel){
     if (shockLevel < 0.2){
         shock.level = 0;
     } else if (shockLevel > 0.7){
@@ -220,11 +220,12 @@ Experiment::Update Experiment::getUpdate(){
     return update;
 }
 
-void Experiment::setShock(double mA){
+void Experiment::setShock(int level){
     if (doShock){
-        int level = (int) (mA*10);
         if (level > 7){
             level = 7;
+        } else if (level < 0){
+            level = 0;
         }
         cbDOut(0, FIRSTPORTC, level);
         currentLevel = level;
