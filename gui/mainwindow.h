@@ -51,6 +51,8 @@ private slots:
 
     void on_actionVideo_tracking_toggled(bool arg1);
 
+    void on_actionDebug_triggered();
+
 private:
     void reset();
 

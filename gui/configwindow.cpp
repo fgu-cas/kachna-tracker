@@ -1,5 +1,4 @@
 #include "configwindow.h"
-#include "ui_configwindow.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
@@ -26,9 +25,6 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->maskYBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
     connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
-    connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
-    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
-
     connect(ui->skipSpin, SIGNAL(valueChanged(int)), ui->skipSlider, SLOT(setValue(int)));
     connect(ui->skipSlider, SIGNAL(valueChanged(int)), ui->skipSpin, SLOT(setValue(int)));
 
@@ -50,6 +46,11 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(ui->resolutionHeightSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
     connect(ui->resolutionWidthSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
+
+    QStringList list;
+    list.append("[START]");
+    list.append("[END]");
+    actionTriggers.setStringList(list);
 
     refreshDevices();
 }
@@ -142,9 +143,6 @@ void configWindow::load(Settings settings)
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
-    ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
-    ui->angleBox->setValue(settings.value("shock/offsetAngle").toInt());
-    ui->distanceBox->setValue(settings.value("shock/offsetDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
@@ -236,9 +234,6 @@ Settings configWindow::compileSettings()
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
-    settings.insert("shock/triggerDistance", ui->triggerBox->value());
-    settings.insert("shock/offsetAngle", ui->angleBox->value());
-    settings.insert("shock/offsetDistance", ui->distanceBox->value());
 
     return settings;
 }
@@ -324,8 +319,17 @@ void configWindow::closeEvent(QCloseEvent *event){
     event->accept();
 }
 
+double configWindow::pixelsToMeters(int px){
+   double diameter_real = ui->arenaSizeBox->value();
+   double radius_px = ui->maskRadiusBox->value();
+   double result = diameter_real * (px/(radius_px*2));
+   return result;
+}
+
 #include "configwindow_general.cpp"
 
 #include "configwindow_capture.cpp"
 
 #include "configwindow_tracking.cpp"
+
+#include "configwindow_actions.cpp"

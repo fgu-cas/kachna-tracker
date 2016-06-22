@@ -1,4 +1,4 @@
-#include "shocklocationlabel.h"
+#include "shockrobotlabel.h"
 #include <QPixmap>
 #include <QPainter>
 #include <math.h>
@@ -6,12 +6,12 @@
 
 #define SIZE 250
 
-ShockLocationLabel::ShockLocationLabel(QWidget *parent) : QLabel(parent)
+ShockRobotLabel::ShockRobotLabel(QWidget *parent) : QLabel(parent)
 {
     update();
 }
 
-void ShockLocationLabel::update(){
+void ShockRobotLabel::update(){
     QPixmap pixmap(SIZE,SIZE);
     pixmap.fill(Qt::white);
 
@@ -38,22 +38,22 @@ void ShockLocationLabel::update(){
     setPixmap(pixmap);
 }
 
-void ShockLocationLabel::setDistance(int distance){
+void ShockRobotLabel::setDistance(int distance){
     this->distance = distance;
     update();
 }
 
-void ShockLocationLabel::setAngle(int angle){
+void ShockRobotLabel::setAngle(int angle){
     this->angle = angle;
     update();
 }
 
-void ShockLocationLabel::setRadius(int radius){
+void ShockRobotLabel::setRadius(int radius){
     this->radius = radius;
     update();
 }
 
-void ShockLocationLabel::setCentered(bool state){
+void ShockRobotLabel::setCentered(bool state){
     centered = state;
     update();
 }

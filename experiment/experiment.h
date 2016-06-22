@@ -96,7 +96,7 @@ private:
         PAUSE,
         REFRACTORY
     } shockState;
-    int currentLevel = 0;
+    int currentLevel = 2;
 
     struct {
         double level;
@@ -117,7 +117,7 @@ private:
 public slots:
     void start();
     void stop();
-    void changeShock(double shock);
+    void setShock(int level);
 
 private slots:
     void processFrame();

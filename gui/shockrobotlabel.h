@@ -3,11 +3,11 @@
 
 #include <QLabel>
 
-class ShockLocationLabel : public QLabel
+class ShockRobotLabel : public QLabel
 {
     Q_OBJECT
 public:
-    explicit ShockLocationLabel(QWidget *parent = 0);
+    explicit ShockRobotLabel(QWidget *parent = 0);
 
 public slots:
     void setDistance(int distance);
