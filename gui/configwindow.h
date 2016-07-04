@@ -21,7 +21,6 @@
 
 typedef QMap<QString, QVariant> Settings;
 
-
 using namespace cv;
 
 namespace Ui {

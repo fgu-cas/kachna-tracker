@@ -20,7 +20,7 @@
    <string>Configuration Window</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/resources/duck.png</normaloff>:/icons/resources/duck.png</iconset>
   </property>
   <property name="currentIndex">
@@ -1423,9 +1423,7 @@
    <header>gui/masklabel.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>satSlider</sender>

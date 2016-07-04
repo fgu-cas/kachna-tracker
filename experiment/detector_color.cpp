@@ -106,7 +106,6 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                 }
             }
             if (count == 0){
-                point.class_id = -1;
                 result.push_back(point);
             } else {
                 int average = atan2(sum_sin/count, sum_cos/count)*180/CV_PI;
@@ -144,7 +143,6 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     continue;
                 }
 
-                point.class_id = -1;
                 result.push_back(point);
             }
         }
@@ -189,6 +187,7 @@ Detector::pointPair DetectorColor::find(Mat *frame){
                                              rat_back.pt.x - rat_front.pt.x));
         result.rat.angle = fmod(result.rat.angle + 270, 360);
         result.rat.size = 1;
+        result.rat.class_id = RAT;
     }
 
     if (robot_front.size > 0 && robot_back.size > 0){
@@ -198,6 +197,7 @@ Detector::pointPair DetectorColor::find(Mat *frame){
                                    robot_back.pt.x - robot_front.pt.x));
         result.robot.angle = fmod(result.robot.angle + 270, 360);
         result.robot.size = 1;
+        result.robot.class_id = ROBOT;
     }
 
     return result;

@@ -239,7 +239,7 @@ void kachnatracker::on_startButton_clicked(){
         experiment.reset(new Experiment(this, &currentSettings));
         experiment->start();
 
-        connect(ui->shockBox, SIGNAL(valueChanged(int)), experiment.get(), SLOT(changeShock(int)));
+        connect(ui->shockBox, SIGNAL(valueChanged(int)), experiment.get(), SLOT(setShockLevel(int)));
 
         updateTimer.start(currentSettings.value("system/updateInterval").toInt());
         elapsedTimer.start();

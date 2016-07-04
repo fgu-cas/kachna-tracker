@@ -17,6 +17,16 @@ class Detector
 public:
     Detector(const QMap<QString, QVariant> &settings, int h, int w);
 
+    enum CLASS_ID {
+        UNKNOWN,
+        RAT,
+        RAT_FRONT,
+        RAT_BACK,
+        ROBOT,
+        ROBOT_FRONT,
+        ROBOT_BACK
+    };
+
     class Point {
     public:
         Point();
@@ -25,10 +35,12 @@ public:
         float angle;
         float size;
         float hue;
-        int class_id;
+        CLASS_ID class_id;
 
         void operator=(cv::KeyPoint point);
     };
+
+
     struct pointPair { Detector::Point rat; Detector::Point robot; };
 
 

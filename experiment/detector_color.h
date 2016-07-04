@@ -29,13 +29,6 @@ public:
     Mat analyze(Mat *frame);
     std::vector<Detector::Point> detect(Mat *frame);
     pointPair find(Mat *frame);
-
-    enum CLASS_ID {
-        RAT_FRONT,
-        RAT_BACK,
-        ROBOT_FRONT,
-        ROBOT_BACK
-    };
 private:
     std::unique_ptr<SimpleBlobDetector> detector;
 

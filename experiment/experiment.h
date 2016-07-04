@@ -8,9 +8,10 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
+#include "params.h"
 #include "mainwindow.h"
 #include "detector_threshold.h"
-
+#include "experimentlogger.h"
 
 using namespace cv;
 
@@ -43,26 +44,16 @@ public:
 private:
     // System
     Stats stats;
+    std::unique_ptr<ExperimentLogger> logger;
 
     QTimer timer;
     QElapsedTimer elapsedTimer;
-    qint64 elapsedTime;
+    qint64 finishedTime;
 
-    qint64 startTimestamp;
-    QString startTime;
-    QString startDate;
+    Detector::pointPair lastKeypoints;
 
-    struct capFrame {
-        Detector::pointPair keypoints;
-        int sectors;
-        int state;
-        int currentLevel;
-        qint64 timestamp;
-    };
-    std::vector<capFrame> frames;
-
-    bool doShock;
-    bool doSynch;
+    bool shockOut;
+    bool synchOut;
     bool synchInv;
 
     // Capture
@@ -82,12 +73,10 @@ private:
     QElapsedTimer robotTimer;
 
     // Shock
-    double triggerDistance;
-    bool shockIsOffset = false;
-    int shockDistance;
-    int shockAngle;
 
-    void setShock(double mA);
+    bool shockIsOffset = false;
+
+    void doShock(int level);
 
     enum shockStates {
         OUTSIDE,
@@ -96,28 +85,21 @@ private:
         PAUSE,
         REFRACTORY
     } shockState;
-    int currentLevel = 2;
+    double shockLevel;
+    int currentShockLevel = 2;
 
-    struct {
-        double level;
-        int length;
-        int delay;
-        int in_delay;
-        int refractory;
-    } shock;
+    Shock shock;
+
     qint64 lastChange;
 
-    struct {
-        int x;
-        int y;
-        double size;
-        int radius;
-    } arena;
+    Arena arena;
+
+
 
 public slots:
     void start();
     void stop();
-    void setShock(int level);
+    void setShockLevel(int level);
 
 private slots:
     void processFrame();
