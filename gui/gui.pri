@@ -29,7 +29,6 @@ HEADERS  += $$PWD/configwindow.h \
     $$PWD/shockrobotlabel.h \
     $$PWD/shocksectorlabel.h \
     $$PWD/actions_modifycounter_dialog.h \
-    $$PWD/models.h \
     $$PWD/actions_enabledisabledialog.h \
     $$PWD/actionssounddialog.h \
     $$PWD/debugwindow.h

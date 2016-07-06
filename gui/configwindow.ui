@@ -341,6 +341,27 @@
        </widget>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="2,1,1">
+        <item>
+         <widget class="QComboBox" name="portComboBox"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPortButton">
+          <property name="text">
+           <string>Refresh list</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="portStatusLabel">
+          <property name="text">
+           <string>STATUS: UNKNOWN</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="QCheckBox" name="shockBox">
         <property name="text">
          <string>Send shock to control-box</string>

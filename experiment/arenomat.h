@@ -4,18 +4,20 @@
 #include <QString>
 #include <QtSerialPort/QtSerialPort>
 #include <QByteArray>
+#include "abstracthardware.h"
 
-class Arenomat : public QObject
+class Arenomat : public AbstractHardware
 {
     Q_OBJECT
 public:
+    Arenomat();
     Arenomat(QString port);
 
     bool check();
-    void setLed(bool state);
     void setShock(int level);
-    void setShockLength(int length);
-    void setShockDelay(int length);
+    void setSync(bool state);
+
+    void setLed(bool state);
     void setTurntableDirection(int direction);
     void setTurntableSpeed(int speed);
     void setPIDValue(int constant, double value);

@@ -16,8 +16,7 @@
 
 #include "detector_threshold.h"
 #include "detector_color.h"
-#include "action.h"
-#include "models.h"
+#include "params.h"
 
 typedef QMap<QString, QVariant> Settings;
 
@@ -43,7 +42,7 @@ public slots:
 
     void load(Settings);
 
-    void refreshDevices();
+    void refreshCaptureDevices();
     void maskValueChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
@@ -75,12 +74,11 @@ private slots:
     void captureResolutionChanged();
 
     void addAction();
-    void addAction(QString trigger, Action *action);
+    void addAction(Action action);
     void addArea();
-    void addArea(QString title, AreaSectorSettings settings, bool enabled);
-    void addArea(QString title, AreaRobotSettings settings, bool enabled);
+    void addArea(Area area);
     void addCounter();
-    void addCounter(QString title, double limit, double frequency, bool enabled);
+    void addCounter(Counter counter);
     void removeThisActionRow();
     void removeThisAreaRow();
     void removeThisCounterRow();
@@ -90,6 +88,13 @@ private slots:
     void actionActionSetPressed();
 
     void triggersChanged(QString id);
+
+    void areaUpdate(int row, Area area);
+    void actionUpdate(int row, Action area);
+
+    void on_refreshPortButton_clicked();
+
+    void on_portComboBox_activated(const QString &arg1);
 
 private:
     Ui::configWindow *ui;
@@ -109,6 +114,13 @@ private:
     QString videoFilename;
 
     QStringListModel actionTriggers;
+
+    QMap<int, Action> partialActions;
+    QMap<int, Area> partialAreas;
+
+    QList<Action> getActionsFromUI();
+    QList<Area> getAreasFromUI();
+    QList<Counter> getCountersFromUI();
 };
 
 #endif // CONFIGWINDOW_H

@@ -1,11 +1,14 @@
 #include "experimentlogger.h"
 #include <QDateTime>
 
-ExperimentLogger::ExperimentLogger(qint64 startTime, Shock shock, Arena arena,  QObject *parent) : QObject(parent)
+ExperimentLogger::ExperimentLogger(Shock shock, Arena arena,  QObject *parent) : QObject(parent)
 {
-    this->startTime = startTime;
     this->shock = shock;
     this->arena = arena;
+}
+
+void ExperimentLogger::setStart(qint64 timestamp){
+    this->startTime = timestamp;
 }
 
 void ExperimentLogger::add(Detector::Point point, int sectors, int state, int shock, qint64 timestamp){
@@ -42,9 +45,9 @@ QString ExperimentLogger::get(Detector::CLASS_ID id, qint64 elapsedTime){
     log += "                %TrackerResolution_PixPerCM.0 ( "+QString::number((2*arena.radius)/(arena.size*100))+" )\r\n";
     log += QString("                %ArenaCenterXY.0 ( %1 %2 )\r\n").arg(QString::number(arena.x), QString::number(arena.y));
     log += "                %Frame.0 ( RoomFrame )\r\n";
-    log += QString("                %ReinforcedSector.0 ( %1 %2 %3 )\r\n").arg(QString::number(shock.radius),
+    /*log += QString("                %ReinforcedSector.0 ( %1 %2 %3 )\r\n").arg(QString::number(shock.radius),
                                                                                QString::number(shock.distance),
-                                                                               QString::number(shock.angle));
+                                                                               QString::number(shock.angle));*/
     log += "                        //%ReinforcedSector.0 ( Radius Distance Angle)\r\n";
     log += "        %%END SETUP_INFORMATION\r\n";\
     log += "        %%BEGIN RECORD_FORMAT\r\n";

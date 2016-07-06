@@ -37,7 +37,7 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(trackFrame()));
 
-    connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
+    connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshCaptureDevices()));
 
     ui->ratFrontSelector->setTitle("Rat Front");
     ui->ratBackSelector->setTitle("Rat Back");
@@ -52,7 +52,8 @@ configWindow::configWindow(QWidget *parent) :
     list.append("[END]");
     actionTriggers.setStringList(list);
 
-    refreshDevices();
+    on_refreshPortButton_clicked();
+    refreshCaptureDevices();
 }
 
 configWindow::~configWindow()
@@ -75,10 +76,10 @@ void configWindow::load(Settings settings)
     int deviceIndex = settings.value("video/device").toInt();
     if (deviceIndex == -1){
         videoFilename = settings.value("video/filename").toString();
-        refreshDevices();
+        refreshCaptureDevices();
         ui->deviceCombobox->setCurrentIndex(ui->deviceCombobox->count()-1);
     } else {
-        refreshDevices();
+        refreshCaptureDevices();
         ui->deviceCombobox->setCurrentIndex(deviceIndex);
     }
 
@@ -148,6 +149,26 @@ void configWindow::load(Settings settings)
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
 
     ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
+
+    ui->portComboBox->setCurrentText(settings.value("hardware/serialPort").toString());
+    on_portComboBox_activated(ui->portComboBox->currentText());
+
+    clearAllActions();
+
+    QList<Counter> tmpCounters = settings.value("actions/counters").value<QList<Counter>>();
+    for (Counter counter : tmpCounters){
+        addCounter(counter);
+    }
+
+    QList<Area> tmpAreas = settings.value("actions/areas").value<QList<Area>>();
+    for (Area area : tmpAreas){
+        addArea(area);
+    }
+
+    QList<Action> tmpActions = settings.value("actions/actions").value<QList<Action>>();
+    for (Action action : tmpActions){
+        addAction(action);
+    }
 
 
     Settings newsettings = compileSettings();
@@ -235,6 +256,12 @@ Settings configWindow::compileSettings()
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
 
+    settings.insert("hardware/serialPort", ui->portComboBox->currentText());
+
+    settings.insert("actions/areas", QVariant::fromValue(getAreasFromUI()));
+    settings.insert("actions/actions", QVariant::fromValue(getActionsFromUI()));
+    settings.insert("actions/counters", QVariant::fromValue(getCountersFromUI()));
+
     return settings;
 }
 
@@ -257,6 +284,7 @@ void configWindow::on_okayButton_clicked()
 }
 
 void configWindow::showEvent(QShowEvent *event){
+    // If we're not running from a file
     if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
         ui->lengthEdit->setEnabled(true);
         ui->timeoutStopBox->setEnabled(true);

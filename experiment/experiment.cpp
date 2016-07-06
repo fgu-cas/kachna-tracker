@@ -1,32 +1,26 @@
 #include "experiment.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "action.h"
-
 #include <QDateTime>
+#include "action.h"
+#include "arenomat.h"
 
-#include "cbw.h"
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
-    QObject(parent)
-{
+    QObject(parent){
     int deviceIndex = settings->value("video/device").toInt();
     if (deviceIndex == -1){
-       capture.open(settings->value("video/filename").toString().toStdString());
-       isLive = false;
+        capture.open(settings->value("video/filename").toString().toStdString());
+        isLive = false;
     } else {
         capture.open(deviceIndex);
-       isLive = true;
+        isLive = true;
     }
 
     if (settings->value("tracking/type").toInt() == 0){
         detector.reset(new DetectorThreshold(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
-        shockIsOffset = false;
     } else {
         detector.reset(new DetectorColor(*settings, capture.get(CV_CAP_PROP_FRAME_HEIGHT), capture.get(CV_CAP_PROP_FRAME_WIDTH)));
-        shockIsOffset = true;
-        shock.distance = settings->value("shock/offsetDistance").toInt();
-        shock.angle = settings->value("shock/offsetAngle").toInt();
     }
 
     timer.setInterval(40);
@@ -36,17 +30,6 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     synchOut = settings->value("output/sync_enabled").toBool();
     synchInv = settings->value("output/sync_inverted").toBool();
     shockOut = settings->value("output/shock").toBool();
-
-    shock.radius = settings->value("shock/triggerDistance").toInt();
-
-    /* MC library init magic */
-    if (shockOut || synchOut){
-        float revision = (float) CURRENTREVNUM;
-        cbDeclareRevision(&revision);
-        cbErrHandling (PRINTALL, DONTSTOP);
-        cbDConfigPort (0, FIRSTPORTB, DIGITALOUT);
-        cbDConfigPort (0, FIRSTPORTC, DIGITALOUT);
-    }
 
     // multiple_reaction = settings->value("faults/multipleReaction").toInt();
     skip_reaction = settings->value("faults/skipReaction").toInt();
@@ -64,6 +47,11 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     shock.length = settings->value("shock/ShockDuration").toInt();
     shock.refractory = settings->value("shock/OutsideRefractory").toInt();
 
+    counters = settings->value("actions/counters").value<QList<Counter>>();
+    areas = settings->value("actions/areas").value<QList<Area>>();
+    actions = settings->value("actions/actions").value<QList<Action>>();
+
+
     shockState = OUTSIDE;
 
     stats.goodFrames = 0;
@@ -72,20 +60,23 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     stats.shockCount = 0;
     stats.initialShock = 0;
     lastChange = 0;
+
+    logger.reset(new ExperimentLogger(shock, arena));
+    hardware.reset(new Arenomat(settings->value("hardware/serialPort").toString()));
 }
 
 Experiment::~Experiment(){
-    doShock(0);
+    hardware->setShock(0);
 }
 
 void Experiment::start(){
     timer.start();
     elapsedTimer.start();
-    logger.reset(new ExperimentLogger(QDateTime::currentMSecsSinceEpoch(), shock, arena));
+    logger->setStart(QDateTime::currentMSecsSinceEpoch());
 }
 
 void Experiment::stop(){
-    doShock(0);
+    hardware->setShock(0);
     this->timer.stop();
     capture.release();
     finishedTime = elapsedTimer.elapsed();
@@ -97,10 +88,19 @@ bool Experiment::isRunning(){
 
 void Experiment::processFrame(){
     // Output sync signal
-    if (synchOut) cbDOut(0, FIRSTPORTB, synchInv ? 0 : 1);
+    if (synchOut) hardware->setSync(!synchInv);
 
-    //Start processing the frame
+    // Process counters
+    if (lastFrameTime != 0){
+        for (int i = 0; i < counters.size(); i++){
+            Counter counter = counters.at(i);
+            if (counter.enabled){
+                counter.value += (elapsedTimer.elapsed()-lastFrameTime)/counter.frequency*1000;
+            }
+        }
+    }
 
+    //Process the frame
     Mat frame;
     bool read = capture.read(frame);
     if ( !read && !isLive ){ //We've reached the end of the file
@@ -111,116 +111,192 @@ void Experiment::processFrame(){
     qint64 timestamp = elapsedTimer.elapsed();
     lastFrame = frame;
 
+    // Detect points
     Detector::pointPair points = detector->find(&frame);
-
-
     if (skip_reaction == 1){
-       if (lastPoints.rat.size == -1 ||
-           cv::norm(lastPoints.rat.pt - points.rat.pt) < skip_distance ||
-           ratTimer.elapsed() > skip_timeout){
-               lastPoints.rat = points.rat;
-               ratTimer.start();
-       } else {
-           points.rat = Detector::Point();
-       }
+        if (lastPoints.rat.size == -1 ||
+                cv::norm(lastPoints.rat.pt - points.rat.pt) < skip_distance ||
+                ratTimer.elapsed() > skip_timeout){
+            lastPoints.rat = points.rat;
+            ratTimer.start();
+        } else {
+            points.rat = Detector::Point();
+        }
 
-       if (lastPoints.robot.size == -1 ||
-           cv::norm(lastPoints.robot.pt - points.robot.pt) < skip_distance ||
-           robotTimer.elapsed() > skip_timeout){
-               lastPoints.robot = points.robot;
-               robotTimer.start();
-       } else {
-           points.robot = Detector::Point();
-       }
-   }
-
+        if (lastPoints.robot.size == -1 ||
+                cv::norm(lastPoints.robot.pt - points.robot.pt) < skip_distance ||
+                robotTimer.elapsed() > skip_timeout){
+            lastPoints.robot = points.robot;
+            robotTimer.start();
+        } else {
+            points.robot = Detector::Point();
+        }
+    }
     lastKeypoints = points;
 
-    double distance = -1;
-    bool badFrame = false;
-    if (points.rat.size == -1 || points.robot.size == -1){
+    // Find triggers
+    QStringList activeTriggers;
+    bool found;
+    bool badFrame = points.rat.size == -1 || points.robot.size == -1;
+    if (badFrame){
         stats.badFrames++;
-        badFrame = true;
+
+        for (int i = 0; i < counters.size(); i++){
+            Counter counter = counters.at(i);
+            if (counter.value > counter.limit){
+                activeTriggers.append(counter.id);
+            }
+        }
     } else {
         stats.goodFrames++;
 
-        Point2f shock_point = points.robot.pt;
-        if (shockIsOffset){
-            // !!!
-            shock_point.x += shock.distance * sin((points.robot.angle + shock.angle)*CV_PI/180);
-            shock_point.y -= shock.distance * cos((points.robot.angle + shock.angle)*CV_PI/180);
+        for (int i = 0; i < areas.size(); i++){
+            Area area = areas.at(i);
+            switch (area.type){
+            case Trigger::CIRCULAR_AREA:
+                if (!area.enabled) continue;
+            {
+                Point2f shock_point = points.robot.pt;
+                shock_point.x += area.distance * sin((points.robot.angle + area.angle)*CV_PI/180);
+                shock_point.y -= area.distance * cos((points.robot.angle + area.angle)*CV_PI/180);
+                double distance = cv::norm(points.rat.pt - shock_point);
+                if (distance < area.radius){
+                    activeTriggers.append(area.id);
+                    found = true;
+                }
+            }
+                break;
+            case Trigger::PIE_AREA:
+                // TODO
+                break;
+            }
         }
-        distance = cv::norm(points.rat.pt - shock_point);
     }
 
-    int sectors = 0;
-    if (distance < shock.radius && distance != -1){
-        sectors = 1;
+    // Process triggers
+    bool shocking = false;
+    for (int i = 0; i < activeTriggers.size(); i++){
+        QString trigger = activeTriggers.at(i);
+
+        for (int j = 0; j < actions.size(); j++){
+            Action action = actions.at(j);
+            if (trigger == action.trigger){
+                switch (action.type){
+                case Action::SHOCK:
+                    shocking = true;
+                    break;
+                case Action::ENABLE:
+                case Action::DISABLE:
+                {
+                    bool found = false;
+                    for (int k = 0; k < areas.size(); k++){
+                        Area area = areas.at(k);
+                        if (action.target == area.id){
+                            area.enabled = action.type == Action::ENABLE ? true : false;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                    for (int k = 0; k < counters.size(); k++){
+                        Counter counter = counters.at(k);
+                        if (action.target == counter.id){
+                            counter.enabled = action.type == Action::ENABLE ? true : false;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case Action::COUNTER_INC:
+                case Action::COUNTER_DEC:
+                case Action::COUNTER_SET:
+
+                    for (int i = 0; i < counters.size(); i++){
+                        Counter counter = counters.at(i);
+                        if (action.target == counter.id){
+                            if (action.type == Action::COUNTER_INC){
+                                counter.value += action.arg;
+                            } else if(action.type == Action::COUNTER_DEC){
+                                counter.value -= action.arg;
+                            } else {
+                                counter.value = action.arg;
+                            }
+                            break;
+                        }
+                    }
+                    break;
+
+                }
+            }
+        }
     }
+
 
     switch (shockState){
-        case OUTSIDE:
-            if (!badFrame && distance < shock.radius){
-                shockState = DELAYING;
-                stats.entryCount++;
-                lastChange = elapsedTimer.elapsed();
-            }
-            break;
-        case DELAYING:
-            if (!badFrame){
-                if (distance < shock.radius){
-                    if (elapsedTimer.elapsed() > lastChange+shock.delay){
-                        shockState = SHOCKING;
-                        stats.shockCount++;
-                        if (stats.initialShock == 0){
-                            stats.initialShock = elapsedTimer.elapsed();
-                        }
-                        lastChange = elapsedTimer.elapsed();
-                        doShock(shockLevel);
-                    }
-                } else {
-                    shockState=OUTSIDE;
-                }
-            }
-            break;
-        case SHOCKING:
-            if (elapsedTimer.elapsed() > lastChange+shock.length){
-                doShock(0);
-                if (!badFrame){
-                    if (distance < shock.radius){
-                        shockState = PAUSE;
-                    } else {
-                        shockState = REFRACTORY;
+    case OUTSIDE:
+        if (shocking){
+            shockState = DELAYING;
+            stats.entryCount++;
+            lastChange = elapsedTimer.elapsed();
+        }
+        break;
+    case DELAYING:
+        if (!badFrame){
+            if (shocking){
+                if (elapsedTimer.elapsed() > lastChange+shock.delay){
+                    shockState = SHOCKING;
+                    stats.shockCount++;
+                    if (stats.initialShock == 0){
+                        stats.initialShock = elapsedTimer.elapsed();
                     }
                     lastChange = elapsedTimer.elapsed();
+                    hardware->setShock(shockLevel);
                 }
+            } else {
+                shockState=OUTSIDE;
             }
-            break;
-        case PAUSE:
+        }
+        break;
+    case SHOCKING:
+        if (elapsedTimer.elapsed() > lastChange+shock.length){
+            hardware->setShock(0);
             if (!badFrame){
-                if (distance < shock.radius){
-                    if (elapsedTimer.elapsed() > lastChange+shock.in_delay){
-                        shockState = SHOCKING;
-                        stats.shockCount++;
-                        lastChange = elapsedTimer.elapsed();
-                        doShock(shockLevel);
-                    }
+                if (shocking){
+                    shockState = PAUSE;
                 } else {
                     shockState = REFRACTORY;
-                    lastChange = elapsedTimer.elapsed();
                 }
+                lastChange = elapsedTimer.elapsed();
             }
-            break;
-        case REFRACTORY:
-            if (elapsedTimer.elapsed() > lastChange+shock.refractory){
-                shockState = OUTSIDE;
+        }
+        break;
+    case PAUSE:
+        if (!badFrame){
+            if (shocking){
+                if (elapsedTimer.elapsed() > lastChange+shock.in_delay){
+                    shockState = SHOCKING;
+                    stats.shockCount++;
+                    lastChange = elapsedTimer.elapsed();
+                    hardware->setShock(shockLevel);
+                }
+            } else {
+                shockState = REFRACTORY;
+                lastChange = elapsedTimer.elapsed();
             }
+        }
+        break;
+    case REFRACTORY:
+        if (elapsedTimer.elapsed() > lastChange+shock.refractory){
+            shockState = OUTSIDE;
+        }
     }
 
-    logger->add(points.rat, sectors, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
-    logger->add(points.robot, sectors, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
+    logger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
+    logger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
 
-    if (synchOut) cbDOut(0, FIRSTPORTB, synchInv ? 1 : 0);
+    lastFrameTime = elapsedTimer.elapsed();
+
+    if (synchOut) hardware->setSync(synchInv);
 }
 
 void Experiment::setShockLevel(int level){
@@ -241,13 +317,6 @@ Experiment::Update Experiment::getUpdate(){
     update.frame = lastFrame;
 
     return update;
-}
-
-void Experiment::doShock(int level){
-    if (shockOut){
-        cbDOut(0, FIRSTPORTC, level);
-        currentShockLevel = level;
-    }
 }
 
 QString Experiment::getLog(bool rat){

@@ -31,10 +31,6 @@ private slots:
 
     void on_shockButton_clicked();
 
-    void on_lengthButton_clicked();
-
-    void on_delayButton_clicked();
-
     void on_directionCombobox_currentIndexChanged(int index);
 
     void on_rateButton_clicked();

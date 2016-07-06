@@ -1,13 +1,9 @@
 #include "arenomat.h"
 #include <QTimer>
 
-#include <QDebug>
-
 enum COMMANDS {
     CHECK = 10,
     SHOCK_LEVEL = 20,
-    SHOCK_LENGTH = 21,
-    SHOCK_DELAY = 22,
     LED = 30,
     TURNTABLE_SPEED = 40,
     TURNTABLE_DIRECTION = 41,
@@ -17,6 +13,9 @@ enum COMMANDS {
     SET_PWM = 45
 };
 
+Arenomat::Arenomat(){
+    Arenomat(QSerialPortInfo::availablePorts().first().portName());
+}
 
 Arenomat::Arenomat(QString port)
 {
@@ -63,14 +62,6 @@ bool Arenomat::check(){
     return timeout.isActive();
 }
 
-void Arenomat::setLed(bool state){
-    QByteArray command(3, 0x00);
-    command[0] = LED;
-    command[1] = state;
-
-    serial.write(command);
-}
-
 void Arenomat::setShock(int level){
     QByteArray command(3, 0x00);
     command[0] = SHOCK_LEVEL;
@@ -79,20 +70,14 @@ void Arenomat::setShock(int level){
     serial.write(command);
 }
 
-void Arenomat::setShockLength(int length){
-    QByteArray command;
-    command.append(SHOCK_LENGTH);
-    command.append(length & 0xff);
-    command.append(length >> 8 & 0xff);
-
-    serial.write(command);
+void Arenomat::setSync(bool state){
+    // TODO
 }
 
-void Arenomat::setShockDelay(int length){
-    QByteArray command;
-    command.append(SHOCK_DELAY);
-    command.append(length & 0xff);
-    command.append(length >> 8 & 0xff);
+void Arenomat::setLed(bool state){
+    QByteArray command(3, 0x00);
+    command[0] = LED;
+    command[1] = state;
 
     serial.write(command);
 }

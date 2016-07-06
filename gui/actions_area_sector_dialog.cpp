@@ -2,12 +2,18 @@
 #include "ui_actions_area_sector_dialog.h"
 
 #include <math.h>
+#include <QCloseEvent>
 
-AreaSectorDialog::AreaSectorDialog(QWidget *parent) :
+AreaSectorDialog::AreaSectorDialog(QWidget *parent, int row, Area area) :
     QDialog(parent),
     ui(new Ui::AreaSectorDialog)
 {
     ui->setupUi(this);
+
+    this->row = row;
+
+    ui->angleSpinbox->setValue(area.angle);
+    ui->rangeSpinbox->setValue(area.range);
 }
 
 AreaSectorDialog::~AreaSectorDialog()
@@ -41,3 +47,12 @@ void AreaSectorDialog::on_rangeSpinbox_valueChanged(double arg1)
     ui->rangeSlider->setValue(round(arg1));
     ui->shockLabel->setRange(arg1);
 }
+
+void AreaSectorDialog::closeEvent(QCloseEvent *event){
+    Area area;
+    area.angle = ui->angleSpinbox->value();
+    area.range = ui->rangeSpinbox->value();
+    emit(update(row, area));
+    event->accept();
+}
+

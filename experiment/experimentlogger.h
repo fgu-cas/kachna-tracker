@@ -12,7 +12,7 @@ class ExperimentLogger : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExperimentLogger(qint64 startTime, Shock shock, Arena arena, QObject *parent = 0);
+    explicit ExperimentLogger(Shock shock, Arena arena, QObject *parent = 0);
     void setStart(qint64 timestamp);
     QString get(Detector::CLASS_ID id, qint64 elapsedTime);
 

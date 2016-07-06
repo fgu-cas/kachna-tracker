@@ -4,8 +4,6 @@
 #include <QtMath>
 #include <math.h>
 
-#include <QDebug>
-
 DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int w)
     : Detector(settings, h, w) {
     cv::SimpleBlobDetector::Params params;

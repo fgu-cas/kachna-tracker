@@ -61,7 +61,7 @@ void DebugWindow::on_shockButton_clicked()
 {
     if (arenomat != 0) arenomat->setShock(ui->shockSpinbox->value());
 }
-
+/*
 void DebugWindow::on_lengthButton_clicked()
 {
     if (arenomat != 0) arenomat->setShockLength(ui->lengthSpinbox->value());
@@ -71,6 +71,7 @@ void DebugWindow::on_delayButton_clicked()
 {
     if (arenomat != 0) arenomat->setShockDelay(ui->delaySpinbox->value());
 }
+*/
 
 void DebugWindow::on_directionCombobox_currentIndexChanged(int index)
 {

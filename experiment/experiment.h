@@ -12,6 +12,7 @@
 #include "mainwindow.h"
 #include "detector_threshold.h"
 #include "experimentlogger.h"
+#include "abstracthardware.h"
 
 using namespace cv;
 
@@ -73,11 +74,6 @@ private:
     QElapsedTimer robotTimer;
 
     // Shock
-
-    bool shockIsOffset = false;
-
-    void doShock(int level);
-
     enum shockStates {
         OUTSIDE,
         DELAYING,
@@ -94,7 +90,12 @@ private:
 
     Arena arena;
 
+    qint64 lastFrameTime = 0;
+    QList<Area> areas;
+    QList<Counter> counters;
+    QList<Action> actions;
 
+    std::unique_ptr<AbstractHardware> hardware;
 
 public slots:
     void start();

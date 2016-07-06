@@ -17,16 +17,13 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Configure Counters</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/resources/duck.png</normaloff>:/icons/resources/duck.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox">
-     <property name="decimals">
-      <number>1</number>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QComboBox" name="actionComboBox">
      <item>
@@ -56,8 +53,17 @@
    <item row="0" column="1">
     <widget class="QComboBox" name="targetComboBox"/>
    </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="argSpinBox">
+     <property name="maximum">
+      <number>9999</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
