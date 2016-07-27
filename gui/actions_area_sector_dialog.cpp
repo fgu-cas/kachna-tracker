@@ -52,6 +52,7 @@ void AreaSectorDialog::closeEvent(QCloseEvent *event){
     Area area;
     area.angle = ui->angleSpinbox->value();
     area.range = ui->rangeSpinbox->value();
+    area.type = Area::PIE_AREA;
     emit(update(row, area));
     event->accept();
 }

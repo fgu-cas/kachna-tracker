@@ -74,6 +74,11 @@ void configWindow::addArea(Area area){
     QComboBox* anchor = new QComboBox(this);
     anchor->addItem("Robot frame");
     anchor->addItem("Arena frame");
+    if (area.type == area.CIRCULAR_AREA){
+        anchor->setCurrentIndex(0);
+    } else if (area.type == area.PIE_AREA){
+        anchor->setCurrentIndex(1);
+    }
     QPushButton* positionButton = new QPushButton("Set...", this);
     connect(positionButton, SIGNAL(clicked(bool)), this, SLOT(actionAreaSetPressed()));
     QCheckBox* enabledCheckBox = new QCheckBox("Enabled", this);

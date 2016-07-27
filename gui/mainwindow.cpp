@@ -228,8 +228,10 @@ void kachnatracker::on_startButton_clicked(){
 
         QPainter painter(&trackImage);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(currentSettings.value("arena/X").toInt(), currentSettings.value("arena/Y").toInt()),
-                            currentSettings.value("arena/radius").toInt(), currentSettings.value("arena/radius").toInt());
+        int radius = currentSettings.value("arena/radius").toInt();
+        arenaArea = QRect(QPoint(currentSettings.value("arena/X").toInt()-radius, currentSettings.value("arena/Y").toInt()-radius),
+                          QPoint(currentSettings.value("arena/X").toInt()+radius, currentSettings.value("arena/Y").toInt()+radius));
+        painter.drawEllipse(arenaArea);
         painter.end();
 
         reset();
@@ -315,23 +317,35 @@ void kachnatracker::requestUpdate(){
 
     showPainter->drawImage(QPoint(0, 0), trackImage);
 
-    if (robot.x() != -1 || robot.y() != -1){;
+    if (robot.x() != -1 || robot.y() != -1){
         showPainter->setPen(Qt::yellow);
         showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-        int radius = currentSettings.value("shock/triggerDistance").toInt();
-        if (currentSettings.value("tracking/type").toInt() == 0){
-            showPainter->drawEllipse(robot, radius, radius);
-        } else {
-            int distance = currentSettings.value("shock/offsetDistance").toInt();
-            int angle = currentSettings.value("shock/offsetAngle").toInt();
-            QPoint shockPoint;
-            shockPoint.setX(robot.x() + distance *
-                            sin((angle+update.keypoints.robot.angle)*CV_PI/180));
-            shockPoint.setY(robot.y() - distance *
-                            cos((angle+update.keypoints.robot.angle)*CV_PI/180));
-            showPainter->drawEllipse(shockPoint, radius, radius);
+        QList<Area> areas = currentSettings.value("actions/areas").value<QList<Area>>();
+        for (Area area : areas){
+            if (area.type == Area::CIRCULAR_AREA){
+                int radius = area.radius;
+                if (currentSettings.value("tracking/type").toInt() == 0){
+                    showPainter->drawEllipse(robot, radius, radius);
+                } else {
+                    int distance = currentSettings.value("shock/offsetDistance").toInt();
+                    int angle = currentSettings.value("shock/offsetAngle").toInt();
+                    QPoint shockPoint;
+                    shockPoint.setX(robot.x() + distance *
+                                    sin((angle+update.keypoints.robot.angle)*CV_PI/180));
+                    shockPoint.setY(robot.y() - distance *
+                                    cos((angle+update.keypoints.robot.angle)*CV_PI/180));
+                    showPainter->drawEllipse(shockPoint, radius, radius);
+                }
+            } else {
+                int a = ((180+(area.angle-(area.range/2)))%360)*16;
+                int alen = area.range*16;
+
+                showPainter->drawPie(arenaArea, a, alen);
+            }
         }
+
+
     }
 
     showPainter->end();

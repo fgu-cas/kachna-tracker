@@ -71,6 +71,7 @@ private:
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
     QImage trackImage;
+    QRect arenaArea;
     Detector::pointPair lastKeypoints;
 
     bool dirty = false;

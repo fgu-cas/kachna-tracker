@@ -44,6 +44,7 @@ void AreaRobotDialog::closeEvent(QCloseEvent *event){
     area.angle = ui->angleBox->value();
     area.distance = ui->distanceBox->value();
     area.radius = ui->triggerBox->value();
+    area.type = Area::CIRCULAR_AREA;
     emit(update(row, area));
     event->accept();
 }
