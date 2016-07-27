@@ -21,7 +21,7 @@ struct Arena {
 
 struct Trigger {
     QString id;
-    bool enabled;
+    bool enabled = false;
     enum TYPE {
         CIRCULAR_AREA,
         PIE_AREA,
@@ -46,6 +46,7 @@ struct Counter : Trigger {
     double frequency = 0;
     int limit = 0;
     TYPE type = COUNTER;
+    qint64 lastUpdated = 0;
     bool operator==(const Counter &other) const;
 }; Q_DECLARE_METATYPE(Counter)
 
@@ -54,6 +55,7 @@ QDataStream &operator>>(QDataStream &in, Counter &myObj);
 
 struct Action {
     QString trigger;
+    bool processed = false;
     enum TYPE {
         SHOCK,
         ENABLE,

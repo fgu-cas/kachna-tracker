@@ -96,14 +96,15 @@ void Experiment::processFrame(){
     if (synchOut) hardware->setSync(!synchInv);
 
     // Process counters
-    if (lastFrameTime != 0){
-        for (int i = 0; i < counters.size(); i++){
-            Counter counter = counters.at(i);
-            if (counter.enabled){
-                counter.value += (elapsedTimer.elapsed()-lastFrameTime)/counter.frequency*1000;
-            }
+
+    for (int i = 0; i < counters.size(); i++){
+        Counter& counter = counters[i];
+        if (counter.enabled && (elapsedTimer.elapsed() - counter.lastUpdated) > counter.frequency*1000){
+            counter.lastUpdated = elapsedTimer.elapsed();
+            counter.value++;
         }
     }
+
 
     //Process the frame
     Mat frame;
@@ -148,12 +149,19 @@ void Experiment::processFrame(){
 
         for (int i = 0; i < counters.size(); i++){
             Counter counter = counters.at(i);
-            if (counter.value > counter.limit){
+            if (counter.value >= counter.limit){
                 activeTriggers.append(counter.id);
             }
         }
     } else {
         stats.goodFrames++;
+
+        for (int i = 0; i < counters.size(); i++){
+            Counter counter = counters.at(i);
+            if (counter.value >= counter.limit){
+                activeTriggers.append(counter.id);
+            }
+        }
 
         for (int i = 0; i < areas.size(); i++){
             Area area = areas.at(i);
@@ -195,7 +203,7 @@ void Experiment::processFrame(){
                 {
                     bool found = false;
                     for (int k = 0; k < areas.size(); k++){
-                        Area area = areas.at(k);
+                        Area& area = areas[k];
                         if (action.target == area.id){
                             area.enabled = action.type == Action::ENABLE ? true : false;
                             found = true;
@@ -204,7 +212,7 @@ void Experiment::processFrame(){
                     }
                     if (found) break;
                     for (int k = 0; k < counters.size(); k++){
-                        Counter counter = counters.at(k);
+                        Counter& counter = counters[k];
                         if (action.target == counter.id){
                             counter.enabled = action.type == Action::ENABLE ? true : false;
                             break;
@@ -215,9 +223,9 @@ void Experiment::processFrame(){
                 case Action::COUNTER_INC:
                 case Action::COUNTER_DEC:
                 case Action::COUNTER_SET:
-
+                    action.processed = true;
                     for (int i = 0; i < counters.size(); i++){
-                        Counter counter = counters.at(i);
+                        Counter& counter = counters[i];
                         if (action.target == counter.id){
                             if (action.type == Action::COUNTER_INC){
                                 counter.value += action.arg;
@@ -298,8 +306,6 @@ void Experiment::processFrame(){
 
     logger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
     logger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
-
-    lastFrameTime = elapsedTimer.elapsed();
 
     if (synchOut) hardware->setSync(synchInv);
 }

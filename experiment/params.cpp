@@ -4,11 +4,11 @@
 
 
 QDataStream &operator<<(QDataStream &out, const Area &obj) {
-    out << obj.id << obj.radius << obj.distance << obj.angle << obj.range << (int) obj.type;
+    out << obj.id << obj.radius << obj.distance << obj.angle << obj.range << (int) obj.type << obj.enabled;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, Area &obj) {
-    in >> obj.id >> obj.radius >> obj.distance >> obj.angle >> obj.range >> (int&) obj.type;
+    in >> obj.id >> obj.radius >> obj.distance >> obj.angle >> obj.range >> (int&) obj.type >> obj.enabled;
     return in;
 }
 

@@ -90,7 +90,6 @@ private:
 
     Arena arena;
 
-    qint64 lastFrameTime = 0;
     QList<Area> areas;
     QList<Counter> counters;
     QList<Action> actions;
