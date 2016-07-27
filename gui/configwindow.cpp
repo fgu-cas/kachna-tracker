@@ -175,7 +175,7 @@ void configWindow::load(Settings settings)
     Settings newsettings = compileSettings();
     if (lastSettings != newsettings){
         lastSettings = newsettings;
-        emit(configurationUpdated(settings));
+        emit(configurationUpdated(newsettings));
     }
 }
 
