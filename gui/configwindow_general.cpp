@@ -31,3 +31,11 @@ void configWindow::on_portComboBox_activated(const QString &arg1)
         ui->portStatusLabel->setText("STATUS: NOT WORKING");
     }
 }
+
+void configWindow::on_modeComboBox_activated(int index)
+{
+    bool visible = index == 0 ? false : true;
+    ui->robotThreshOuter->setVisible(visible);
+    ui->robotBackSelector->setVisible(visible);
+    ui->robotFrontSelector->setVisible(visible);
+}

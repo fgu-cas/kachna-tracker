@@ -28,6 +28,8 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     timer.setTimerType(Qt::PreciseTimer);
     connect(&timer, SIGNAL(timeout()), this, SLOT(processFrame()));
 
+    ratRobot = settings->value("experiment/mode").toInt() == 0 ? false : true;
+
     synchOut = settings->value("output/sync_enabled").toBool();
     synchInv = settings->value("output/sync_inverted").toBool();
     shockOut = settings->value("output/shock").toBool();
@@ -51,7 +53,6 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     counters = settings->value("actions/counters").value<QList<Counter>>();
     areas = settings->value("actions/areas").value<QList<Area>>();
     actions = settings->value("actions/actions").value<QList<Action>>();
-
 
     shockState = OUTSIDE;
 
@@ -119,6 +120,8 @@ void Experiment::processFrame(){
 
     // Detect points
     Detector::pointPair points = detector->find(&frame);
+    if (!ratRobot) points.robot = Detector::Point();
+    bool badFrame = points.rat.size == -1 || (ratRobot && points.robot.size == -1);
     if (skip_reaction == 1){
         if (lastPoints.rat.size == -1 ||
                 cv::norm(lastPoints.rat.pt - points.rat.pt) < skip_distance ||
@@ -140,10 +143,9 @@ void Experiment::processFrame(){
     }
     lastKeypoints = points;
 
-    // Find triggers
+    // Find active triggers
     QStringList activeTriggers;
     bool found;
-    bool badFrame = points.rat.size == -1 || points.robot.size == -1;
     if (badFrame){
         stats.badFrames++;
 
@@ -184,7 +186,6 @@ void Experiment::processFrame(){
                 int angle = fmod(qRadiansToDegrees(angleRad)+ 270, 360);
                 if (angle > area.angle-area.range/2 && angle < area.angle+area.range/2){
                     activeTriggers.append(area.id);
-                    qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
                 }
                 break;
             }

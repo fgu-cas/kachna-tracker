@@ -71,6 +71,8 @@ void configWindow::load(Settings settings)
     int h = length % 24;
 
     ui->lengthEdit->setTime(QTime(h, m, s));
+    ui->modeComboBox->setCurrentIndex(settings.value("experiment/mode").toInt());
+    on_modeComboBox_activated(ui->modeComboBox->currentIndex());
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
     int deviceIndex = settings.value("video/device").toInt();
@@ -185,6 +187,7 @@ Settings configWindow::compileSettings()
 
     QTime time = ui->lengthEdit->time();
     settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
+    settings.insert("experiment/mode", ui->modeComboBox->currentIndex());
     settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
 
     settings.insert("system/defaultDirectory", ui->directoryEdit->text());

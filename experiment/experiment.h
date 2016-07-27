@@ -53,6 +53,8 @@ private:
 
     Detector::pointPair lastKeypoints;
 
+    bool ratRobot;
+
     bool shockOut;
     bool synchOut;
     bool synchInv;

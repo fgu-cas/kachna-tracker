@@ -173,21 +173,23 @@ void kachnatracker::saveTracks(){
             file.close();
         }
 
-        fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
-                                                    currentSettings.value("system/defaultDirectory").toString()+'/'+
-                                                    currentSettings.value("system/defaultFilename").toString()+"_rob",
-                                                    tr("Files (*.dat)"));
-        if (!fileName.isEmpty()){
-            if (!fileName.endsWith(".dat")){
-                fileName += ".dat";
+        if (currentSettings.value("experiment/mode").toInt() == 1){
+            fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
+                                                        currentSettings.value("system/defaultDirectory").toString()+'/'+
+                                                        currentSettings.value("system/defaultFilename").toString()+"_rob",
+                                                        tr("Files (*.dat)"));
+            if (!fileName.isEmpty()){
+                if (!fileName.endsWith(".dat")){
+                    fileName += ".dat";
+                }
+                QFile file(fileName);
+                if (file.open(QFile::WriteOnly)){
+                    QString log = experiment->getLog(false);
+                    QTextStream out(&file);
+                    out << log;
+                }
+                file.close();
             }
-            QFile file(fileName);
-            if (file.open(QFile::WriteOnly)){
-                QString log = experiment->getLog(false);
-                QTextStream out(&file);
-                out << log;
-            }
-            file.close();
         }
     }
 }
@@ -317,7 +319,8 @@ void kachnatracker::requestUpdate(){
 
     showPainter->drawImage(QPoint(0, 0), trackImage);
 
-    if (robot.x() != -1 || robot.y() != -1){
+    if (currentSettings.value("experiment/mode").toInt() == 0 ||
+            robot.x() != -1 || robot.y() != -1){
         showPainter->setPen(Qt::yellow);
         showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 

@@ -96,6 +96,8 @@ private slots:
 
     void on_portComboBox_activated(const QString &arg1);
 
+    void on_modeComboBox_activated(int index);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;
