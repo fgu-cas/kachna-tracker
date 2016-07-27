@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include "action.h"
 #include "arenomat.h"
+#include "dummyhardware.h"
 
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
@@ -41,7 +42,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     arena.size = settings->value("arena/size").toDouble();
     arena.radius = settings->value("arena/radius").toInt();
 
-    shockLevel = 0;
+    shockLevel = settings->value("shock/initialShock").toInt();
     shock.delay = settings->value("shock/EntranceLatency").toInt();
     shock.in_delay = settings->value("shock/InterShockLatency").toInt();
     shock.length = settings->value("shock/ShockDuration").toInt();
@@ -62,7 +63,11 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     lastChange = 0;
 
     logger.reset(new ExperimentLogger(shock, arena));
-    hardware.reset(new Arenomat(settings->value("hardware/serialPort").toString()));
+    if (isLive){
+        hardware.reset(new Arenomat(settings->value("hardware/serialPort").toString()));
+    } else {
+        hardware.reset(new DummyHardware());
+    }
 }
 
 Experiment::~Experiment(){

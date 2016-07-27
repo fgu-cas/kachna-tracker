@@ -140,6 +140,7 @@ void configWindow::load(Settings settings)
     ui->invertBox->setChecked(settings.value("output/sync_inverted").toBool());
     ui->shockBox->setChecked(settings.value("output/shock").toBool());
 
+    ui->initialShockSpinBox->setValue(settings.value("shock/initialShock").toInt());
     ui->entryBox->setValue(settings.value("shock/EntranceLatency").toInt());
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
@@ -251,6 +252,7 @@ Settings configWindow::compileSettings()
     settings.insert("output/sync_inverted", ui->invertBox->isChecked());
     settings.insert("output/shock", ui->shockBox->isChecked());
 
+    settings.insert("shock/initialShock", ui->initialShockSpinBox->value());
     settings.insert("shock/EntranceLatency", ui->entryBox->value());
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());

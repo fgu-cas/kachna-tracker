@@ -293,7 +293,15 @@ QList<Action> configWindow::getActionsFromUI(){
         if (item != 0){
             Action action;
             action.trigger = qobject_cast<QComboBox*>(item->widget())->currentText();
-            action.type = partialActions[row].type;
+            int typeIndex = qobject_cast<QComboBox*>(ui->actionLayout->itemAtPosition(row, 1)->widget())->currentIndex();
+            switch (typeIndex){
+            case 0:
+                action.type = Action::SHOCK;
+                break;
+            default:
+                action.type = partialActions[row].type;
+                break;
+            }
             action.target = partialActions[row].target;
             result.append(action);
         }

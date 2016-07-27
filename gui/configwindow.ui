@@ -398,14 +398,28 @@
         <property name="fieldGrowthPolicy">
          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
         </property>
-        <item row="0" column="0">
+        <item row="0" column="0" colspan="2">
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_58">
+          <property name="text">
+           <string>Initial shock level</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QLabel" name="label_20">
           <property name="text">
            <string>Duration</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="2" column="1">
          <widget class="QSpinBox" name="durationBox">
           <property name="suffix">
            <string> ms</string>
@@ -418,31 +432,14 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_21">
-          <property name="text">
-           <string>Entry latency</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="entryBox">
-          <property name="suffix">
-           <string> ms</string>
-          </property>
-          <property name="maximum">
-           <number>9999</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_23">
           <property name="text">
            <string>Inter-shock delay</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="3" column="1">
          <widget class="QSpinBox" name="interBox">
           <property name="suffix">
            <string> ms</string>
@@ -452,20 +449,50 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>Entry latency</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="entryBox">
+          <property name="suffix">
+           <string> ms</string>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
          <widget class="QLabel" name="label_22">
           <property name="text">
            <string>Refractory delay</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="5" column="1">
          <widget class="QSpinBox" name="refractoryBox">
           <property name="suffix">
            <string> ms</string>
           </property>
           <property name="maximum">
            <number>9999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="initialShockSpinBox">
+          <property name="suffix">
+           <string> mA</string>
+          </property>
+          <property name="prefix">
+           <string>0,</string>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>

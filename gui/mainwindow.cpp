@@ -424,7 +424,7 @@ void kachnatracker::reset(){
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
 
-    ui->shockBox->setValue(0.1);
+    ui->shockBox->setValue(currentSettings.value("shock/initialShock").toInt());
 }
 
 void kachnatracker::on_actionSave_screenshot_triggered(){
