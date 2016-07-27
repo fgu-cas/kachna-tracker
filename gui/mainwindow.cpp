@@ -338,7 +338,7 @@ void kachnatracker::requestUpdate(){
                     showPainter->drawEllipse(shockPoint, radius, radius);
                 }
             } else {
-                int a = ((180+(area.angle-(area.range/2)))%360)*16;
+                int a = ((90-area.angle-(area.range/2)))*16;
                 int alen = area.range*16;
 
                 showPainter->drawPie(arenaArea, a, alen);

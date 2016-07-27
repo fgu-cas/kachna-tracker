@@ -180,7 +180,12 @@ void Experiment::processFrame(){
             }
                 break;
             case Trigger::PIE_AREA:
-                // TODO
+                qreal angleRad = qAtan2(arena.y - points.rat.pt.y, arena.x - points.rat.pt.x);
+                int angle = fmod(qRadiansToDegrees(angleRad)+ 270, 360);
+                if (angle > area.angle-area.range/2 && angle < area.angle+area.range/2){
+                    activeTriggers.append(area.id);
+                    qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+                }
                 break;
             }
         }
