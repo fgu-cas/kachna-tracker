@@ -1,5 +1,6 @@
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
+#include "ui_configwindow.h"
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -11,11 +12,13 @@
 #include <QPixmap>
 #include <QPainter>
 
+#include <QStringListModel>
+
 #include "detector_threshold.h"
 #include "detector_color.h"
+#include "params.h"
 
 typedef QMap<QString, QVariant> Settings;
-
 
 using namespace cv;
 
@@ -29,6 +32,7 @@ class configWindow : public QTabWidget
 
 public:
     explicit configWindow(QWidget *parent = 0);
+    double pixelsToMeters(int px);
     ~configWindow();
 
 signals:
@@ -38,7 +42,7 @@ public slots:
 
     void load(Settings);
 
-    void refreshDevices();
+    void refreshCaptureDevices();
     void maskValueChanged();
     void on_testButton_clicked();
     void on_refreshTrackingButton_clicked();
@@ -61,8 +65,6 @@ private slots:
 
     void updateTrackingView();
 
-    void on_triggerBox_valueChanged(int);
-
     void on_maskButton_toggled(bool checked);
 
     void on_trackingCombobox_currentIndexChanged(int index);
@@ -71,7 +73,30 @@ private slots:
 
     void captureResolutionChanged();
 
-    void on_distanceBox_valueChanged(int arg1);
+    void addAction();
+    void addAction(Action action);
+    void addArea();
+    void addArea(Area area);
+    void addCounter();
+    void addCounter(Counter counter);
+    void removeThisActionRow();
+    void removeThisAreaRow();
+    void removeThisCounterRow();
+    void clearAllActions();
+
+    void actionAreaSetPressed();
+    void actionActionSetPressed();
+
+    void triggersChanged(QString id);
+
+    void areaUpdate(int row, Area area);
+    void actionUpdate(int row, Action area);
+
+    void on_refreshPortButton_clicked();
+
+    void on_portComboBox_activated(const QString &arg1);
+
+    void on_modeComboBox_activated(int index);
 
 private:
     Ui::configWindow *ui;
@@ -89,6 +114,15 @@ private:
     void closeEvent(QCloseEvent*);
     void showEvent(QShowEvent *);
     QString videoFilename;
+
+    QStringListModel actionTriggers;
+
+    QMap<int, Action> partialActions;
+    QMap<int, Area> partialAreas;
+
+    QList<Action> getActionsFromUI();
+    QList<Area> getAreasFromUI();
+    QList<Counter> getCountersFromUI();
 };
 
 #endif // CONFIGWINDOW_H

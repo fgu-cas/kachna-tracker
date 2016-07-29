@@ -23,7 +23,7 @@ Detector::Point::Point(){
     angle = -1;
     size = -1;
     hue = -1;
-    class_id = -1;
+    class_id = UNKNOWN;
 }
 
 void Detector::Point::operator=(KeyPoint point){

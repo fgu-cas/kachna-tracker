@@ -1,4 +1,7 @@
 #include "configwindow.h"
+#include "arenomat.h"
+#include <QtSerialPort/QtSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 void configWindow::on_browseButton_clicked()
 {
@@ -8,27 +11,31 @@ void configWindow::on_browseButton_clicked()
     }
 }
 
-void configWindow::on_distanceBox_valueChanged(int dist_px)
+void configWindow::on_refreshPortButton_clicked()
 {
-   double diameter_real = ui->arenaSizeBox->value();
-   double radius_px = ui->maskRadiusBox->value();
-
-   double dist_real = diameter_real * (dist_px/(radius_px*2));
-
-   QString result("%1 m");
-
-   ui->distanceRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
+    ui->portComboBox->clear();
+    const auto infos = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &info : infos) {
+        ui->portComboBox->addItem(info.portName());
+    }
 }
 
-
-void configWindow::on_triggerBox_valueChanged(int dist_px)
+void configWindow::on_portComboBox_activated(const QString &arg1)
 {
-   double diameter_real = ui->arenaSizeBox->value();
-   double radius_px = ui->maskRadiusBox->value();
+    Arenomat arenomat(arg1);
+    ui->portStatusLabel->setText("STATUS: CHECKING...");
+    ui->portStatusLabel->repaint();
+    if (arenomat.check()){
+        ui->portStatusLabel->setText("STATUS: WORKING!");
+    } else {
+        ui->portStatusLabel->setText("STATUS: NOT WORKING");
+    }
+}
 
-   double dist_real = diameter_real * (dist_px/(radius_px*2));
-
-   QString result("%1 m");
-
-   ui->triggerRealLabel->setText(result.arg(dist_real, 3, 'f', 3, '0'));
+void configWindow::on_modeComboBox_activated(int index)
+{
+    bool visible = index == 0 ? false : true;
+    ui->robotThreshOuter->setVisible(visible);
+    ui->robotBackSelector->setVisible(visible);
+    ui->robotFrontSelector->setVisible(visible);
 }

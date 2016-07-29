@@ -5,9 +5,6 @@
 #include <QColor>
 #include <QPixmap>
 
-#include <QDebug>
-
-
 
 PointSelector::PointSelector(QWidget *parent) : QWidget(parent)
 {

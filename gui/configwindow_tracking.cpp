@@ -166,20 +166,6 @@ void configWindow::on_trackingCombobox_currentIndexChanged(int index)
     ui->trackingWidget->setCurrentIndex(index);
     resetDetector();
     updateTrackingView();
-
-    if (index == 0){
-        ui->angleBox->setEnabled(false);
-        ui->angleSlider->setEnabled(false);
-        ui->distanceSlider->setEnabled(false);
-        ui->distanceBox->setEnabled(false);
-        ui->shockLocationLabel->setCentered(true);
-    } else {
-        ui->angleBox->setEnabled(true);
-        ui->angleSlider->setEnabled(true);
-        ui->distanceSlider->setEnabled(true);
-        ui->distanceBox->setEnabled(true);
-        ui->shockLocationLabel->setCentered(false);
-    }
 }
 
 void configWindow::on_skipCombo_currentIndexChanged(int index)

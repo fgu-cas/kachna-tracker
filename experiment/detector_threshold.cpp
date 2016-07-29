@@ -67,10 +67,12 @@ Detector::pointPair DetectorThreshold::find(Mat *frame){
        Detector::Point keypoint = keypoints[i];
        if (keypoint.size > minRat && keypoint.size < maxRat){    
            result.rat = keypoint;
+           result.rat.class_id = RAT;
        }
 
        if (keypoint.size > minRobot && keypoint.size < maxRobot){
            result.robot = keypoint;
+           result.robot.class_id = ROBOT;
        }
     }
 

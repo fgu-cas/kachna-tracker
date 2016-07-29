@@ -1,5 +1,4 @@
-
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,3 +30,5 @@ LIBS += -L .. \
 LIBS += -lole32 -loleaut32
 
 QMAKE_LFLAGS = -static-libgcc -static-libstdc++
+
+RESOURCES +=

@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Configuration Window</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/resources/duck.png</normaloff>:/icons/resources/duck.png</iconset>
+  </property>
   <property name="currentIndex">
    <number>0</number>
   </property>
@@ -26,7 +30,7 @@
    <attribute name="title">
     <string>General</string>
    </attribute>
-   <layout class="QHBoxLayout" name="horizontalLayout_10">
+   <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0,1">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -38,14 +42,14 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Experiment length</string>
+           <string>Length</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QTimeEdit" name="lengthEdit">
           <property name="dateTime">
            <datetime>
@@ -79,11 +83,32 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QCheckBox" name="timeoutStopBox">
           <property name="text">
            <string>Stop experiment after timeout</string>
           </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_59">
+          <property name="text">
+           <string>Mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="modeComboBox">
+          <item>
+           <property name="text">
+            <string>Rat AAPA</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Rat + Robot Avoidance</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
@@ -337,6 +362,27 @@
        </widget>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="2,1,1">
+        <item>
+         <widget class="QComboBox" name="portComboBox"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPortButton">
+          <property name="text">
+           <string>Refresh list</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="portStatusLabel">
+          <property name="text">
+           <string>STATUS: UNKNOWN</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="QCheckBox" name="shockBox">
         <property name="text">
          <string>Send shock to control-box</string>
@@ -373,14 +419,28 @@
         <property name="fieldGrowthPolicy">
          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
         </property>
-        <item row="0" column="0">
+        <item row="0" column="0" colspan="2">
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_58">
+          <property name="text">
+           <string>Initial shock level</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QLabel" name="label_20">
           <property name="text">
            <string>Duration</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="2" column="1">
          <widget class="QSpinBox" name="durationBox">
           <property name="suffix">
            <string> ms</string>
@@ -393,31 +453,14 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_21">
-          <property name="text">
-           <string>Entry latency</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="entryBox">
-          <property name="suffix">
-           <string> ms</string>
-          </property>
-          <property name="maximum">
-           <number>9999</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_23">
           <property name="text">
            <string>Inter-shock delay</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QSpinBox" name="interBox">
           <property name="suffix">
            <string> ms</string>
@@ -427,14 +470,31 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>Entry latency</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="entryBox">
+          <property name="suffix">
+           <string> ms</string>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
          <widget class="QLabel" name="label_22">
           <property name="text">
            <string>Refractory delay</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="5" column="1">
          <widget class="QSpinBox" name="refractoryBox">
           <property name="suffix">
            <string> ms</string>
@@ -444,171 +504,16 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="Line" name="line_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_33">
-          <property name="text">
-           <string>Trigger distance</string>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="initialShockSpinBox">
+          <property name="suffix">
+           <string> mA</string>
           </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QSlider" name="triggerSlider">
-            <property name="minimum">
-             <number>5</number>
-            </property>
-            <property name="maximum">
-             <number>300</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="invertedAppearance">
-             <bool>false</bool>
-            </property>
-            <property name="invertedControls">
-             <bool>false</bool>
-            </property>
-            <property name="tickPosition">
-             <enum>QSlider::NoTicks</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="triggerRealLabel">
-            <property name="text">
-             <string>(0,00 m)</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="triggerBox">
-            <property name="suffix">
-             <string> px</string>
-            </property>
-            <property name="minimum">
-             <number>5</number>
-            </property>
-            <property name="maximum">
-             <number>999</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_40">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Shock position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="4,6">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
-          <item>
-           <widget class="QLabel" name="label_42">
-            <property name="text">
-             <string>Distance</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_20">
-            <item>
-             <widget class="QSlider" name="distanceSlider">
-              <property name="maximum">
-               <number>333</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="distanceRealLabel">
-              <property name="text">
-               <string>(0,00 m)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="distanceBox">
-              <property name="suffix">
-               <string> px</string>
-              </property>
-              <property name="maximum">
-               <number>999</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_41">
-            <property name="text">
-             <string>Angle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_19">
-            <item>
-             <widget class="QSlider" name="angleSlider">
-              <property name="maximum">
-               <number>360</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="angleBox">
-              <property name="suffix">
-               <string>°</string>
-              </property>
-              <property name="maximum">
-               <number>360</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="ShockLocationLabel" name="shockLocationLabel">
-          <property name="text">
-           <string/>
+          <property name="prefix">
+           <string>0,</string>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
@@ -882,20 +787,31 @@
    </attribute>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,5,2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,1,0,0,0">
       <item>
-       <widget class="QComboBox" name="trackingCombobox">
-        <item>
-         <property name="text">
-          <string>Threshold tracking</string>
-         </property>
+       <layout class="QFormLayout" name="formLayout_11">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_56">
+          <property name="text">
+           <string>Tracking type</string>
+          </property>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>Color tracking</string>
-         </property>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="trackingCombobox">
+          <item>
+           <property name="text">
+            <string>Threshold tracking</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Color tracking</string>
+           </property>
+          </item>
+         </widget>
         </item>
-       </widget>
+       </layout>
       </item>
       <item>
        <widget class="Line" name="line_5">
@@ -1027,49 +943,70 @@
            </layout>
           </item>
           <item>
-           <layout class="QFormLayout" name="formLayout_4">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#0000ff;&quot;&gt;Robot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Maximal Size</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Minimal Size</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="robotMaxSize">
-              <property name="maximum">
-               <double>999.990000000000009</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="robotMinSize">
-              <property name="maximum">
-               <double>999.990000000000009</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QWidget" name="robotThreshOuter" native="true">
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <layout class="QFormLayout" name="robotThreshLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#0000ff;&quot;&gt;Robot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Maximal Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="robotMaxSize">
+                 <property name="maximum">
+                  <double>999.990000000000009</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Minimal Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="robotMinSize">
+                 <property name="maximum">
+                  <double>999.990000000000009</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_2">
@@ -1087,7 +1024,7 @@
          </layout>
         </widget>
         <widget class="QWidget" name="page_2">
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0,0,0,0,0,0,1,1,1,1">
           <item>
            <layout class="QFormLayout" name="formLayout_5">
             <item row="0" column="0">
@@ -1171,14 +1108,14 @@
           </item>
           <item>
            <layout class="QFormLayout" name="formLayout_6">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_36">
               <property name="text">
                <string>Minimum size</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="1" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_17">
               <item>
                <widget class="QDoubleSpinBox" name="globminBox">
@@ -1192,26 +1129,25 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_18"/>
+            </item>
+            <item row="0" column="0">
              <widget class="QLabel" name="label_38">
               <property name="text">
                <string>Maximum size</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_18">
-              <item>
-               <widget class="QDoubleSpinBox" name="globmaxBox">
-                <property name="maximum">
-                 <double>25.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="globmaxBox">
+              <property name="maximum">
+               <double>25.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1320,6 +1256,227 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWidget" name="actions_tab">
+   <attribute name="title">
+    <string>Actions</string>
+   </attribute>
+   <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,1">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,0,0">
+      <item>
+       <widget class="QLabel" name="label_43">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; text-decoration: underline;&quot;&gt;Areas&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="areaOuterLayout">
+        <item>
+         <layout class="QGridLayout" name="areaLayout" columnstretch="1,1,1,1,0">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>Anchor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>Position</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_33">
+            <property name="text">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_48">
+            <property name="text">
+             <string>Enabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="label_53">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="areaAddButton">
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_44">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; text-decoration: underline;&quot;&gt;Counters&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="counterOuterLayout">
+        <item>
+         <layout class="QGridLayout" name="counterLayout" columnstretch="1,1,1,1,0">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>Limit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_47">
+            <property name="text">
+             <string>Frequency</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_49">
+            <property name="text">
+             <string>Enabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="label_54">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="counterAddButton">
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_12" stretch="0,0">
+      <item>
+       <widget class="QLabel" name="label_46">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; text-decoration: underline;&quot;&gt;Actions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="actionOuterLayout">
+        <item>
+         <layout class="QGridLayout" name="actionLayout" columnstretch="1,1,1,0">
+          <property name="horizontalSpacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_51">
+            <property name="text">
+             <string>Action</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_52">
+            <property name="text">
+             <string>Settings</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_50">
+            <property name="text">
+             <string>Trigger</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_55">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="actionAddButton">
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1333,18 +1490,10 @@
    <extends>QLabel</extends>
    <header>gui/masklabel.h</header>
   </customwidget>
-  <customwidget>
-   <class>ShockLocationLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/shocklocationlabel.h</header>
-   <slots>
-    <slot>setAngle(int)</slot>
-    <slot>setDistance(int)</slot>
-    <slot>setRadius(int)</slot>
-   </slots>
-  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>satSlider</sender>
@@ -1354,11 +1503,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>100</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -1370,11 +1519,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>100</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -1386,11 +1535,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>100</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -1402,11 +1551,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>100</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -1418,7 +1567,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>80</y>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>7</x>
@@ -1434,7 +1583,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
-     <y>76</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -1449,8 +1598,8 @@
    <slot>trackingParamsChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>82</x>
-     <y>91</y>
+     <x>140</x>
+     <y>130</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1465,8 +1614,8 @@
    <slot>updateTrackingView()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>113</y>
+     <x>67</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1481,8 +1630,8 @@
    <slot>updateTrackingView()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>60</x>
-     <y>77</y>
+     <x>84</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -1498,11 +1647,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>102</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>67</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
@@ -1514,123 +1663,59 @@
    <hints>
     <hint type="sourcelabel">
      <x>67</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>102</x>
-     <y>86</y>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>distanceBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>distanceSlider</receiver>
-   <slot>setValue(int)</slot>
+   <sender>areaAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>configWindow</receiver>
+   <slot>addArea()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>596</x>
-     <y>342</y>
+     <x>126</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
-     <x>547</x>
-     <y>342</y>
+     <x>131</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>distanceSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>distanceBox</receiver>
-   <slot>setValue(int)</slot>
+   <sender>counterAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>configWindow</receiver>
+   <slot>addCounter()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>484</x>
-     <y>343</y>
+     <x>383</x>
+     <y>361</y>
     </hint>
     <hint type="destinationlabel">
-     <x>610</x>
-     <y>347</y>
+     <x>349</x>
+     <y>434</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>angleBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>angleSlider</receiver>
-   <slot>setValue(int)</slot>
+   <sender>actionAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>configWindow</receiver>
+   <slot>addAction()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>595</x>
-     <y>385</y>
+     <x>690</x>
+     <y>84</y>
     </hint>
     <hint type="destinationlabel">
-     <x>550</x>
-     <y>393</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>angleSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>angleBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>489</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>593</x>
-     <y>386</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>distanceBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>shockLocationLabel</receiver>
-   <slot>setDistance(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>602</x>
-     <y>336</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>727</x>
-     <y>344</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>angleBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>shockLocationLabel</receiver>
-   <slot>setAngle(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>590</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>709</x>
-     <y>397</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>triggerBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>shockLocationLabel</receiver>
-   <slot>setRadius(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>840</x>
-     <y>273</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>808</x>
-     <y>357</y>
+     <x>687</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>
@@ -1638,5 +1723,8 @@
  <slots>
   <slot>updateTrackingView()</slot>
   <slot>trackingParamsChanged()</slot>
+  <slot>addArea()</slot>
+  <slot>addCounter()</slot>
+  <slot>addAction()</slot>
  </slots>
 </ui>

@@ -1,5 +1,4 @@
 #include "configwindow.h"
-#include "ui_configwindow.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
@@ -26,9 +25,6 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->maskYBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
     connect(ui->maskRadiusBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 
-    connect(ui->triggerBox, SIGNAL(valueChanged(int)), ui->triggerSlider, SLOT(setValue(int)));
-    connect(ui->triggerSlider, SIGNAL(valueChanged(int)), ui->triggerBox, SLOT(setValue(int)));
-
     connect(ui->skipSpin, SIGNAL(valueChanged(int)), ui->skipSlider, SLOT(setValue(int)));
     connect(ui->skipSlider, SIGNAL(valueChanged(int)), ui->skipSpin, SLOT(setValue(int)));
 
@@ -41,7 +37,7 @@ configWindow::configWindow(QWidget *parent) :
 
     connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(trackFrame()));
 
-    connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshDevices()));
+    connect(ui->refreshDevicesButton, SIGNAL(clicked(bool)), this, SLOT(refreshCaptureDevices()));
 
     ui->ratFrontSelector->setTitle("Rat Front");
     ui->ratBackSelector->setTitle("Rat Back");
@@ -51,7 +47,13 @@ configWindow::configWindow(QWidget *parent) :
     connect(ui->resolutionHeightSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
     connect(ui->resolutionWidthSpin, SIGNAL(editingFinished()), this, SLOT(captureResolutionChanged()));
 
-    refreshDevices();
+    QStringList list;
+    list.append("[START]");
+    list.append("[END]");
+    actionTriggers.setStringList(list);
+
+    on_refreshPortButton_clicked();
+    refreshCaptureDevices();
 }
 
 configWindow::~configWindow()
@@ -69,15 +71,17 @@ void configWindow::load(Settings settings)
     int h = length % 24;
 
     ui->lengthEdit->setTime(QTime(h, m, s));
+    ui->modeComboBox->setCurrentIndex(settings.value("experiment/mode").toInt());
+    on_modeComboBox_activated(ui->modeComboBox->currentIndex());
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
     int deviceIndex = settings.value("video/device").toInt();
     if (deviceIndex == -1){
         videoFilename = settings.value("video/filename").toString();
-        refreshDevices();
+        refreshCaptureDevices();
         ui->deviceCombobox->setCurrentIndex(ui->deviceCombobox->count()-1);
     } else {
-        refreshDevices();
+        refreshCaptureDevices();
         ui->deviceCombobox->setCurrentIndex(deviceIndex);
     }
 
@@ -138,24 +142,42 @@ void configWindow::load(Settings settings)
     ui->invertBox->setChecked(settings.value("output/sync_inverted").toBool());
     ui->shockBox->setChecked(settings.value("output/shock").toBool());
 
+    ui->initialShockSpinBox->setValue(settings.value("shock/initialShock").toInt());
     ui->entryBox->setValue(settings.value("shock/EntranceLatency").toInt());
     ui->interBox->setValue(settings.value("shock/InterShockLatency").toInt());
     ui->durationBox->setValue(settings.value("shock/ShockDuration").toInt());
     ui->refractoryBox->setValue(settings.value("shock/OutsideRefractory").toInt());
-    ui->triggerBox->setValue(settings.value("shock/triggerDistance").toInt());
-    ui->angleBox->setValue(settings.value("shock/offsetAngle").toInt());
-    ui->distanceBox->setValue(settings.value("shock/offsetDistance").toInt());
 
     ui->directoryEdit->setText(settings.value("system/defaultDirectory").toString());
     ui->filenameEdit->setText(settings.value("system/defaultFilename").toString());
 
     ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
 
+    ui->portComboBox->setCurrentText(settings.value("hardware/serialPort").toString());
+    on_portComboBox_activated(ui->portComboBox->currentText());
+
+    clearAllActions();
+
+    QList<Counter> tmpCounters = settings.value("actions/counters").value<QList<Counter>>();
+    for (Counter counter : tmpCounters){
+        addCounter(counter);
+    }
+
+    QList<Area> tmpAreas = settings.value("actions/areas").value<QList<Area>>();
+    for (Area area : tmpAreas){
+        addArea(area);
+    }
+
+    QList<Action> tmpActions = settings.value("actions/actions").value<QList<Action>>();
+    for (Action action : tmpActions){
+        addAction(action);
+    }
+
 
     Settings newsettings = compileSettings();
     if (lastSettings != newsettings){
         lastSettings = newsettings;
-        emit(configurationUpdated(settings));
+        emit(configurationUpdated(newsettings));
     }
 }
 
@@ -165,6 +187,7 @@ Settings configWindow::compileSettings()
 
     QTime time = ui->lengthEdit->time();
     settings.insert("experiment/duration", time.hour()*60*60+time.minute()*60+time.second());
+    settings.insert("experiment/mode", ui->modeComboBox->currentIndex());
     settings.insert("experiment/stopAfterTimeout", ui->timeoutStopBox->isChecked());
 
     settings.insert("system/defaultDirectory", ui->directoryEdit->text());
@@ -232,13 +255,17 @@ Settings configWindow::compileSettings()
     settings.insert("output/sync_inverted", ui->invertBox->isChecked());
     settings.insert("output/shock", ui->shockBox->isChecked());
 
+    settings.insert("shock/initialShock", ui->initialShockSpinBox->value());
     settings.insert("shock/EntranceLatency", ui->entryBox->value());
     settings.insert("shock/InterShockLatency", ui->interBox->value());
     settings.insert("shock/ShockDuration", ui->durationBox->value());
     settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
-    settings.insert("shock/triggerDistance", ui->triggerBox->value());
-    settings.insert("shock/offsetAngle", ui->angleBox->value());
-    settings.insert("shock/offsetDistance", ui->distanceBox->value());
+
+    settings.insert("hardware/serialPort", ui->portComboBox->currentText());
+
+    settings.insert("actions/areas", QVariant::fromValue(getAreasFromUI()));
+    settings.insert("actions/actions", QVariant::fromValue(getActionsFromUI()));
+    settings.insert("actions/counters", QVariant::fromValue(getCountersFromUI()));
 
     return settings;
 }
@@ -262,6 +289,7 @@ void configWindow::on_okayButton_clicked()
 }
 
 void configWindow::showEvent(QShowEvent *event){
+    // If we're not running from a file
     if (ui->deviceCombobox->currentIndex() != ui->deviceCombobox->count()-1){
         ui->lengthEdit->setEnabled(true);
         ui->timeoutStopBox->setEnabled(true);
@@ -324,8 +352,17 @@ void configWindow::closeEvent(QCloseEvent *event){
     event->accept();
 }
 
+double configWindow::pixelsToMeters(int px){
+   double diameter_real = ui->arenaSizeBox->value();
+   double radius_px = ui->maskRadiusBox->value();
+   double result = diameter_real * (px/(radius_px*2));
+   return result;
+}
+
 #include "configwindow_general.cpp"
 
 #include "configwindow_capture.cpp"
 
 #include "configwindow_tracking.cpp"
+
+#include "configwindow_actions.cpp"

@@ -4,6 +4,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "debugwindow.h"
 #include <iostream>
 #include <QFileDialog>
 #include <QFile>
@@ -143,6 +144,7 @@ void kachnatracker::experimentTimeout(){
             updateTimer.stop();
             experiment->stop();
             alert->exec();
+            ui->actionConfigure->setEnabled(true);
             saveTracks();
         } else {
             alert->setModal(false);
@@ -171,21 +173,23 @@ void kachnatracker::saveTracks(){
             file.close();
         }
 
-        fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
-                                                    currentSettings.value("system/defaultDirectory").toString()+'/'+
-                                                    currentSettings.value("system/defaultFilename").toString()+"_rob",
-                                                    tr("Files (*.dat)"));
-        if (!fileName.isEmpty()){
-            if (!fileName.endsWith(".dat")){
-                fileName += ".dat";
+        if (currentSettings.value("experiment/mode").toInt() == 1){
+            fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
+                                                        currentSettings.value("system/defaultDirectory").toString()+'/'+
+                                                        currentSettings.value("system/defaultFilename").toString()+"_rob",
+                                                        tr("Files (*.dat)"));
+            if (!fileName.isEmpty()){
+                if (!fileName.endsWith(".dat")){
+                    fileName += ".dat";
+                }
+                QFile file(fileName);
+                if (file.open(QFile::WriteOnly)){
+                    QString log = experiment->getLog(false);
+                    QTextStream out(&file);
+                    out << log;
+                }
+                file.close();
             }
-            QFile file(fileName);
-            if (file.open(QFile::WriteOnly)){
-                QString log = experiment->getLog(false);
-                QTextStream out(&file);
-                out << log;
-            }
-            file.close();
         }
     }
 }
@@ -226,8 +230,10 @@ void kachnatracker::on_startButton_clicked(){
 
         QPainter painter(&trackImage);
         painter.setPen(Qt::black);
-        painter.drawEllipse(QPoint(currentSettings.value("arena/X").toInt(), currentSettings.value("arena/Y").toInt()),
-                            currentSettings.value("arena/radius").toInt(), currentSettings.value("arena/radius").toInt());
+        int radius = currentSettings.value("arena/radius").toInt();
+        arenaArea = QRect(QPoint(currentSettings.value("arena/X").toInt()-radius, currentSettings.value("arena/Y").toInt()-radius),
+                          QPoint(currentSettings.value("arena/X").toInt()+radius, currentSettings.value("arena/Y").toInt()+radius));
+        painter.drawEllipse(arenaArea);
         painter.end();
 
         reset();
@@ -237,7 +243,7 @@ void kachnatracker::on_startButton_clicked(){
         experiment.reset(new Experiment(this, &currentSettings));
         experiment->start();
 
-        connect(ui->shockBox, SIGNAL(valueChanged(double)), experiment.get(), SLOT(changeShock(double)));
+        connect(ui->shockBox, SIGNAL(valueChanged(int)), experiment.get(), SLOT(setShockLevel(int)));
 
         updateTimer.start(currentSettings.value("system/updateInterval").toInt());
         elapsedTimer.start();
@@ -293,6 +299,8 @@ void kachnatracker::requestUpdate(){
     painter.end();
 
     QPixmap showPixmap(trackImage.size());
+    QPainter *showPainter;
+
 
     if (showVideo) {
         Mat rgbFrame;
@@ -302,34 +310,48 @@ void kachnatracker::requestUpdate(){
                                                         rgbFrame.rows,
                                                         rgbFrame.step,
                                                         QImage::Format_RGB888));
-
+        showPainter = new QPainter(&showPixmap);
+        showPainter->setOpacity(0.4);
     } else {
+        showPainter = new QPainter(&showPixmap);
         showPixmap.fill(Qt::white);
     }
 
-    QPainter showPainter(&showPixmap);
-    showPainter.drawImage(QPoint(0, 0), trackImage);
+    showPainter->drawImage(QPoint(0, 0), trackImage);
 
-    if (robot.x() != -1 || robot.y() != -1){;
-        showPainter.setPen(Qt::yellow);
-        showPainter.setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
+    if (currentSettings.value("experiment/mode").toInt() == 0 ||
+            robot.x() != -1 || robot.y() != -1){
+        showPainter->setPen(Qt::yellow);
+        showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-        int radius = currentSettings.value("shock/triggerDistance").toInt();
-        if (currentSettings.value("tracking/type").toInt() == 0){
-            showPainter.drawEllipse(robot, radius, radius);
-        } else {
-            int distance = currentSettings.value("shock/offsetDistance").toInt();
-            int angle = currentSettings.value("shock/offsetAngle").toInt();
-            QPoint shockPoint;
-            shockPoint.setX(robot.x() + distance *
-                            sin((angle+update.keypoints.robot.angle)*CV_PI/180));
-            shockPoint.setY(robot.y() - distance *
-                            cos((angle+update.keypoints.robot.angle)*CV_PI/180));
-            showPainter.drawEllipse(shockPoint, radius, radius);
+        QList<Area> areas = currentSettings.value("actions/areas").value<QList<Area>>();
+        for (Area area : areas){
+            if (area.type == Area::CIRCULAR_AREA){
+                int radius = area.radius;
+                if (currentSettings.value("tracking/type").toInt() == 0){
+                    showPainter->drawEllipse(robot, radius, radius);
+                } else {
+                    int distance = currentSettings.value("shock/offsetDistance").toInt();
+                    int angle = currentSettings.value("shock/offsetAngle").toInt();
+                    QPoint shockPoint;
+                    shockPoint.setX(robot.x() + distance *
+                                    sin((angle+update.keypoints.robot.angle)*CV_PI/180));
+                    shockPoint.setY(robot.y() - distance *
+                                    cos((angle+update.keypoints.robot.angle)*CV_PI/180));
+                    showPainter->drawEllipse(shockPoint, radius, radius);
+                }
+            } else {
+                int a = ((90-area.angle-(area.range/2)))*16;
+                int alen = area.range*16;
+
+                showPainter->drawPie(arenaArea, a, alen);
+            }
         }
+
+
     }
 
-    showPainter.end();
+    showPainter->end();
     ui->displayLabel->setPixmap(showPixmap);
 
 
@@ -419,7 +441,7 @@ void kachnatracker::reset(){
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
 
-    ui->shockBox->setValue(0.1);
+    ui->shockBox->setValue(currentSettings.value("shock/initialShock").toInt());
 }
 
 void kachnatracker::on_actionSave_screenshot_triggered(){
@@ -444,6 +466,12 @@ void kachnatracker::on_actionAbout_triggered()
 {
     QMessageBox aboutBox;
     aboutBox.setText("<b>Kachna Tracker</b>");
-    aboutBox.setInformativeText("Version 3.3<br><br>https://github.com/fgu-cas/kachna-tracker");
+    aboutBox.setInformativeText("Version 3.4<br><br>https://github.com/fgu-cas/kachna-tracker");
     aboutBox.exec();
+}
+
+void kachnatracker::on_actionDebug_triggered()
+{
+    DebugWindow debugWindow;
+    debugWindow.exec();
 }

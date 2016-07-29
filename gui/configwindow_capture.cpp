@@ -81,7 +81,7 @@ void configWindow::on_deviceCombobox_activated(int index){
     showEvent(NULL);
 }
 
-void configWindow::refreshDevices(){
+void configWindow::refreshCaptureDevices(){
     ui->deviceCombobox->clear();
 
     // Here be dragons. If it weren't for Naveen @ stackoverflow I'd be completely lost.

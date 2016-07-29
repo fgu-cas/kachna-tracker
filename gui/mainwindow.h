@@ -51,6 +51,8 @@ private slots:
 
     void on_actionVideo_tracking_toggled(bool arg1);
 
+    void on_actionDebug_triggered();
+
 private:
     void reset();
 
@@ -69,6 +71,7 @@ private:
     std::unique_ptr<QSettings> appSettings;
     std::unique_ptr<Experiment> experiment;
     QImage trackImage;
+    QRect arenaArea;
     Detector::pointPair lastKeypoints;
 
     bool dirty = false;

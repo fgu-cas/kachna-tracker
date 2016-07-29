@@ -1,8 +1,6 @@
 #include "masklabel.h"
 #include <qmath.h>
 
-#include <QDebug>
-
 void MaskLabel::setEditable(bool editable){
     this->editable = editable;
 }
