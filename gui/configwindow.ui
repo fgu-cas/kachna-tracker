@@ -83,7 +83,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QCheckBox" name="timeoutStopBox">
           <property name="text">
            <string>Stop experiment after timeout</string>
@@ -110,6 +110,38 @@
            </property>
           </item>
          </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_57">
+          <property name="text">
+           <string>Arena speed</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
+          <item>
+           <widget class="QSpinBox" name="arenaSpinbox">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="arenaDirectionCombobox">
+            <item>
+             <property name="text">
+              <string>CW</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>CCW</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -260,7 +292,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0">
           <item>
            <widget class="QLineEdit" name="directoryEdit">
             <property name="readOnly">

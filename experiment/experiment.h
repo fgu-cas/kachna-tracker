@@ -44,6 +44,9 @@ public:
 
 
 private:
+    int arenaPWM = 0;
+    int arenaDirection = 0;
+
     // System
     Stats stats;
     std::unique_ptr<ExperimentLogger> logger;

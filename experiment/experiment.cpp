@@ -50,6 +50,17 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     shock.length = settings->value("shock/ShockDuration").toInt();
     shock.refractory = settings->value("shock/OutsideRefractory").toInt();
 
+    arenaPWM = settings->value("arena/PWM").toInt();
+
+    QString direction = settings->value("arena/direction").toString();
+    if (direction == "CW"){
+        arenaDirection = 1;
+    } else if (direction == "CCw"){
+        arenaDirection = 2;
+    } else {
+        arenaDirection = 0;
+    }
+
     counters = settings->value("actions/counters").value<QList<Counter>>();
     areas = settings->value("actions/areas").value<QList<Area>>();
     actions = settings->value("actions/actions").value<QList<Action>>();
@@ -79,6 +90,12 @@ void Experiment::start(){
     timer.start();
     elapsedTimer.start();
     logger->setStart(QDateTime::currentMSecsSinceEpoch());
+
+    if (arenaDirection > 0){
+        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+        mat->setTurntableDirection(arenaDirection);
+        mat->setTurntablePWM(arenaPWM);
+    }
 }
 
 void Experiment::stop(){

@@ -75,6 +75,9 @@ void configWindow::load(Settings settings)
     on_modeComboBox_activated(ui->modeComboBox->currentIndex());
     ui->timeoutStopBox->setChecked(settings.value("experiment/stopAfterTimeout").toBool());
 
+    ui->arenaSpinbox->setValue(settings.value("arena/PWM").toInt());
+    ui->arenaDirectionCombobox->setCurrentText(settings.value("arena/direction").toString());
+
     int deviceIndex = settings.value("video/device").toInt();
     if (deviceIndex == -1){
         videoFilename = settings.value("video/filename").toString();
@@ -193,6 +196,9 @@ Settings configWindow::compileSettings()
     settings.insert("system/defaultDirectory", ui->directoryEdit->text());
     settings.insert("system/defaultFilename", ui->filenameEdit->text());
     settings.insert("system/updateInterval", ui->updateBox->value());
+
+    settings.insert("arena/PWM", ui->arenaSpinbox->value());
+    settings.insert("arena/direction", ui->arenaDirectionCombobox->currentText());
 
     int deviceIndex = ui->deviceCombobox->currentIndex();
     if (deviceIndex == ui->deviceCombobox->count()-1){
