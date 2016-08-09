@@ -13,6 +13,7 @@ public:
     virtual bool check() = 0;
     virtual void setShock(int level) = 0;
     virtual void setSync(bool state) = 0;
+    virtual void shutdown() = 0;
 
 signals:
 

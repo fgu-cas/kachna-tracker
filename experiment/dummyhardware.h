@@ -12,6 +12,7 @@ public:
     bool check();
     void setShock(int level);
     void setSync(bool state);
+    void shutdown();
 };
 
 #endif // DUMMYHARDWARE_H

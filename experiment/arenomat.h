@@ -16,6 +16,7 @@ public:
     bool check();
     void setShock(int level);
     void setSync(bool state);
+    void shutdown();
 
     void setLed(bool state);
     void setTurntableDirection(int direction);

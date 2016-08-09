@@ -22,3 +22,8 @@ void DIO24::setShock(int level){
 void DIO24::setSync(bool state){
     cbDOut(0, FIRSTPORTB, state ? 1 : 0);
 }
+
+void DIO24::shutdown(){
+    cbDOut(0, FIRSTPORTB, 0);
+    cbDOut(0, FIRSTPORTC, 0);
+}

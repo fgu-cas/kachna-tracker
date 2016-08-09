@@ -3,6 +3,7 @@
 
 enum COMMANDS {
     CHECK = 10,
+    SHUTDOWN = 11,
     SHOCK_LEVEL = 20,
     LED = 30,
     TURNTABLE_SPEED = 40,
@@ -72,6 +73,13 @@ void Arenomat::setShock(int level){
 
 void Arenomat::setSync(bool state){
     // TODO
+}
+
+void Arenomat::shutdown(){
+    QByteArray command(3, 0x00);
+    command[0] = SHUTDOWN;
+
+    serial.write(command);
 }
 
 void Arenomat::setLed(bool state){

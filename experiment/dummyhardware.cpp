@@ -18,3 +18,7 @@ void DummyHardware::setShock(int level){
 void DummyHardware::setSync(bool state){
     return;
 }
+
+void DummyHardware::shutdown(){
+    qDebug() << "[HW] Shutting down!";
+}

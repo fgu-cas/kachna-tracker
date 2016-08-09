@@ -84,6 +84,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 
 Experiment::~Experiment(){
     hardware->setShock(0);
+    hardware->shutdown();
 }
 
 void Experiment::start(){
