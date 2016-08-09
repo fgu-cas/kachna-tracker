@@ -324,8 +324,11 @@ void kachnatracker::requestUpdate(){
         showPainter->setPen(Qt::yellow);
         showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-        QList<Area> areas = currentSettings.value("actions/areas").value<QList<Area>>();
+        QList<Area> areas = experiment->getAreas();
         for (Area area : areas){
+            if (!area.enabled){
+                continue;
+            }
             if (area.type == Area::CIRCULAR_AREA){
                 int radius = area.radius;
                 if (currentSettings.value("tracking/type").toInt() == 0){

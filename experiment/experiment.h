@@ -40,6 +40,7 @@ public:
     };
 
     Update getUpdate();
+    QList<Area> getAreas();
 
 
 private:

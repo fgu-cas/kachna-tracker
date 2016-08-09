@@ -326,6 +326,10 @@ void Experiment::setShockLevel(int level){
     }
 }
 
+QList<Area> Experiment::getAreas(){
+    return areas;
+}
+
 Experiment::Update Experiment::getUpdate(){
     Update update;
 
