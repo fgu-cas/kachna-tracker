@@ -72,6 +72,7 @@ void Arenomat::setShock(int level){
 }
 
 void Arenomat::setSync(bool state){
+    state = state;
     // TODO
 }
 

@@ -100,6 +100,14 @@ private:
     QList<Counter> counters;
     QList<Action> actions;
 
+    enum TriggerState {
+        OFF,
+        RISING,
+        ON
+    };
+
+    QMap<QString, TriggerState> triggerStates;
+
     std::unique_ptr<AbstractHardware> hardware;
 
 public slots:

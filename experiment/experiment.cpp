@@ -80,6 +80,14 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     } else {
         hardware.reset(new DummyHardware());
     }
+
+    for (Counter counter : counters){
+        triggerStates[counter.id] = TriggerState::OFF;
+    }
+
+    for (Area area : areas){
+        triggerStates[area.id] = TriggerState::OFF;
+    }
 }
 
 Experiment::~Experiment(){
@@ -180,14 +188,21 @@ void Experiment::processFrame(){
             Counter counter = counters.at(i);
             if (counter.value >= counter.limit){
                 activeTriggers.append(counter.id);
+                if (triggerStates[counter.id] == TriggerState::OFF){
+                    triggerStates[counter.id] = TriggerState::RISING;
+                } else if (triggerStates[counter.id] == TriggerState::RISING){
+                    triggerStates[counter.id] = TriggerState::ON;
+                }
+            } else {
+                triggerStates[counter.id] = TriggerState::OFF;
             }
         }
 
         for (int i = 0; i < areas.size(); i++){
             Area area = areas.at(i);
+            if (!area.enabled) continue;
             switch (area.type){
-            case Trigger::CIRCULAR_AREA:
-                if (!area.enabled) continue;
+            case Area::CIRCULAR_AREA:
             {
                 Point2f shock_point = points.robot.pt;
                 shock_point.x += area.distance * sin((points.robot.angle + area.angle)*CV_PI/180);
@@ -196,14 +211,28 @@ void Experiment::processFrame(){
                 if (distance < area.radius){
                     activeTriggers.append(area.id);
                     found = true;
+                    if (triggerStates[area.id] == TriggerState::OFF){
+                        triggerStates[area.id] = TriggerState::RISING;
+                    } else if (triggerStates[area.id] == TriggerState::RISING){
+                        triggerStates[area.id] = TriggerState::ON;
+                    }
+                } else {
+                    triggerStates[area.id] = TriggerState::OFF;
                 }
             }
                 break;
-            case Trigger::PIE_AREA:
+            case Area::PIE_AREA:
                 qreal angleRad = qAtan2(arena.y - points.rat.pt.y, arena.x - points.rat.pt.x);
                 int angle = fmod(qRadiansToDegrees(angleRad)+ 270, 360);
                 if (angle > area.angle-area.range/2 && angle < area.angle+area.range/2){
                     activeTriggers.append(area.id);
+                    if (triggerStates[area.id] == TriggerState::OFF){
+                        triggerStates[area.id] = TriggerState::RISING;
+                    } else if (triggerStates[area.id] == TriggerState::RISING){
+                        triggerStates[area.id] = TriggerState::ON;
+                    }
+                } else {
+                    triggerStates[area.id] = TriggerState::OFF;
                 }
                 break;
             }
@@ -247,7 +276,7 @@ void Experiment::processFrame(){
                 case Action::COUNTER_INC:
                 case Action::COUNTER_DEC:
                 case Action::COUNTER_SET:
-                    action.processed = true;
+                    if (triggerStates[trigger] != TriggerState::RISING) continue;
                     for (int i = 0; i < counters.size(); i++){
                         Counter& counter = counters[i];
                         if (action.target == counter.id){
