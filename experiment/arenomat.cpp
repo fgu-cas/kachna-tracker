@@ -83,7 +83,7 @@ void Arenomat::shutdown(){
     serial.write(command);
 }
 
-void Arenomat::setLed(bool state){
+void Arenomat::setLight(bool state){
     QByteArray command(3, 0x00);
     command[0] = LED;
     command[1] = state;

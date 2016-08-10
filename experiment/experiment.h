@@ -93,6 +93,7 @@ private:
     Shock shock;
 
     qint64 lastChange;
+    qint64 lastLight = 0;
 
     Arena arena;
 

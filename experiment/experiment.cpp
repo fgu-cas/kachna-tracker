@@ -6,6 +6,7 @@
 #include "arenomat.h"
 #include "dummyhardware.h"
 
+#define LIGHT_LIMIT 500
 
 Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     QObject(parent){
@@ -291,10 +292,22 @@ void Experiment::processFrame(){
                         }
                     }
                     break;
-
+                case Action::LIGHT:
+                    if (elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
+                        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+                        mat->setLight(1);
+                    }
+                    lastLight = elapsedTimer.elapsed();
+                    break;
                 }
+
             }
         }
+    }
+
+    if (elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
+        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+        mat->setLight(0);
     }
 
 

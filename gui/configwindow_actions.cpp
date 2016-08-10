@@ -22,9 +22,9 @@ void configWindow::addAction(Action action){
     QComboBox* actionType = new QComboBox(this);
     actionType->addItem("Shock");
     actionType->addItem("Set state");
-    actionType->addItem("Modify counter");/*
+    actionType->addItem("Modify counter");
     actionType->addItem("Light");
-    actionType->addItem("Sound");*/
+    //actionType->addItem("Sound");
     switch (action.type) {
         case Action::SHOCK:
             actionType->setCurrentIndex(0);
@@ -42,7 +42,7 @@ void configWindow::addAction(Action action){
             //
             break;
         case Action::LIGHT:
-            //
+            actionType->setCurrentIndex(3);
             break;
     }
     QPushButton* setButton = new QPushButton("Set...", this);
@@ -302,6 +302,9 @@ QList<Action> configWindow::getActionsFromUI(){
             switch (typeIndex){
             case 0:
                 action.type = Action::SHOCK;
+                break;
+            case 3:
+                action.type = Action::LIGHT;
                 break;
             default:
                 action.type = partialActions[row].type;

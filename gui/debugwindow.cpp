@@ -49,12 +49,12 @@ void DebugWindow::on_checkButton_clicked()
 
 void DebugWindow::on_ledOnButton_clicked()
 {
-    if (arenomat != 0) arenomat->setLed(true);
+    if (arenomat != 0) arenomat->setLight(true);
 }
 
 void DebugWindow::on_ledOffButton_clicked()
 {
-    if (arenomat != 0) arenomat->setLed(false);
+    if (arenomat != 0) arenomat->setLight(false);
 }
 
 void DebugWindow::on_shockButton_clicked()

@@ -18,7 +18,7 @@ public:
     void setSync(bool state);
     void shutdown();
 
-    void setLed(bool state);
+    void setLight(bool state);
     void setTurntableDirection(int direction);
     void setTurntableSpeed(int speed);
     void setPIDValue(int constant, double value);
