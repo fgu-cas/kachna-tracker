@@ -24,9 +24,6 @@ LIBS += -L"$$PWD\\..\\opencv\\build\\bin" \
     libopencv_features2d2413d \
     libopencv_calib3d2413d
 
-LIBS += -L .. \
-        -lcbw32
-
 LIBS += -lole32 -loleaut32
 
 QMAKE_LFLAGS = -static-libgcc -static-libstdc++

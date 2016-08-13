@@ -8,7 +8,6 @@ SOURCES +=  $$PWD/detector.cpp \
     $$PWD/arenomat.cpp \
     $$PWD/experimentlogger.cpp \
     $$PWD/abstracthardware.cpp \
-    $$PWD/dio24.cpp \
     $$PWD/params.cpp \
     $$PWD/dummyhardware.cpp
 
@@ -21,5 +20,4 @@ HEADERS += $$PWD/detector.h \
     $$PWD/experimentlogger.h \
     $$PWD/params.h \
     $$PWD/abstracthardware.h \
-    $$PWD/dio24.h \
     $$PWD/dummyhardware.h
