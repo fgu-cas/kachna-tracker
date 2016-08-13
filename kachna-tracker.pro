@@ -18,11 +18,11 @@ include($$PWD/experiment/experiment.pri)
 INCLUDEPATH += "$$PWD\\..\\opencv\\build\\include"
 
 LIBS += -L"$$PWD\\..\\opencv\\build\\bin" \
-    libopencv_core2412d \
-    libopencv_highgui2412d \
-    libopencv_imgproc2412d \
-    libopencv_features2d2412d \
-    libopencv_calib3d2412d
+    libopencv_core2413d \
+    libopencv_highgui2413d \
+    libopencv_imgproc2413d \
+    libopencv_features2d2413d \
+    libopencv_calib3d2413d
 
 LIBS += -L .. \
         -lcbw32
