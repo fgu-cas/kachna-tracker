@@ -52,6 +52,9 @@ configWindow::configWindow(QWidget *parent) :
     list.append("[END]");
     actionTriggers.setStringList(list);
 
+    ui->ratBackSelector->setVisible(false);
+    ui->robotBackSelector->setVisible(false);
+
     on_refreshPortButton_clicked();
     refreshCaptureDevices();
 }
@@ -116,6 +119,8 @@ void configWindow::load(Settings settings)
 
     ui->valSlider->setValue(settings.value("tracking/color/value_threshold").toInt());
     ui->satSlider->setValue(settings.value("tracking/color/saturation_threshold").toInt());
+
+    ui->colorModeBox->setCurrentIndex(settings.value("tracking/color/mode").toInt());
 
     pointRange ratFrontRange;
     ratFrontRange.hue = settings.value("tracking/color/ratFront/hue").toInt();
@@ -236,6 +241,8 @@ Settings configWindow::compileSettings()
 
     settings.insert("tracking/color/saturation_threshold", ui->satSlider->value());
     settings.insert("tracking/color/value_threshold", ui->valSlider->value());
+
+    settings.insert("tracking/color/mode", ui->colorModeBox->currentIndex());
 
     pointRange ratFrontRange = ui->ratFrontSelector->getColorRange();
     settings.insert("tracking/color/ratFront/hue", ratFrontRange.hue);

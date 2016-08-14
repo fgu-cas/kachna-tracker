@@ -36,6 +36,8 @@ void configWindow::on_modeComboBox_activated(int index)
 {
     bool visible = index == 0 ? false : true;
     ui->robotThreshOuter->setVisible(visible);
-    ui->robotBackSelector->setVisible(visible);
     ui->robotFrontSelector->setVisible(visible);
+    if (ui->colorModeBox->currentIndex() == 1){
+        ui->robotBackSelector->setVisible(visible);
+    }
 }

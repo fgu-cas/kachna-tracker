@@ -1056,7 +1056,7 @@
          </layout>
         </widget>
         <widget class="QWidget" name="page_2">
-         <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0,0,0,0,0,0,1,1,1,1">
+         <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0,0,0,0,0,0,0,1,1,1,1">
           <item>
            <layout class="QFormLayout" name="formLayout_5">
             <item row="0" column="0">
@@ -1223,6 +1223,31 @@
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="0,1">
+            <item>
+             <widget class="QLabel" name="label_60">
+              <property name="text">
+               <string>Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="colorModeBox">
+              <item>
+               <property name="text">
+                <string>Single point (Position only)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Two point (Position + Orientation)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="PointSelector" name="ratFrontSelector" native="true"/>

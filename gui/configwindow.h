@@ -98,6 +98,8 @@ private slots:
 
     void on_modeComboBox_activated(int index);
 
+    void on_colorModeBox_activated(int index);
+
 private:
     Ui::configWindow *ui;
     std::unique_ptr<Detector> detector;

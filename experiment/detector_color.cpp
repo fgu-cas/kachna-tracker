@@ -44,6 +44,15 @@ DetectorColor::DetectorColor(const QMap<QString, QVariant> &settings, int h, int
     robotBack.hue = settings.value("tracking/color/robotBack/hue").toInt();
     robotBack.minimum_size = settings.value("tracking/color/robotBack/minimum_size").toInt();
     robotBack.maximum_size = settings.value("tracking/color/robotBack/maximum_size").toInt();
+
+    switch (settings.value("tracking/color/mode").toInt()){
+    case 0:
+        bothPoints = false;
+        break;
+    case 1:
+        bothPoints = true;
+        break;
+    }
 }
 
 Mat DetectorColor::process(Mat *frame){
@@ -119,13 +128,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     result.push_back(point);
                     continue;
                 }
-                distance = abs(ratBack.hue-average);
-                if (distance > 180) distance = 360 - distance;
-                if (distance < hue_tol){
-                    point.class_id = RAT_BACK;
-                    result.push_back(point);
-                    continue;
-                }
+
                 distance = abs(robotFront.hue-average);
                 if (distance > 180) distance = 360 - distance;
                 if (distance < hue_tol){
@@ -133,12 +136,23 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     result.push_back(point);
                     continue;
                 }
-                distance = abs(robotBack.hue-average);
-                if (distance > 180) distance = 360 - distance;
-                if (distance < hue_tol){
-                    point.class_id = ROBOT_BACK;
-                    result.push_back(point);
-                    continue;
+
+                if (bothPoints){
+                    distance = abs(ratBack.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = RAT_BACK;
+                        result.push_back(point);
+                        continue;
+                    }
+
+                    distance = abs(robotBack.hue-average);
+                    if (distance > 180) distance = 360 - distance;
+                    if (distance < hue_tol){
+                        point.class_id = ROBOT_BACK;
+                        result.push_back(point);
+                        continue;
+                    }
                 }
 
                 result.push_back(point);
@@ -153,6 +167,22 @@ Detector::pointPair DetectorColor::find(Mat *frame){
     pointPair result;
 
     std::vector<Detector::Point> points = detect(frame);
+
+    if (!bothPoints){
+        for (Detector::Point point : points){
+            switch (point.class_id){
+                case RAT_FRONT:
+                    result.rat = point;
+                    break;
+               case ROBOT_FRONT:
+                    result.robot = point;
+                    break;
+               default:
+                    break;
+            }
+        }
+        return result;
+    }
 
     Detector::Point rat_front;
     Detector::Point rat_back;

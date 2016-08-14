@@ -188,3 +188,19 @@ void configWindow::on_skipCombo_currentIndexChanged(int index)
             break;
     }
 }
+
+void configWindow::on_colorModeBox_activated(int index)
+{
+    switch (index){
+    case 0:
+        ui->ratBackSelector->setVisible(false);
+        ui->robotBackSelector->setVisible(false);
+        break;
+    case 1:
+        ui->ratBackSelector->setVisible(true);
+        if (ui->modeComboBox->currentIndex() == 1){
+            ui->robotBackSelector->setVisible(true);
+        }
+    }
+}
+

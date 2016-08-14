@@ -32,6 +32,8 @@ public:
 private:
     std::unique_ptr<SimpleBlobDetector> detector;
 
+    bool bothPoints = false;
+
     double min, max;
     int hue_tol, val, sat;
 
