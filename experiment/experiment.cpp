@@ -101,7 +101,7 @@ void Experiment::start(){
     elapsedTimer.start();
     logger->setStart(QDateTime::currentMSecsSinceEpoch());
 
-    if (arenaDirection > 0){
+    if (isLive && arenaDirection > 0){
         Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
         mat->setTurntableDirection(arenaDirection);
         mat->setTurntablePWM(arenaPWM);
@@ -305,7 +305,7 @@ void Experiment::processFrame(){
         }
     }
 
-    if (elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
+    if (isLive && elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
         Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
         mat->setLight(0);
     }
