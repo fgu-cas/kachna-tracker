@@ -41,3 +41,8 @@ void configWindow::on_modeComboBox_activated(int index)
         ui->robotBackSelector->setVisible(visible);
     }
 }
+
+void configWindow::on_shockModeCombobox_activated(int index)
+{
+    ui->initialShockSpinBox->setEnabled(index == 0);
+}

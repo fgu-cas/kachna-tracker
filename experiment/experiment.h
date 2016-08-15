@@ -59,6 +59,7 @@ private:
 
     bool ratRobot;
 
+    bool shockIsElectric;
     bool shockOut;
     bool synchOut;
     bool synchInv;
@@ -89,6 +90,7 @@ private:
     } shockState;
     double shockLevel;
     int currentShockLevel = 2;
+    void outputShock(int level);
 
     Shock shock;
 

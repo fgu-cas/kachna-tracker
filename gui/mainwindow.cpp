@@ -429,7 +429,6 @@ void kachnatracker::closeEvent(QCloseEvent *closeEvent){
 }
 
 void kachnatracker::reset(){
-
     experimentEnded = false;
 
     lastKeypoints.rat = KeyPoint(0, 0, 0);
@@ -444,7 +443,11 @@ void kachnatracker::reset(){
     ui->badFramesLCD->display(0);
     ui->badFramesLCD->display(0);
 
-    ui->shockBox->setValue(currentSettings.value("shock/initialShock").toInt());
+    if (currentSettings.value("shock/mode").toInt() == 0){
+        ui->shockBox->setValue(currentSettings.value("shock/initialShock").toInt());
+    } else {
+        ui->shockBox->setEnabled(false);
+    }
 }
 
 void kachnatracker::on_actionSave_screenshot_triggered(){

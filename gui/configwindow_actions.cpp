@@ -23,7 +23,7 @@ void configWindow::addAction(Action action){
     actionType->addItem("Shock");
     actionType->addItem("Set state");
     actionType->addItem("Modify counter");
-    actionType->addItem("Light");
+    //actionType->addItem("Light shock");
     //actionType->addItem("Sound");
     switch (action.type) {
         case Action::SHOCK:

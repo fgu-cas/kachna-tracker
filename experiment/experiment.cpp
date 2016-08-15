@@ -45,7 +45,13 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     arena.size = settings->value("arena/size").toDouble();
     arena.radius = settings->value("arena/radius").toInt();
 
-    shockLevel = settings->value("shock/initialShock").toInt();
+    if (settings->value("shock/mode").toInt() == 0){
+       shockIsElectric = true;
+       shockLevel = settings->value("shock/initialShock").toInt();
+    } else {
+        shockIsElectric = false;
+        shockLevel = 1;
+    }
     shock.delay = settings->value("shock/EntranceLatency").toInt();
     shock.in_delay = settings->value("shock/InterShockLatency").toInt();
     shock.length = settings->value("shock/ShockDuration").toInt();
@@ -292,22 +298,9 @@ void Experiment::processFrame(){
                         }
                     }
                     break;
-                case Action::LIGHT:
-                    if (elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
-                        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
-                        mat->setLight(1);
-                    }
-                    lastLight = elapsedTimer.elapsed();
-                    break;
                 }
-
             }
         }
-    }
-
-    if (isLive && elapsedTimer.elapsed() > lastLight + LIGHT_LIMIT){
-        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
-        mat->setLight(0);
     }
 
 
@@ -329,7 +322,7 @@ void Experiment::processFrame(){
                         stats.initialShock = elapsedTimer.elapsed();
                     }
                     lastChange = elapsedTimer.elapsed();
-                    hardware->setShock(shockLevel);
+                    outputShock(shockLevel);
                 }
             } else {
                 shockState=OUTSIDE;
@@ -338,7 +331,7 @@ void Experiment::processFrame(){
         break;
     case SHOCKING:
         if (elapsedTimer.elapsed() > lastChange+shock.length){
-            hardware->setShock(0);
+            outputShock(shockLevel);
             if (!badFrame){
                 if (shocking){
                     shockState = PAUSE;
@@ -356,7 +349,7 @@ void Experiment::processFrame(){
                     shockState = SHOCKING;
                     stats.shockCount++;
                     lastChange = elapsedTimer.elapsed();
-                    hardware->setShock(shockLevel);
+                    outputShock(shockLevel);
                 }
             } else {
                 shockState = REFRACTORY;
@@ -383,6 +376,15 @@ void Experiment::setShockLevel(int level){
         shockLevel = 7;
     } else {
         shockLevel = level;
+    }
+}
+
+void Experiment::outputShock(int level){
+    if (shockIsElectric && isLive){
+        Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+        mat->setLight(level > 0);
+    } else {
+        hardware->setShock(level);
     }
 }
 
