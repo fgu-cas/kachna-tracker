@@ -11,7 +11,8 @@ enum COMMANDS {
     UPDATE_P = 42,
     UPDATE_I = 43,
     UPDATE_D = 44,
-    SET_PWM = 45
+    SET_PWM = 45,
+    FEED = 50
 };
 
 Arenomat::Arenomat(){
@@ -23,6 +24,10 @@ Arenomat::Arenomat(QString port)
     connect(&serial, SIGNAL(readyRead()), this, SLOT(handleData()));
     serial.setPortName(port);
     serial.open(QIODevice::ReadWrite);
+}
+
+Arenomat::~Arenomat(){
+    serial.close();
 }
 
 void Arenomat::handleData(){
@@ -136,6 +141,13 @@ void Arenomat::setTurntablePWM(uint8_t pwm){
     QByteArray command(3, 0x00);
     command[0] = SET_PWM;
     command[1] = pwm;
+
+    serial.write(command);
+}
+
+void Arenomat::feed(){
+    QByteArray command(3, 0x00);
+    command[0] = FEED;
 
     serial.write(command);
 }

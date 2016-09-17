@@ -38,11 +38,11 @@ Source: "D:\dev\build\kachna\release\cbw32.dll"; DestDir: "{app}"; Flags: ignore
 Source: "C:\Qt\5.6\mingw49_32\bin\icudt54.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.6\mingw49_32\bin\icuin54.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.6\mingw49_32\bin\icuuc54.dll"; DestDir: "{app}"; 
-Source: "D:\dev\opencv\build\bin\libopencv_core2412d.dll"; DestDir: "{app}"; 
-Source: "D:\dev\opencv\build\bin\libopencv_features2d2412d.dll"; DestDir: "{app}"; 
-Source: "D:\dev\opencv\build\bin\libopencv_flann2412d.dll"; DestDir: "{app}"; 
-Source: "D:\dev\opencv\build\bin\libopencv_highgui2412d.dll"; DestDir: "{app}"; 
-Source: "D:\dev\opencv\build\bin\libopencv_imgproc2412d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_core2413d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_features2d2413d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_flann2413d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_highgui2413d.dll"; DestDir: "{app}"; 
+Source: "D:\dev\opencv\build\bin\libopencv_imgproc2413d.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Core.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Cored.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.6\mingw49_32\bin\Qt5Gui.dll"; DestDir: "{app}"; 

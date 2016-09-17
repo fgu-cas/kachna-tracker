@@ -241,7 +241,12 @@ void kachnatracker::on_startButton_clicked(){
         ui->actionConfigure->setEnabled(false);
 
         experiment.reset(new Experiment(this, &currentSettings));
-        experiment->start();
+        if (!experiment->start()){
+            QMessageBox aboutBox;
+            aboutBox.setText("<b>Hardware initialization failed!</b>");
+            aboutBox.setInformativeText("An error occurred during hardware initialization. You may want to abort the experiment.");
+            aboutBox.exec();
+        }
 
         connect(ui->shockBox, SIGNAL(valueChanged(int)), experiment.get(), SLOT(setShockLevel(int)));
 

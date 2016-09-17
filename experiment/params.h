@@ -64,7 +64,8 @@ struct Action {
         COUNTER_DEC,
         COUNTER_SET,
         SOUND,
-        LIGHT
+        LIGHT,
+        FEEDER
     } type;
     QString target;
     int arg = 0;

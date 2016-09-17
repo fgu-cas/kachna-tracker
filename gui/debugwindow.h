@@ -43,6 +43,12 @@ private slots:
 
     void on_pwmButton_clicked();
 
+    void on_feederButton_clicked();
+
+    void closeEvent(QCloseEvent*);
+
+    void showEvent(QShowEvent*);
+
 private:
     Ui::DebugWindow *ui;
     std::unique_ptr<Arenomat> arenomat;

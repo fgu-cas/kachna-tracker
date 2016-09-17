@@ -111,10 +111,11 @@ private:
 
     QMap<QString, TriggerState> triggerStates;
 
+    QString serialPort;
     std::unique_ptr<AbstractHardware> hardware;
 
 public slots:
-    void start();
+    bool start();
     void stop();
     void setShockLevel(int level);
 

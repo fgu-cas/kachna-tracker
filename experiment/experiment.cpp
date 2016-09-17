@@ -82,11 +82,8 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     lastChange = 0;
 
     logger.reset(new ExperimentLogger(shock, arena));
-    if (isLive){
-        hardware.reset(new Arenomat(settings->value("hardware/serialPort").toString()));
-    } else {
-        hardware.reset(new DummyHardware());
-    }
+
+    serialPort = settings->value("hardware/serialPort").toString();
 
     for (Counter counter : counters){
         triggerStates[counter.id] = TriggerState::OFF;
@@ -98,24 +95,36 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
 }
 
 Experiment::~Experiment(){
-    hardware->setShock(0);
-    hardware->shutdown();
+    hardware.reset();
 }
 
-void Experiment::start(){
+bool Experiment::start(){
     timer.start();
     elapsedTimer.start();
     logger->setStart(QDateTime::currentMSecsSinceEpoch());
+
+    if (isLive){
+        hardware.reset(new Arenomat(serialPort));
+    } else {
+        hardware.reset(new DummyHardware());
+    }
+
+    if (!hardware->check()){
+        return false;
+    }
 
     if (isLive && arenaDirection > 0){
         Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
         mat->setTurntableDirection(arenaDirection);
         mat->setTurntablePWM(arenaPWM);
     }
+    return true;
 }
 
 void Experiment::stop(){
     hardware->setShock(0);
+    hardware->shutdown();
+
     this->timer.stop();
     capture.release();
     finishedTime = elapsedTimer.elapsed();
@@ -298,6 +307,11 @@ void Experiment::processFrame(){
                         }
                     }
                     break;
+               case Action::FEEDER:
+                    if (triggerStates[trigger] != TriggerState::RISING) continue;
+                    Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+                    mat->feed();
+                    break;
                 }
             }
         }
@@ -331,7 +345,7 @@ void Experiment::processFrame(){
         break;
     case SHOCKING:
         if (elapsedTimer.elapsed() > lastChange+shock.length){
-            outputShock(shockLevel);
+            outputShock(0);
             if (!badFrame){
                 if (shocking){
                     shockState = PAUSE;
@@ -380,7 +394,7 @@ void Experiment::setShockLevel(int level){
 }
 
 void Experiment::outputShock(int level){
-    if (shockIsElectric && isLive){
+    if (!shockIsElectric && isLive){
         Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
         mat->setLight(level > 0);
     } else {

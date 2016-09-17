@@ -12,6 +12,7 @@ class Arenomat : public AbstractHardware
 public:
     Arenomat();
     Arenomat(QString port);
+    ~Arenomat();
 
     bool check();
     void setShock(int level);
@@ -23,6 +24,7 @@ public:
     void setTurntableSpeed(int speed);
     void setPIDValue(int constant, double value);
     void setTurntablePWM(uint8_t pwm);
+    void feed();
 
 signals:
     void messageReceived(QByteArray message);

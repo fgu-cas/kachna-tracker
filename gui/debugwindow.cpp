@@ -13,12 +13,18 @@ DebugWindow::DebugWindow(QWidget *parent) :
     for (const QSerialPortInfo &info : infos) {
         ui->portsComboBox->addItem(info.portName());
     }
+}
+
+void DebugWindow::showEvent(QShowEvent *ev){
     on_portsComboBox_activated(ui->portsComboBox->currentText());
+}
+
+void DebugWindow::closeEvent(QCloseEvent *ev){
+    arenomat.reset();
 }
 
 DebugWindow::~DebugWindow()
 {
-    arenomat.release();
     delete ui;
 }
 
@@ -101,4 +107,9 @@ void DebugWindow::on_setDButton_clicked()
 void DebugWindow::on_pwmButton_clicked()
 {
     if (arenomat != 0) arenomat->setTurntablePWM(ui->pwmSpinbox->value());
+}
+
+void DebugWindow::on_feederButton_clicked()
+{
+    if (arenomat != 0) arenomat->feed();
 }

@@ -130,75 +130,13 @@
     </layout>
    </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Shock length</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
-     <item>
-      <widget class="QPushButton" name="lengthButton">
-       <property name="text">
-        <string>Set</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="lengthSpinbox">
-       <property name="suffix">
-        <string> ms</string>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>200</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Inter-shock delay</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
-     <item>
-      <widget class="QPushButton" name="delayButton">
-       <property name="text">
-        <string>Set</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="delaySpinbox">
-       <property name="suffix">
-        <string> ms</string>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="8" column="0">
     <widget class="QLabel" name="label_9">
      <property name="text">
       <string>Turntable rotate rate</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="6" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
      <item>
       <widget class="QPushButton" name="rateButton">
@@ -219,14 +157,14 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="label_10">
      <property name="text">
       <string>Turntable direction</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="7" column="1">
     <widget class="QComboBox" name="directionCombobox">
      <item>
       <property name="text">
@@ -245,14 +183,14 @@
      </item>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="label_11">
      <property name="text">
       <string>PID values</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="8" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
@@ -328,14 +266,14 @@
      </item>
     </layout>
    </item>
-   <item row="11" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="label_12">
      <property name="text">
       <string>Set turntable PWM</string>
      </property>
     </widget>
    </item>
-   <item row="11" column="1">
+   <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
      <item>
       <widget class="QPushButton" name="pwmButton">
@@ -352,6 +290,20 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Feeder</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QPushButton" name="feederButton">
+     <property name="text">
+      <string>Feed</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
