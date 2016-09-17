@@ -3,6 +3,8 @@
 #include <QtSerialPort/QtSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#include <QShowEvent>
+
 DebugWindow::DebugWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DebugWindow)
@@ -17,10 +19,12 @@ DebugWindow::DebugWindow(QWidget *parent) :
 
 void DebugWindow::showEvent(QShowEvent *ev){
     on_portsComboBox_activated(ui->portsComboBox->currentText());
+    ev->accept();
 }
 
 void DebugWindow::closeEvent(QCloseEvent *ev){
     arenomat.reset();
+    ev->accept();
 }
 
 DebugWindow::~DebugWindow()

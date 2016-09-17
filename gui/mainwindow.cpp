@@ -329,7 +329,7 @@ void kachnatracker::requestUpdate(){
         showPainter->setPen(Qt::yellow);
         showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-        QList<Area> areas = experiment->getAreas();
+        QList<Area> areas = update.areas;
         for (Area area : areas){
             if (!area.enabled){
                 continue;

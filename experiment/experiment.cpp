@@ -402,16 +402,13 @@ void Experiment::outputShock(int level){
     }
 }
 
-QList<Area> Experiment::getAreas(){
-    return areas;
-}
-
 Experiment::Update Experiment::getUpdate(){
     Update update;
 
     update.keypoints = lastKeypoints;
     update.stats = stats;
     update.frame = lastFrame;
+    update.areas = areas;
 
     return update;
 }

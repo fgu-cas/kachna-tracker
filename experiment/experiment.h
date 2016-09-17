@@ -37,11 +37,10 @@ public:
         Detector::pointPair keypoints;
         Stats stats;
         Mat frame;
+        QList<Area> areas;
     };
 
     Update getUpdate();
-    QList<Area> getAreas();
-
 
 private:
     int arenaPWM = 0;
