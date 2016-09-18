@@ -17,3 +17,6 @@
 
 # Autosave files (?)
 *.autosave
+
+# Build directory
+build

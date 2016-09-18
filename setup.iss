@@ -33,16 +33,16 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\build\kachna\release\kachna-tracker.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "\build\x64\Release\kachna-tracker.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "tracker.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\opencv\build\bin\libopencv_core2413d.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\bin\libopencv_features2d2413d.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\bin\libopencv_flann2413d.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\bin\libopencv_highgui2413d.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\bin\libopencv_imgproc2413d.dll"; DestDir: "{app}";
-Source: "C:\Qt\5.7\mingw53_32\bin\icudt54.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.7\mingw53_32\bin\icuin54.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.7\mingw53_32\bin\icuuc54.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\Tools\QtCreator\bin\icudt54.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\Tools\QtCreator\bin\icuin54.dll"; DestDir: "{app}"; 
+Source: "C:\Qt\Tools\QtCreator\bin\icuuc54.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.7\mingw53_32\bin\Qt5Core.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.7\mingw53_32\bin\Qt5Cored.dll"; DestDir: "{app}"; 
 Source: "C:\Qt\5.7\mingw53_32\bin\Qt5Gui.dll"; DestDir: "{app}"; 

@@ -16,7 +16,7 @@ public:
     explicit ActionEnableDisableDialog(QStringListModel &targets, int row, Action action, QWidget *parent = 0);
     ~ActionEnableDisableDialog();
 signals:
-    update(int, Action);
+    void update(int, Action);
 private:
     Ui::EnableDisableDialog *ui;
     int row;
