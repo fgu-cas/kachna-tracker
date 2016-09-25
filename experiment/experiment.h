@@ -42,6 +42,9 @@ public:
 
     Update getUpdate();
 
+signals:
+	void counterUpdate(QList<Counter>);
+
 private:
     int arenaPWM = 0;
     int arenaDirection = 0;

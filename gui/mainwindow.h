@@ -53,6 +53,8 @@ private slots:
 
     void on_actionDebug_triggered();
 
+	void showCounterWindow();
+
 private:
     void reset();
 

@@ -2,9 +2,12 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "debugwindow.h"
+#include "counterwindow.hpp"
+
 #include <iostream>
 #include <QFileDialog>
 #include <QFile>
@@ -27,6 +30,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
     configWin.setWindowModality(Qt::ApplicationModal);
     connect(&configWin, SIGNAL(configurationUpdated(Settings)), this, SLOT(onConfigurationUpdated(Settings)));
     connect(ui->actionSave_tracks, SIGNAL(triggered()), this, SLOT(saveTracks()));
+	connect(ui->actionView_counters, SIGNAL(triggered()), this, SLOT(showCounterWindow()));
 
     appSettings.reset(new QSettings("FGU AV", "Kachna Tracker", this));
 
@@ -471,6 +475,13 @@ void kachnatracker::on_actionSave_screenshot_triggered(){
 void kachnatracker::on_actionVideo_tracking_toggled(bool state)
 {
     showVideo = state;
+}
+
+void kachnatracker::showCounterWindow()
+{
+	CounterWindow* window = new CounterWindow(this);
+	connect(experiment.get(), SIGNAL(counterUpdate(QList<Counter>)), window, SLOT(updateView(QList<Counter>)));
+	window->show();
 }
 
 void kachnatracker::on_actionAbout_triggered()

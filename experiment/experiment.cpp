@@ -2,7 +2,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QDateTime>
-#include "action.h"
 #include "arenomat.h"
 #include "dummyhardware.h"
 
@@ -118,6 +117,7 @@ bool Experiment::start(){
         mat->setTurntableDirection(arenaDirection);
         mat->setTurntablePWM(arenaPWM);
     }
+	emit(counterUpdate(counters));
     return true;
 }
 
@@ -142,10 +142,14 @@ void Experiment::processFrame(){
 
     for (int i = 0; i < counters.size(); i++){
         Counter& counter = counters[i];
+
         if (counter.enabled && (elapsedTimer.elapsed() - counter.lastUpdated) > counter.frequency*1000){
             counter.lastUpdated = elapsedTimer.elapsed();
             counter.value++;
         }
+		if (counter.value > counter.limit) {
+			counter.value = 0;
+		}
     }
 
 
@@ -306,6 +310,7 @@ void Experiment::processFrame(){
                             break;
                         }
                     }
+					emit(counterUpdate(counters));
                     break;
                case Action::FEEDER:
                     if (triggerStates[trigger] != TriggerState::RISING) continue;
@@ -379,6 +384,8 @@ void Experiment::processFrame(){
 
     logger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
     logger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
+
+	emit(counterUpdate(counters));
 
     if (synchOut) hardware->setSync(synchInv);
 }

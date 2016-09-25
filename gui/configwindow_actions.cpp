@@ -1,5 +1,4 @@
 #include "configwindow.h"
-#include "action.h"
 #include <QHBoxLayout>
 #include <QLineEdit>
 
