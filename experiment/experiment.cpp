@@ -128,6 +128,8 @@ void Experiment::stop(){
     this->timer.stop();
     capture.release();
     finishedTime = elapsedTimer.elapsed();
+
+	emit finished();
 }
 
 bool Experiment::isRunning(){

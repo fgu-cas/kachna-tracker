@@ -1,6 +1,6 @@
 ﻿#include "counterwindow.hpp"
 
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 
 CounterWindow::CounterWindow(QWidget * parent) : QDialog(parent) {
@@ -9,7 +9,6 @@ CounterWindow::CounterWindow(QWidget * parent) : QDialog(parent) {
 }
 
 CounterWindow::~CounterWindow() {
-	
 }
 
 void CounterWindow::updateView(QList<Counter> counters) {
@@ -22,11 +21,10 @@ void CounterWindow::updateView(QList<Counter> counters) {
 		}
 	} else {
 		for (Counter counter : counters) {
-			QVBoxLayout* layout = new QVBoxLayout;
+			QHBoxLayout* layout = new QHBoxLayout;
 			
 			QLabel* label = new QLabel(counter.id);
 			QProgressBar* bar = new QProgressBar;
-			bar->setOrientation(Qt::Vertical);
 			bar->setMaximum(counter.limit);
 			bar->setValue(counter.value);
 			bar->setTextVisible(true);

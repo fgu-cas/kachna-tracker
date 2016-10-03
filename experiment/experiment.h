@@ -44,6 +44,7 @@ public:
 
 signals:
 	void counterUpdate(QList<Counter>);
+	void finished();
 
 private:
     int arenaPWM = 0;
