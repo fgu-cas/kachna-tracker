@@ -202,8 +202,6 @@
     <addaction name="actionSave_tracks"/>
     <addaction name="actionSave_screenshot"/>
     <addaction name="separator"/>
-    <addaction name="actionDebug"/>
-    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -213,9 +211,17 @@
     <addaction name="actionVideo_tracking"/>
     <addaction name="actionView_counters"/>
    </widget>
+   <widget class="QMenu" name="menuAdvanced">
+    <property name="title">
+     <string>Advanced</string>
+    </property>
+    <addaction name="actionDebug"/>
+    <addaction name="actionMessage_Log"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuConfiguration"/>
+   <addaction name="menuAdvanced"/>
   </widget>
   <action name="actionImportConfig">
    <property name="text">
@@ -263,12 +269,17 @@
   </action>
   <action name="actionDebug">
    <property name="text">
-    <string>Debug</string>
+    <string>HW Debug</string>
    </property>
   </action>
   <action name="actionView_counters">
    <property name="text">
     <string>View counters</string>
+   </property>
+  </action>
+  <action name="actionMessage_Log">
+   <property name="text">
+    <string>Message Log</string>
    </property>
   </action>
  </widget>

@@ -19,10 +19,6 @@
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
@@ -32,10 +28,6 @@
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug_x64">
       <UniqueIdentifier>{d309f6bb-15de-49f8-b329-1bdc99fe5b05}</UniqueIdentifier>
@@ -68,9 +60,6 @@
     </Filter>
     <Filter Include="Sources\gui\widgets">
       <UniqueIdentifier>{ac396d7d-4a38-4cca-86cb-31113caf03d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\gui\configuration">
-      <UniqueIdentifier>{1d3b6324-9afa-48e5-a654-03b0266fdc6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -260,20 +249,26 @@
     <ClCompile Include="gui\pointselector.cpp">
       <Filter>Sources\gui\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="gui\logwindow.cpp">
+      <Filter>Sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Debug\moc_logwindow.cpp">
+      <Filter>Generated Files\Debug_x64</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Release\moc_logwindow.cpp">
+      <Filter>Generated Files\Release_x64</Filter>
+    </ClCompile>
     <ClCompile Include="gui\configwindow.cpp">
-      <Filter>Sources\gui\configuration</Filter>
+      <Filter>Sources\gui</Filter>
     </ClCompile>
-    <ClCompile Include="gui\configwindow_actions.cpp">
-      <Filter>Sources\gui\configuration</Filter>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\configwindow_capture.cpp">
-      <Filter>Sources\gui\configuration</Filter>
+    <ClCompile Include="build\x64\Debug\moc_Logger.cpp">
+      <Filter>Generated Files\Debug_x64</Filter>
     </ClCompile>
-    <ClCompile Include="gui\configwindow_general.cpp">
-      <Filter>Sources\gui\configuration</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\configwindow_tracking.cpp">
-      <Filter>Sources\gui\configuration</Filter>
+    <ClCompile Include="build\x64\Release\moc_Logger.cpp">
+      <Filter>Generated Files\Release_x64</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,8 +314,17 @@
     <CustomBuild Include="gui\pointselector.h">
       <Filter>Sources\gui\widgets</Filter>
     </CustomBuild>
+    <CustomBuild Include="gui\logwindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="gui\logwindow.hpp">
+      <Filter>Sources\gui</Filter>
+    </CustomBuild>
     <CustomBuild Include="gui\configwindow.h">
-      <Filter>Sources\gui\configuration</Filter>
+      <Filter>Sources\gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Logger.h">
+      <Filter>Generated Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -414,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="experiment\params.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="build\GeneratedFiles\ui_logwindow.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

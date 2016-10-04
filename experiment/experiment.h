@@ -11,6 +11,7 @@
 #include "params.h"
 #include "mainwindow.h"
 #include "detector_threshold.h"
+#include "Logger.h"
 #include "experimentlogger.h"
 #include "abstracthardware.h"
 
@@ -20,7 +21,7 @@ class Experiment : public QObject
 {
     Q_OBJECT
 public:
-    explicit Experiment(QObject *parent = 0, QMap<QString, QVariant> *settings = 0);
+    explicit Experiment(QMap<QString, QVariant> *settings, Logger*, QObject *parent = 0);
     ~Experiment();
     bool isRunning();
     QString getLog(bool rat);
@@ -52,7 +53,8 @@ private:
 
     // System
     Stats stats;
-    std::unique_ptr<ExperimentLogger> logger;
+    std::unique_ptr<ExperimentLogger> experimentLogger;
+	Logger* logger;
 
     QTimer timer;
     QElapsedTimer elapsedTimer;

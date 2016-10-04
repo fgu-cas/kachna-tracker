@@ -7,8 +7,8 @@
 
 #define LIGHT_LIMIT 500
 
-Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
-    QObject(parent){
+Experiment::Experiment(QMap<QString, QVariant> *settings, Logger* logger, QObject *parent) :
+    QObject(parent), logger(logger){
     int deviceIndex = settings->value("video/device").toInt();
     if (deviceIndex == -1){
         capture.open(settings->value("video/filename").toString().toStdString());
@@ -80,7 +80,7 @@ Experiment::Experiment(QObject *parent, QMap<QString, QVariant>  *settings) :
     stats.initialShock = 0;
     lastChange = 0;
 
-    logger.reset(new ExperimentLogger(shock, arena));
+    experimentLogger.reset(new ExperimentLogger(shock, arena));
 
     serialPort = settings->value("hardware/serialPort").toString();
 
@@ -100,15 +100,16 @@ Experiment::~Experiment(){
 bool Experiment::start(){
     timer.start();
     elapsedTimer.start();
-    logger->setStart(QDateTime::currentMSecsSinceEpoch());
+    experimentLogger->setStart(QDateTime::currentMSecsSinceEpoch());
 
     if (isLive){
         hardware.reset(new Arenomat(serialPort));
     } else {
-        hardware.reset(new DummyHardware());
+        hardware.reset(new DummyHardware(logger));
     }
 
     if (!hardware->check()){
+		logger->log("Hardware check failed", Logger::ERROR);
         return false;
     }
 
@@ -117,6 +118,7 @@ bool Experiment::start(){
         mat->setTurntableDirection(arenaDirection);
         mat->setTurntablePWM(arenaPWM);
     }
+	logger->log("Experiment started", Logger::INFO);
 	emit(counterUpdate(counters));
     return true;
 }
@@ -128,6 +130,8 @@ void Experiment::stop(){
     this->timer.stop();
     capture.release();
     finishedTime = elapsedTimer.elapsed();
+
+	logger->log("Experiment stopped", Logger::INFO);
 
 	emit finished();
 }
@@ -384,8 +388,8 @@ void Experiment::processFrame(){
         }
     }
 
-    logger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
-    logger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
+    experimentLogger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
+    experimentLogger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
 
 	emit(counterUpdate(counters));
 
@@ -400,6 +404,7 @@ void Experiment::setShockLevel(int level){
     } else {
         shockLevel = level;
     }
+	logger->log(QString("Shock level set to %1 mA").arg(shockLevel));
 }
 
 void Experiment::outputShock(int level){
@@ -409,6 +414,7 @@ void Experiment::outputShock(int level){
     } else {
         hardware->setShock(level);
     }
+	logger->log(QString("Outputting shock at %1 mA").arg(level));
 }
 
 Experiment::Update Experiment::getUpdate(){
@@ -430,5 +436,5 @@ QString Experiment::getLog(bool rat){
         id = Detector::ROBOT;
     }
 
-    return logger->get(id, finishedTime);
+    return experimentLogger->get(id, finishedTime);
 }

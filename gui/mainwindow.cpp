@@ -5,8 +5,10 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include "debugwindow.h"
 #include "counterwindow.hpp"
+#include "logwindow.hpp"
 
 #include <iostream>
 #include <QFileDialog>
@@ -26,6 +28,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
 	ui->setupUi(this);
 
+	logger.log("Kachna Tracker started", Logger::INFO);
 
 	configWin.setWindowModality(Qt::ApplicationModal);
 	connect(&configWin, SIGNAL(configurationUpdated(Settings)), this, SLOT(onConfigurationUpdated(Settings)));
@@ -63,9 +66,9 @@ kachnatracker::~kachnatracker() {
 	delete ui;
 }
 
-void kachnatracker::loadSettings(QString fileName) {
+void kachnatracker::loadSettings(QString filename) {
 
-	QSettings experimentIni(fileName, QSettings::IniFormat, this);
+	QSettings experimentIni(filename, QSettings::IniFormat, this);
 	Settings settings;
 
 	QStringList keys = experimentIni.allKeys();
@@ -74,8 +77,10 @@ void kachnatracker::loadSettings(QString fileName) {
 		settings.insert(key, experimentIni.value(key));
 	}
 
+	logger.log("Loaded settings file: " + filename, Logger::INFO);
+
 	configWin.load(settings);
-	appSettings->setValue("lastUsedSettings", fileName);
+	appSettings->setValue("lastUsedSettings", filename);
 
 	QString version = experimentIni.value("general/version").toString();
 	if (!version.isEmpty()) {
@@ -248,7 +253,7 @@ void kachnatracker::on_startButton_clicked() {
 
 		ui->actionConfigure->setEnabled(false);
 
-		experiment.reset(new Experiment(this, &currentSettings));
+		experiment.reset(new Experiment(&currentSettings, &logger, this));
 		if (!experiment->start()) {
 			QMessageBox aboutBox;
 			aboutBox.setText("<b>Hardware initialization failed!</b>");
@@ -496,16 +501,22 @@ void kachnatracker::showCounterWindow()
 	window->show();
 }
 
+void kachnatracker::on_actionDebug_triggered()
+{
+	DebugWindow debugWindow;
+	debugWindow.exec();
+}
+
+void kachnatracker::on_actionMessage_Log_triggered()
+{
+	LogWindow* window = new LogWindow(&logger, this);
+	window->show();
+}
+
 void kachnatracker::on_actionAbout_triggered()
 {
 	QMessageBox aboutBox;
 	aboutBox.setText("<b>Kachna Tracker</b>");
 	aboutBox.setInformativeText("Version 3.4<br><br>https://github.com/fgu-cas/kachna-tracker");
 	aboutBox.exec();
-}
-
-void kachnatracker::on_actionDebug_triggered()
-{
-	DebugWindow debugWindow;
-	debugWindow.exec();
 }

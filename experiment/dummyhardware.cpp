@@ -1,18 +1,17 @@
 #include "dummyhardware.h"
 #include <QDebug>
 
-DummyHardware::DummyHardware()
+DummyHardware::DummyHardware(Logger* logger) : logger(logger)
 {
-
 }
 
 bool DummyHardware::check(){
-    qDebug() << "[HW] Hardware checked alright.";
+    logger->log("{DUMMY} Hardware checked alright.");
     return true;
 }
 
 void DummyHardware::setShock(int level){
-    qDebug() << "[HW] Setting shock to " << level << " mA!";
+	logger->log(QString("{DUMMY} Setting shock to %1 mA!").arg(level));
 }
 
 void DummyHardware::setSync(bool state){
@@ -20,5 +19,5 @@ void DummyHardware::setSync(bool state){
 }
 
 void DummyHardware::shutdown(){
-    qDebug() << "[HW] Shutting down!";
+    logger->log("{DUMMY} Shutting down!");
 }

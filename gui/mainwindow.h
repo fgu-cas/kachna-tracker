@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QImage>
 #include "configwindow.h"
+#include "Logger.h"
 #include "detector.h"
 class Experiment;
 
@@ -53,6 +54,8 @@ private slots:
 
     void on_actionDebug_triggered();
 
+	void on_actionMessage_Log_triggered();
+
 	void showCounterWindow();
 
 private:
@@ -64,6 +67,7 @@ private:
 
     configWindow configWin;
     Settings currentSettings;
+	Logger logger;
     QTimer updateTimer;
     QElapsedTimer elapsedTimer;
     bool experimentEnded;
