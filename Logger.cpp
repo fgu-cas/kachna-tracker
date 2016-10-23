@@ -42,7 +42,7 @@ QString Logger::format(Message message)
 	default:
 		break;
 	}
-	return QString("%1 | [%2] %3").arg(message.time.toString("dd/MM/yyyy HH:mm"))
+	return QString("%1 | [%2] %3").arg(message.time.toString("dd/MM/yyyy HH:mm:ss.zzz"))
 		.arg(level)
 		.arg(message.text);
 }
