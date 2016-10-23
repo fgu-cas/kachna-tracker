@@ -39,6 +39,7 @@ void LogWindow::addMessage(Logger::Message message) {
 			break;
 		}
 		ui.listWidget->addItem(item);
+		ui.listWidget->scrollToBottom();
 	}
 }
 
