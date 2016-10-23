@@ -4,6 +4,8 @@
 #include <memory>
 #include <QDialog>
 #include <QByteArray>
+
+#include "Logger.h"
 #include "experiment/arenomat.h"
 
 namespace Ui {
@@ -15,7 +17,7 @@ class DebugWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit DebugWindow(QWidget *parent = 0);
+    explicit DebugWindow(Logger* logger, QWidget *parent = 0);
     ~DebugWindow();
 
 private slots:
@@ -45,13 +47,24 @@ private slots:
 
     void on_feederButton_clicked();
 
+	void on_pulseButton_clicked();
+
     void closeEvent(QCloseEvent*);
 
     void showEvent(QShowEvent*);
 
+	void updateShock();
+
 private:
     Ui::DebugWindow *ui;
+	Logger* logger;
     std::unique_ptr<Arenomat> arenomat;
+
+	enum {
+		SHOCKING,
+		PAUSE,
+		OFF
+	} state;
 };
 
 #endif // DEBUGWINDOW_H

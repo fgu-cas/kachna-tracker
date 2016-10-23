@@ -503,7 +503,7 @@ void kachnatracker::showCounterWindow()
 
 void kachnatracker::on_actionDebug_triggered()
 {
-	DebugWindow debugWindow;
+	DebugWindow debugWindow(&logger, this);
 	debugWindow.exec();
 }
 

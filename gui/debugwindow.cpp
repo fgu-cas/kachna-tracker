@@ -5,9 +5,10 @@
 
 #include <QShowEvent>
 
-DebugWindow::DebugWindow(QWidget *parent) :
+DebugWindow::DebugWindow(Logger* logger, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DebugWindow)
+    ui(new Ui::DebugWindow),
+	logger(logger)
 {
     ui->setupUi(this);
 
@@ -117,3 +118,44 @@ void DebugWindow::on_feederButton_clicked()
 {
     if (arenomat != 0) arenomat->feed();
 }
+
+void DebugWindow::on_pulseButton_clicked()
+{
+	if (arenomat != 0) {
+		if (ui->pulseButton->isChecked()) {
+			logger->log("STARTING SHOCKING");
+			state = SHOCKING;
+			ui->shockButton->setEnabled(false);
+		}
+		else {
+			logger->log("STOPPING SHOCKING.");
+			state = OFF;
+			ui->shockButton->setEnabled(true);
+		}
+		updateShock();
+	}
+}
+
+void DebugWindow::updateShock()
+{
+	if (arenomat == 0) return;
+
+	switch (state) {
+	case SHOCKING:
+		logger->log("SETTING SHOCK ON!");
+		arenomat->setShock(ui->shockSpinbox->value());
+		state = PAUSE;
+		QTimer::singleShot(ui->shockLengthSpinBox->value(), this, SLOT(updateShock()));
+		break;
+	case PAUSE:
+		logger->log("SETTING SHOCK OFF!");
+		arenomat->setShock(0);
+		state = SHOCKING;
+		QTimer::singleShot(ui->pauseLengthSpinBox->value(), this, SLOT(updateShock()));
+		break;
+	case OFF:
+		arenomat->setShock(0);
+		break;
+	}
+}
+

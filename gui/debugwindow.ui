@@ -106,26 +106,79 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
      <item>
-      <widget class="QPushButton" name="shockButton">
-       <property name="text">
-        <string>Set</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="shockFixedLayout" stretch="0,1">
+       <item>
+        <widget class="QPushButton" name="shockButton">
+         <property name="text">
+          <string>Set fixed</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="shockSpinbox">
+         <property name="suffix">
+          <string> mA</string>
+         </property>
+         <property name="prefix">
+          <string>0,</string>
+         </property>
+         <property name="maximum">
+          <number>7</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QSpinBox" name="shockSpinbox">
-       <property name="suffix">
-        <string> mA</string>
-       </property>
-       <property name="prefix">
-        <string>0,</string>
-       </property>
-       <property name="maximum">
-        <number>7</number>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="shockPulsingLayout" stretch="0,1,1">
+       <item>
+        <widget class="QPushButton" name="pulseButton">
+         <property name="text">
+          <string>Set periodic</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="shockLengthSpinBox">
+         <property name="suffix">
+          <string> ms</string>
+         </property>
+         <property name="prefix">
+          <string>Shock length: </string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+         <property name="value">
+          <number>500</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="pauseLengthSpinBox">
+         <property name="suffix">
+          <string> ms</string>
+         </property>
+         <property name="prefix">
+          <string>Pause length: </string>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+         <property name="value">
+          <number>250</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
