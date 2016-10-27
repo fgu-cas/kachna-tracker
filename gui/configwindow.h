@@ -14,6 +14,7 @@
 
 #include <QStringListModel>
 
+#include "Logger.h"
 #include "detector_threshold.h"
 #include "detector_color.h"
 #include "params.h"
@@ -31,9 +32,9 @@ class configWindow : public QTabWidget
     Q_OBJECT
 
 public:
-    explicit configWindow(QWidget *parent = 0);
+    explicit configWindow(Logger* logger, QWidget *parent = 0);
     double pixelsToMeters(int px);
-    ~configWindow();
+	~configWindow();
 
 signals:
     void configurationUpdated(Settings);
@@ -104,6 +105,8 @@ private slots:
 
 private:
     Ui::configWindow *ui;
+	Logger* logger;
+
     std::unique_ptr<Detector> detector;
     void resetDetector();
 

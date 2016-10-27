@@ -35,7 +35,7 @@ DebugWindow::~DebugWindow()
 
 void DebugWindow::on_portsComboBox_activated(const QString &portName)
 {
-    arenomat.reset(new Arenomat(portName));
+    arenomat.reset(new Arenomat(logger, portName));
     connect(arenomat.get(), SIGNAL(messageReceived(QByteArray)), this, SLOT(showMessage(QByteArray)));
     ui->receivedLine->setText("");
     ui->statusLabel->setText("UNKNOWN");
@@ -142,13 +142,11 @@ void DebugWindow::updateShock()
 
 	switch (state) {
 	case SHOCKING:
-		logger->log("SETTING SHOCK ON!");
 		arenomat->setShock(ui->shockSpinbox->value());
 		state = PAUSE;
 		QTimer::singleShot(ui->shockLengthSpinBox->value(), this, SLOT(updateShock()));
 		break;
 	case PAUSE:
-		logger->log("SETTING SHOCK OFF!");
 		arenomat->setShock(0);
 		state = SHOCKING;
 		QTimer::singleShot(ui->pauseLengthSpinBox->value(), this, SLOT(updateShock()));

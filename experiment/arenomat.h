@@ -10,8 +10,8 @@ class Arenomat : public AbstractHardware
 {
     Q_OBJECT
 public:
-    Arenomat();
-    Arenomat(QString port);
+	Arenomat(Logger * logger);
+	Arenomat(Logger* logger, QString port);
     ~Arenomat();
 
     bool check();

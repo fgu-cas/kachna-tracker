@@ -1,8 +1,9 @@
 #include "dummyhardware.h"
 #include <QDebug>
 
-DummyHardware::DummyHardware(Logger* logger) : logger(logger)
+DummyHardware::DummyHardware(Logger* logger) : AbstractHardware(logger)
 {
+	logger->log("{DUMMY} Hardware initialized.");
 }
 
 bool DummyHardware::check(){

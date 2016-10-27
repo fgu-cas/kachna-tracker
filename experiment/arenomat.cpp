@@ -15,19 +15,21 @@ enum COMMANDS {
     FEED = 50
 };
 
-Arenomat::Arenomat(){
-    Arenomat(QSerialPortInfo::availablePorts().first().portName());
+Arenomat::Arenomat(Logger* logger) : AbstractHardware(logger) {
+    Arenomat(logger, QSerialPortInfo::availablePorts().first().portName());
 }
 
-Arenomat::Arenomat(QString port)
+Arenomat::Arenomat(Logger* logger, QString port) : AbstractHardware(logger)
 {
     connect(&serial, SIGNAL(readyRead()), this, SLOT(handleData()));
     serial.setPortName(port);
     serial.open(QIODevice::ReadWrite);
+	logger->log("Hardware connection initialized.");
 }
 
 Arenomat::~Arenomat(){
     serial.close();
+	logger->log("Hardware connection terminated.");
 }
 
 void Arenomat::handleData(){
@@ -74,6 +76,8 @@ void Arenomat::setShock(int level){
     command[1] = level;
 
     serial.write(command);
+
+	logger->log(QString("{HW} Shock set to 0.%1 mA").arg(level));
 }
 
 void Arenomat::setSync(bool state){
@@ -86,6 +90,7 @@ void Arenomat::shutdown(){
     command[0] = SHUTDOWN;
 
     serial.write(command);
+	logger->log("{HW} Shutdown issued");
 }
 
 void Arenomat::setLight(bool state){
@@ -94,6 +99,7 @@ void Arenomat::setLight(bool state){
     command[1] = state;
 
     serial.write(command);
+	logger->log(QString("{HW} Light set to %1").arg(state));
 }
 
 void Arenomat::setTurntableDirection(int direction){
@@ -104,6 +110,8 @@ void Arenomat::setTurntableDirection(int direction){
 
         serial.write(command);
     }
+	// TODO: humanize enum vals
+	logger->log(QString("{HW} Direction set to mode %1").arg(direction));
 }
 
 void Arenomat::setTurntableSpeed(int speed){
@@ -143,6 +151,7 @@ void Arenomat::setTurntablePWM(uint8_t pwm){
     command[1] = pwm;
 
     serial.write(command);
+	logger->log(QString("{HW} Speed set to %1/255").arg(pwm));
 }
 
 void Arenomat::feed(){
@@ -150,4 +159,5 @@ void Arenomat::feed(){
     command[0] = FEED;
 
     serial.write(command);
+	logger->log("{HW} Feeder release issued");
 }

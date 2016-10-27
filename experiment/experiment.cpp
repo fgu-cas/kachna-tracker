@@ -103,7 +103,7 @@ bool Experiment::start(){
     experimentLogger->setStart(QDateTime::currentMSecsSinceEpoch());
 
     if (isLive){
-        hardware.reset(new Arenomat(serialPort));
+        hardware.reset(new Arenomat(logger, serialPort));
     } else {
         hardware.reset(new DummyHardware(logger));
     }
@@ -154,6 +154,7 @@ void Experiment::processFrame(){
             counter.value++;
         }
 		if (counter.value > counter.limit) {
+			logger->log(QString("Counter \"%1\" hit limit, resetting").arg(counter.id));
 			counter.value = 0;
 		}
     }
@@ -284,7 +285,14 @@ void Experiment::processFrame(){
                     for (int k = 0; k < areas.size(); k++){
                         Area& area = areas[k];
                         if (action.target == area.id){
-                            area.enabled = action.type == Action::ENABLE ? true : false;
+							if (action.type == Action::ENABLE) {
+								logger->log(QString("Enabling area \"%1\"").arg(area.id));
+								area.enabled = true;
+							}
+							else {
+								logger->log(QString("Disabling area \"%1\"").arg(area.id));
+								area.enabled = false;
+							}
                             found = true;
                             break;
                         }
@@ -293,7 +301,14 @@ void Experiment::processFrame(){
                     for (int k = 0; k < counters.size(); k++){
                         Counter& counter = counters[k];
                         if (action.target == counter.id){
-                            counter.enabled = action.type == Action::ENABLE ? true : false;
+							if (action.type == Action::ENABLE) {
+								logger->log(QString("Enabling counter \"%1\"").arg(counter.id));
+								counter.enabled = true;
+							}
+							else {
+								logger->log(QString("Disabling counter \"%1\"").arg(counter.id));
+								counter.enabled = false;
+							}
                             break;
                         }
                     }
@@ -308,10 +323,13 @@ void Experiment::processFrame(){
                         if (action.target == counter.id){
                             if (action.type == Action::COUNTER_INC){
                                 counter.value += action.arg;
+								logger->log(QString("Increasing counter \"%1\" by %2").arg(counter.id).arg(action.arg));
                             } else if(action.type == Action::COUNTER_DEC){
                                 counter.value -= action.arg;
+								logger->log(QString("Decreasing counter \"%1\" by %2").arg(counter.id).arg(action.arg));
                             } else {
                                 counter.value = action.arg;
+								logger->log(QString("Setting counter \"%1\" to %2").arg(counter.id).arg(action.arg));
                             }
                             break;
                         }

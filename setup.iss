@@ -40,12 +40,12 @@ Source: "..\opencv\build\install\x64\vc14\bin\opencv_features2d2413.dll"; DestDi
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_highgui2413.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_imgproc2413.dll"; DestDir: "{app}";
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_flann2413.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.7\msvc2015_64\bin\Qt5Core.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.7\msvc2015_64\bin\Qt5Gui.dll"; DestDir: "{app}"; 
-Source: "C:\Qt\5.7\msvc2015_64\bin\Qt5Widgets.dll"; DestDir: "{app}";
-Source: "C:\Qt\5.7\msvc2015_64\bin\Qt5SerialPort.dll"; DestDir: "{app}";
-Source: "C:\Qt\5.7\msvc2015_64\bin\Qt5Test.dll"; DestDir: "{app}";
-Source: "C:\Qt\5.7\msvc2015_64\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms";
+Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Core.dll"; DestDir: "{app}"; 
+Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Gui.dll"; DestDir: "{app}"; 
+Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Widgets.dll"; DestDir: "{app}";
+Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5SerialPort.dll"; DestDir: "{app}";
+Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Test.dll"; DestDir: "{app}";
+Source: "D:\Qt\5.7\msvc2015_64\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

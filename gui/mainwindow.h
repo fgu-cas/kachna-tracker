@@ -65,9 +65,9 @@ private:
 
     void closeEvent(QCloseEvent *);
 
-    configWindow configWin;
-    Settings currentSettings;
 	Logger logger;
+	configWindow configWin{ &logger };
+    Settings currentSettings;
     QTimer updateTimer;
     QElapsedTimer elapsedTimer;
     bool experimentEnded;

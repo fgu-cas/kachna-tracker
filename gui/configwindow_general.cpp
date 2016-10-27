@@ -22,7 +22,7 @@ void configWindow::on_refreshPortButton_clicked()
 
 void configWindow::on_portComboBox_activated(const QString &arg1)
 {
-    Arenomat arenomat(arg1);
+    Arenomat arenomat(logger, arg1);
     ui->portStatusLabel->setText("STATUS: CHECKING...");
     ui->portStatusLabel->repaint();
     if (arenomat.check()){

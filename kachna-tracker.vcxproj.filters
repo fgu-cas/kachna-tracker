@@ -261,14 +261,14 @@
     <ClCompile Include="gui\configwindow.cpp">
       <Filter>Sources\gui</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="build\x64\Debug\moc_Logger.cpp">
       <Filter>Generated Files\Debug_x64</Filter>
     </ClCompile>
     <ClCompile Include="build\x64\Release\moc_Logger.cpp">
       <Filter>Generated Files\Release_x64</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -324,7 +324,7 @@
       <Filter>Sources\gui</Filter>
     </CustomBuild>
     <CustomBuild Include="Logger.h">
-      <Filter>Generated Files</Filter>
+      <Filter>Sources</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

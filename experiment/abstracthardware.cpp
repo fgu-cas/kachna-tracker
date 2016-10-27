@@ -1,5 +1,6 @@
 #include "abstracthardware.h"
 
-AbstractHardware::AbstractHardware()
+AbstractHardware::AbstractHardware(Logger* logger)
 {
+	this->logger = logger;
 }

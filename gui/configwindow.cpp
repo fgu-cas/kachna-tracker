@@ -15,11 +15,13 @@
 #include "detector_color.h"
 
 
-configWindow::configWindow(QWidget *parent) :
+configWindow::configWindow(Logger* logger, QWidget *parent) :
 	QTabWidget(parent),
 	ui(new Ui::configWindow)
 {
 	ui->setupUi(this);
+
+	this->logger = logger;
 
 	connect(ui->maskXBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
 	connect(ui->maskYBox, SIGNAL(valueChanged(int)), this, SLOT(maskValueChanged()));
