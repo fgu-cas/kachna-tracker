@@ -3,6 +3,7 @@
 
 DummyHardware::DummyHardware(Logger* logger) : AbstractHardware(logger)
 {
+	this->logger = logger;
 	logger->log("{DUMMY} Hardware initialized.");
 }
 
