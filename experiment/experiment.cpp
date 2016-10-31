@@ -149,13 +149,19 @@ void Experiment::processFrame(){
     for (int i = 0; i < counters.size(); i++){
         Counter& counter = counters[i];
 
-        if (counter.enabled && (elapsedTimer.elapsed() - counter.lastUpdated) > counter.frequency*1000){
+        if (counter.active && (elapsedTimer.elapsed() - counter.lastUpdated) > counter.period*1000){
             counter.lastUpdated = elapsedTimer.elapsed();
             counter.value++;
         }
 		if (counter.value > counter.limit) {
-			logger->log(QString("Counter \"%1\" hit limit, resetting").arg(counter.id));
 			counter.value = 0;
+			if (counter.singleShot) {
+				counter.active = false;
+				logger->log(QString("Counter \"%1\" hit limit, resetting and stopping").arg(counter.id));
+			}
+			else {
+				logger->log(QString("Counter \"%1\" hit limit, resetting").arg(counter.id));
+			}
 		}
     }
 
@@ -302,12 +308,12 @@ void Experiment::processFrame(){
                         Counter& counter = counters[k];
                         if (action.target == counter.id){
 							if (action.type == Action::ENABLE) {
-								logger->log(QString("Enabling counter \"%1\"").arg(counter.id));
-								counter.enabled = true;
+								logger->log(QString("Starting counter \"%1\"").arg(counter.id));
+								counter.active = true;
 							}
 							else {
-								logger->log(QString("Disabling counter \"%1\"").arg(counter.id));
-								counter.enabled = false;
+								logger->log(QString("Stopping counter \"%1\"").arg(counter.id));
+								counter.active = false;
 							}
                             break;
                         }

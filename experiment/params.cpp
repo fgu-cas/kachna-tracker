@@ -29,20 +29,19 @@ bool Area::operator==(const Area &other) const {
 }
 
 QDataStream &operator<<(QDataStream &out, const Counter &obj) {
-    out << obj.id << obj.enabled << obj.value << obj.frequency << obj.limit << (int) obj.type;
+	out << obj.id << obj.active << obj.value << obj.period << obj.limit << obj.singleShot;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, Counter &obj) {
-    in >> obj.id >> obj.enabled >> obj.value >> obj.frequency >> obj.limit >> (int&) obj.type;
+	in >> obj.id >> obj.active >> obj.value >> obj.period >> obj.limit >> obj.singleShot;
     return in;
 }
 
 bool Counter::operator==(const Counter &other) const {
-  if (this->type != other.type) return false;
   if (this->id != other.id) return false;
-  if (this->enabled != other.enabled) return false;
+  if (this->active != other.active) return false;
   if (this->limit != other.limit) return false;
-  if (this->frequency != other.frequency) return false;
+  if (this->period != other.period) return false;
   if (this->value != other.value) return false; // ?
 
   return true;

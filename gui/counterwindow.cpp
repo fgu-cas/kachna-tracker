@@ -23,7 +23,15 @@ void CounterWindow::updateView(QList<Counter> counters) {
 		for (Counter counter : counters) {
 			QHBoxLayout* layout = new QHBoxLayout;
 			
-			QLabel* label = new QLabel(counter.id);
+			QLabel* label = new QLabel();
+			label->setTextFormat(Qt::RichText);
+			/*if (counter.active) {
+				label->setText(QString("<b>%1</b>").arg(counter.id)));
+			}
+			else {*/
+			label->setText(counter.id);
+			
+
 			QProgressBar* bar = new QProgressBar;
 			bar->setMaximum(counter.limit);
 			bar->setValue(counter.value);

@@ -19,33 +19,30 @@ struct Arena {
     int radius;
 };
 
-struct Trigger {
-    QString id;
-    bool enabled = false;
-    enum TYPE {
-        CIRCULAR_AREA,
-        PIE_AREA,
-        COUNTER
-    } type;
-};
-
-struct Area : Trigger {
+struct Area {
+	QString id = "";
+	bool enabled = true;
     int radius = 0;
     int distance = 0;
     int angle = 0;
     int range = 0;
-    TYPE type = CIRCULAR_AREA;
+	enum TYPE {
+		CIRCULAR_AREA,
+		PIE_AREA
+	} type = CIRCULAR_AREA;
     bool operator==(const Area &other) const;
 }; Q_DECLARE_METATYPE(Area)
 
 QDataStream &operator<<(QDataStream &in, const Area &myObj);
 QDataStream &operator>>(QDataStream &in, Area &myObj);
 
-struct Counter : Trigger {
+struct Counter {
+	QString id = "";
+	bool active = false;
+	bool singleShot = false;
     int value = 0;
-    double frequency = 0;
+    double period = 0;
     int limit = 0;
-    TYPE type = COUNTER;
     qint64 lastUpdated = 0;
     bool operator==(const Counter &other) const;
 }; Q_DECLARE_METATYPE(Counter)

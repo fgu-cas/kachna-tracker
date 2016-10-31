@@ -111,13 +111,15 @@ void configWindow::addCounter(Counter counter){
     QLineEdit* titleEdit = new QLineEdit(counter.id, this);
     connect(titleEdit, SIGNAL(textEdited(QString)), this, SLOT(triggersChanged(QString)));
     QDoubleSpinBox* frequencyBox = new QDoubleSpinBox(this);
-    frequencyBox->setValue(counter.frequency);
+    frequencyBox->setValue(counter.period);
     frequencyBox->setDecimals(1);
     frequencyBox->setSuffix(" s");
     QSpinBox* limitBox = new QSpinBox(this);
     limitBox->setValue(counter.limit);
-    QCheckBox* enabledCheckBox = new QCheckBox("Enabled", this);
-    enabledCheckBox->setChecked(counter.enabled);
+	QCheckBox* singleShotCheckbox = new QCheckBox("Single-shot", this);
+	singleShotCheckbox->setChecked(counter.singleShot);
+    QCheckBox* enabledCheckBox = new QCheckBox("Active", this);
+    enabledCheckBox->setChecked(counter.active);
     QPushButton* deleteButton = new QPushButton("X", this);
     connect(deleteButton, SIGNAL(clicked(bool)), this, SLOT(removeThisCounterRow()));
 
@@ -125,8 +127,9 @@ void configWindow::addCounter(Counter counter){
     ui->counterLayout->addWidget(titleEdit, row, 0);
     ui->counterLayout->addWidget(limitBox, row, 1);
     ui->counterLayout->addWidget(frequencyBox, row, 2);
-    ui->counterLayout->addWidget(enabledCheckBox, row, 3);
-    ui->counterLayout->addWidget(deleteButton, row, 4);
+	ui->counterLayout->addWidget(singleShotCheckbox, row, 3);
+    ui->counterLayout->addWidget(enabledCheckBox, row, 4);
+    ui->counterLayout->addWidget(deleteButton, row, 5);
 }
 
 void configWindow::actionAreaSetPressed(){
@@ -329,8 +332,9 @@ QList<Counter> configWindow::getCountersFromUI(){
             Counter counter;
             counter.id = qobject_cast<QLineEdit*>(item->widget())->text();
             counter.limit = qobject_cast<QSpinBox*>(ui->counterLayout->itemAtPosition(row, 1)->widget())->value();
-            counter.frequency = qobject_cast<QDoubleSpinBox*>(ui->counterLayout->itemAtPosition(row, 2)->widget())->value();
-            counter.enabled = qobject_cast<QCheckBox*>(ui->counterLayout->itemAtPosition(row, 3)->widget())->isChecked();
+            counter.period = qobject_cast<QDoubleSpinBox*>(ui->counterLayout->itemAtPosition(row, 2)->widget())->value();
+			counter.singleShot = qobject_cast<QCheckBox*>(ui->counterLayout->itemAtPosition(row, 3)->widget())->isChecked();
+            counter.active = qobject_cast<QCheckBox*>(ui->counterLayout->itemAtPosition(row, 4)->widget())->isChecked();
             result.append(counter);
         }
     }
