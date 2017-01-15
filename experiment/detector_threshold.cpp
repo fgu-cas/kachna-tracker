@@ -40,8 +40,8 @@ Mat DetectorThreshold::analyze(Mat *frame){
     return result;
 }
 
-std::vector<Detector::Point> DetectorThreshold::detect(Mat *frame){
-    std::vector<Detector::Point> result;
+std::vector<DetectedPoint> DetectorThreshold::detect(Mat *frame){
+    std::vector<DetectedPoint> result;
 
     if (!frame->empty() && frame->channels() == 3){
         Mat workFrame = process(frame);
@@ -49,7 +49,7 @@ std::vector<Detector::Point> DetectorThreshold::detect(Mat *frame){
         std::vector<KeyPoint> keyPoints;
         detector->detect(workFrame, keyPoints);
         for (KeyPoint keyPoint : keyPoints){
-            Detector::Point point;
+            DetectedPoint point;
             point = keyPoint;
             result.push_back(point);
         }
@@ -61,18 +61,18 @@ std::vector<Detector::Point> DetectorThreshold::detect(Mat *frame){
 Detector::pointPair DetectorThreshold::find(Mat *frame){
     pointPair result;
 
-    std::vector<Detector::Point> keypoints = detect(frame);
+    std::vector<DetectedPoint> keypoints = detect(frame);
 
     for (unsigned i = 0; i<keypoints.size(); i++){
-       Detector::Point keypoint = keypoints[i];
+       DetectedPoint keypoint = keypoints[i];
        if (keypoint.size > minRat && keypoint.size < maxRat){    
            result.rat = keypoint;
-           result.rat.class_id = RAT;
+           result.rat.class_id = DetectedPoint::RAT;
        }
 
        if (keypoint.size > minRobot && keypoint.size < maxRobot){
            result.robot = keypoint;
-           result.robot.class_id = ROBOT;
+           result.robot.class_id = DetectedPoint::ROBOT;
        }
     }
 

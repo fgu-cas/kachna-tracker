@@ -10,30 +10,37 @@ typedef QMap<QString, QVariant> Settings;
 
 class ExperimentLogger : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit ExperimentLogger(Shock shock, Arena arena, QObject *parent = 0);
-    void setStart(qint64 timestamp);
-    QString get(Detector::CLASS_ID id, qint64 elapsedTime);
+	explicit ExperimentLogger(Shock shock, Arena arena, QList<Area> areas, QList<Counter> counters, QList<Action> actions, QObject *parent = 0);
+	void setStart(qint64 timestamp);
+	QString get(qint64 elapsedTime);
 
-public slots:
-    void add(Detector::Point point, int sectors, int state, int shock, qint64 timestamp);
+	public slots:
+	void add(ExperimentState);
 
 private:
-    // to remove
-    Shock shock;
-    Arena arena;
+	Shock shock;
+	Arena arena;
+	QList<Counter> counters;
+	QList<Area> areas;
+	QList<Action> actions;
 
-    struct Frame {
-        Detector::Point point;
-        int sectors;
-        int state;
-        int shock;
-        qint64 timestamp;
-    };
+	bool hasRobot = false;
+	bool hasAngle = false;
 
-    QLinkedList<Frame> frames;
-    qint64 startTime;
+	struct Frame {
+		qint64 timestamp;
+		DetectedPoint rat;
+		DetectedPoint robot;
+		int state;
+		int shock;
+		QList<Counter> counters;
+		QList<Area> areas;
+	};
+
+	QLinkedList<Frame> frames;
+	qint64 startTime;
 
 };
 

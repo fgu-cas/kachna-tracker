@@ -1,5 +1,5 @@
 ﻿#include "counterwindow.hpp"
-
+#include "experiment/experiment.h"
 #include <QHBoxLayout>
 #include <QLabel>
 
@@ -11,16 +11,16 @@ CounterWindow::CounterWindow(QWidget * parent) : QDialog(parent) {
 CounterWindow::~CounterWindow() {
 }
 
-void CounterWindow::updateView(QList<Counter> counters) {
+void CounterWindow::updateView(ExperimentState state) {
 	if (!bars.isEmpty()) {
-		for (Counter counter : counters) {
+		for (Counter counter : state.counters) {
 			QProgressBar* bar = bars.value(counter.id, 0);
 			if (bar != 0) {
 				bar->setValue(counter.value);
 			}
 		}
 	} else {
-		for (Counter counter : counters) {
+		for (Counter counter : state.counters) {
 			QHBoxLayout* layout = new QHBoxLayout;
 			
 			QLabel* label = new QLabel();

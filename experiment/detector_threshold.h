@@ -19,7 +19,7 @@ public:
 
     Mat process(Mat *frame);
     Mat analyze(Mat *frame);
-    std::vector<Detector::Point> detect(Mat *frame);
+    std::vector<DetectedPoint> detect(Mat *frame);
     pointPair find(Mat *frame);
 
 private:

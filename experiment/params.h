@@ -1,9 +1,14 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
+#define KACHNA_VERSION "Kachna Tracker v4.0 (2017/01)"
+#define MAJOR_VERSION 4
+
 #include <QString>
 #include <QVariant>
 #include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+
 
 struct Shock {
     int length;
@@ -73,6 +78,47 @@ struct Action {
 QDataStream &operator<<(QDataStream &in, const Action &myObj);
 QDataStream &operator>>(QDataStream &in, Action &myObj);
 
+class DetectedPoint {
+public:
+	DetectedPoint();
 
+	cv::Point2f pt;
+	float angle;
+	float size;
+	float hue;
+	bool valid;
+	enum CLASS_ID {
+		UNKNOWN,
+		RAT,
+		RAT_FRONT,
+		RAT_BACK,
+		ROBOT,
+		ROBOT_FRONT,
+		ROBOT_BACK
+	} class_id;
+
+	void operator=(cv::KeyPoint point);
+};
+
+struct ExperimentStats {
+	int goodFrames = 0;
+	int badFrames = 0;
+	int shockCount = 0;
+	int entryCount = 0;
+	int feederCount = 0;
+	qint64 initialShock = -1;
+};
+
+struct ExperimentState {
+	qint64 ts;
+	cv::Mat frame;
+	DetectedPoint rat;
+	DetectedPoint robot;
+	ExperimentStats stats;
+	QList<Area> areas;
+	QList<Counter>counters;
+	int state;
+	int shock;
+};
 
 #endif // PARAMS_H

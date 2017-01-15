@@ -80,11 +80,11 @@ void configWindow::updateTrackingView(){
                                                     QImage::Format_RGB888));
 
         QPainter painter(&pixmap);
-        std::vector<Detector::Point> points = detector->detect(&trackingFrame);
+        std::vector<DetectedPoint> points = detector->detect(&trackingFrame);
         ui->keypointList->clear();
 
         for (unsigned i = 0; i < points.size(); i++){
-            Detector::Point point = points[i];
+            DetectedPoint point = points[i];
             QString line = "%5 %1 | Pos: [%2, %3], Size: %4";
             line = line.arg(i);
             line = line.arg(point.pt.x);
@@ -92,16 +92,16 @@ void configWindow::updateTrackingView(){
             line = line.arg(point.size);
             if (colorTracking){
                 switch (point.class_id){
-                case DetectorColor::RAT_FRONT:
+                case DetectedPoint::RAT_FRONT:
                     line = line.arg("[RAT F] ");
                     break;
-                case DetectorColor::RAT_BACK:
+                case DetectedPoint::RAT_BACK:
                     line = line.arg("[RAT B] ");
                     break;
-                case DetectorColor::ROBOT_FRONT:
+                case DetectedPoint::ROBOT_FRONT:
                     line = line.arg("[ROB F] ");
                     break;
-                case DetectorColor::ROBOT_BACK:
+                case DetectedPoint::ROBOT_BACK:
                     line = line.arg("[ROB B] ");
                     break;
                 default:

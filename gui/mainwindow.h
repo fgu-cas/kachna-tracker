@@ -12,8 +12,6 @@
 #include "detector.h"
 class Experiment;
 
-#define MAJOR_VERSION 3
-
 namespace Ui {
 class kachnatracker;
 }
@@ -39,11 +37,14 @@ public slots:
 
     void on_startButton_clicked();
 
+	void receiveUpdate(ExperimentState);
+
+	void drawUpdate();
+
     void saveTracks();
 
     void updateTick();
     void experimentTimeout();
-    void requestUpdate();
 
     void on_actionSave_screenshot_triggered();
 
@@ -79,6 +80,7 @@ private:
     QImage trackImage;
     QRect arenaArea;
     Detector::pointPair lastKeypoints;
+	ExperimentState lastUpdate;
 
     bool dirty = false;
     bool showVideo = false;

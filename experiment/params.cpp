@@ -63,3 +63,19 @@ bool Action::operator==(const Action &other) const {
 
     return true;
 }
+
+DetectedPoint::DetectedPoint() {
+	valid = false;
+	pt.x = -1;
+	pt.y = -1;
+	angle = -1;
+	size = -1;
+	hue = -1;
+	class_id = UNKNOWN;
+}
+
+void DetectedPoint::operator=(cv::KeyPoint point) {
+	pt = point.pt;
+	angle = point.angle;
+	size = point.size;
+}

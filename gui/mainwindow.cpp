@@ -56,7 +56,7 @@ kachnatracker::kachnatracker(QWidget *parent) :
 
 	reset();
 
-	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(requestUpdate()));
+	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(drawUpdate()));
 	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(updateTick()));
 
 	experiment = 0;
@@ -169,7 +169,7 @@ void kachnatracker::saveTracks() {
 	if (experiment != 0) {
 		QString fileName = QFileDialog::getSaveFileName(this, tr("Rat track"),
 			currentSettings.value("system/defaultDirectory").toString() + '/' +
-			currentSettings.value("system/defaultFilename").toString() + "_rat",
+			currentSettings.value("system/defaultFilename").toString(),
 			tr("Files (*.dat)"));
 		if (!fileName.isEmpty()) {
 			if (!fileName.endsWith(".dat")) {
@@ -177,30 +177,11 @@ void kachnatracker::saveTracks() {
 			}
 			QFile file(fileName);
 			if (file.open(QFile::WriteOnly)) {
-				QString log = experiment->getLog(true);
+				QString log = experiment->getLog();
 				QTextStream out(&file);
 				out << log;
 			}
 			file.close();
-		}
-
-		if (currentSettings.value("experiment/mode").toInt() == 1) {
-			fileName = QFileDialog::getSaveFileName(this, tr("Robot track"),
-				currentSettings.value("system/defaultDirectory").toString() + '/' +
-				currentSettings.value("system/defaultFilename").toString() + "_rob",
-				tr("Files (*.dat)"));
-			if (!fileName.isEmpty()) {
-				if (!fileName.endsWith(".dat")) {
-					fileName += ".dat";
-				}
-				QFile file(fileName);
-				if (file.open(QFile::WriteOnly)) {
-					QString log = experiment->getLog(false);
-					QTextStream out(&file);
-					out << log;
-				}
-				file.close();
-			}
 		}
 	}
 }
@@ -254,6 +235,9 @@ void kachnatracker::on_startButton_clicked() {
 		ui->actionConfigure->setEnabled(false);
 
 		experiment.reset(new Experiment(&currentSettings, &logger, this));
+
+		connect(experiment.get(), &Experiment::update, this, &kachnatracker::receiveUpdate);
+
 		if (!experiment->start()) {
 			QMessageBox aboutBox;
 			aboutBox.setText("<b>Hardware initialization failed!</b>");
@@ -263,21 +247,24 @@ void kachnatracker::on_startButton_clicked() {
 
 		connect(ui->shockBox, SIGNAL(valueChanged(int)), experiment.get(), SLOT(setShockLevel(int)));
 
-		updateTimer.start(currentSettings.value("system/updateInterval").toInt());
+		//updateTimer.start(currentSettings.value("system/updateInterval").toInt());
+		updateTimer.start(100);
 		elapsedTimer.start();
 	}
 }
 
-void kachnatracker::requestUpdate() {
-	Experiment::Update update = experiment->getUpdate();
+void kachnatracker::receiveUpdate(ExperimentState state) {
+	lastUpdate = state;
+}
 
-	QPoint rat(update.keypoints.rat.pt.x, update.keypoints.rat.pt.y);
+void kachnatracker::drawUpdate() {
+	QPoint rat(lastUpdate.rat.pt.x, lastUpdate.rat.pt.y);
 	QPoint lastRat;
 	if (lastKeypoints.rat.size != 0) {
 		lastRat = QPoint(lastKeypoints.rat.pt.x, lastKeypoints.rat.pt.y);
 	}
 
-	QPoint robot(update.keypoints.robot.pt.x, update.keypoints.robot.pt.y);
+	QPoint robot(lastUpdate.robot.pt.x, lastUpdate.robot.pt.y);
 	QPoint lastRobot;
 	if (lastKeypoints.robot.size != 0) {
 		lastRobot = QPoint(lastKeypoints.robot.pt.x, lastKeypoints.robot.pt.y);
@@ -296,7 +283,7 @@ void kachnatracker::requestUpdate() {
 		painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
 		painter.drawEllipse(rat, 2, 2);
 
-		lastKeypoints.rat = update.keypoints.rat;
+		lastKeypoints.rat = lastUpdate.rat;
 	}
 
 
@@ -311,7 +298,7 @@ void kachnatracker::requestUpdate() {
 		painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
 		painter.drawEllipse(robot, 2, 2);
 
-		lastKeypoints.robot = update.keypoints.robot;
+		lastKeypoints.robot = lastUpdate.robot;
 	}
 
 	painter.end();
@@ -322,7 +309,7 @@ void kachnatracker::requestUpdate() {
 
 	if (showVideo) {
 		Mat rgbFrame;
-		cv::cvtColor(update.frame, rgbFrame, CV_BGR2RGB);
+		cv::cvtColor(lastUpdate.frame, rgbFrame, CV_BGR2RGB);
 		showPixmap = QPixmap::fromImage(QImage((uchar*)rgbFrame.data,
 			rgbFrame.cols,
 			rgbFrame.rows,
@@ -343,7 +330,7 @@ void kachnatracker::requestUpdate() {
 		showPainter->setPen(Qt::yellow);
 		showPainter->setBrush(QBrush(Qt::yellow, Qt::FDiagPattern));
 
-		QList<Area> areas = update.areas;
+		QList<Area> areas = lastUpdate.areas;
 		for (Area area : areas) {
 			if (!area.enabled) {
 				continue;
@@ -358,9 +345,9 @@ void kachnatracker::requestUpdate() {
 					int angle = currentSettings.value("shock/offsetAngle").toInt();
 					QPoint shockPoint;
 					shockPoint.setX(robot.x() + distance *
-						sin((angle + update.keypoints.robot.angle)*CV_PI / 180));
+						sin((angle + lastUpdate.robot.angle)*CV_PI / 180));
 					shockPoint.setY(robot.y() - distance *
-						cos((angle + update.keypoints.robot.angle)*CV_PI / 180));
+						cos((angle + lastUpdate.robot.angle)*CV_PI / 180));
 					showPainter->drawEllipse(shockPoint, radius, radius);
 				}
 			}
@@ -379,11 +366,11 @@ void kachnatracker::requestUpdate() {
 	ui->displayLabel->setPixmap(showPixmap);
 
 
-	ui->goodFramesLCD->display(update.stats.goodFrames);
-	ui->badFramesLCD->display(update.stats.badFrames);
-	ui->encounterLabel->setText(QString::number(update.stats.entryCount));
-	ui->shockLabel->setText(QString::number(update.stats.shockCount));
-	ui->firstShockLabel->setText(QString::number(update.stats.initialShock / 1000) + " s");
+	ui->goodFramesLCD->display(lastUpdate.stats.goodFrames);
+	ui->badFramesLCD->display(lastUpdate.stats.badFrames);
+	ui->encounterLabel->setText(QString::number(lastUpdate.stats.entryCount));
+	ui->shockLabel->setText(QString::number(lastUpdate.stats.shockCount));
+	ui->firstShockLabel->setText(QString::number(lastUpdate.stats.initialShock / 1000) + " s");
 }
 
 void kachnatracker::updateTick() {
@@ -494,7 +481,7 @@ void kachnatracker::on_actionVideo_tracking_toggled(bool state)
 void kachnatracker::showCounterWindow()
 {
 	CounterWindow* window = new CounterWindow(this);
-	connect(experiment.get(), &Experiment::counterUpdate, window, &CounterWindow::updateView);
+	connect(experiment.get(), &Experiment::update, window, &CounterWindow::updateView);
 	connect(experiment.get(), &Experiment::finished, window, [=]() {
 		window->done(0);
 	});
@@ -517,6 +504,6 @@ void kachnatracker::on_actionAbout_triggered()
 {
 	QMessageBox aboutBox;
 	aboutBox.setText("<b>Kachna Tracker</b>");
-	aboutBox.setInformativeText("Version 3.4<br><br>https://github.com/fgu-cas/kachna-tracker");
+	aboutBox.setInformativeText(KACHNA_VERSION"<br><br>https://github.com/fgu-cas/kachna-tracker");
 	aboutBox.exec();
 }

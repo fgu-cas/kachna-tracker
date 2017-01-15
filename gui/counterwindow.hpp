@@ -3,6 +3,7 @@
 #include <QDialog>
 #include "ui_counterwindow.h"
 #include "params.h"
+#include "experiment.h"
 
 #include <QProgressBar>
 
@@ -13,8 +14,8 @@ public:
 	CounterWindow(QWidget * parent = Q_NULLPTR);
 	~CounterWindow();
 
-public slots:
-	void updateView(QList<Counter>);
+	public slots:
+	void updateView(ExperimentState state);
 
 private:
 	Ui::CounterWindow ui;

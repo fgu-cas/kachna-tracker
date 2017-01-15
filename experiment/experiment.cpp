@@ -80,7 +80,8 @@ Experiment::Experiment(QMap<QString, QVariant> *settings, Logger* logger, QObjec
     stats.initialShock = 0;
     lastChange = 0;
 
-    experimentLogger.reset(new ExperimentLogger(shock, arena));
+    experimentLogger.reset(new ExperimentLogger(shock, arena, areas, counters, actions));
+	connect(this, SIGNAL(update(ExperimentState)), experimentLogger.get(), SLOT(add(ExperimentState)));
 
     serialPort = settings->value("hardware/serialPort").toString();
 
@@ -119,7 +120,6 @@ bool Experiment::start(){
         mat->setTurntablePWM(arenaPWM);
     }
 	logger->log("Experiment started", Logger::INFO);
-	emit(counterUpdate(counters));
     return true;
 }
 
@@ -145,7 +145,6 @@ void Experiment::processFrame(){
     if (synchOut) hardware->setSync(!synchInv);
 
     // Process counters
-
     for (int i = 0; i < counters.size(); i++){
         Counter& counter = counters[i];
 
@@ -179,7 +178,7 @@ void Experiment::processFrame(){
 
     // Detect points
     Detector::pointPair points = detector->find(&frame);
-    if (!ratRobot) points.robot = Detector::Point();
+    if (!ratRobot) points.robot = DetectedPoint();
     bool badFrame = points.rat.size == -1 || (ratRobot && points.robot.size == -1);
     if (skip_reaction == 1){
         if (lastPoints.rat.size == -1 ||
@@ -188,7 +187,7 @@ void Experiment::processFrame(){
             lastPoints.rat = points.rat;
             ratTimer.start();
         } else {
-            points.rat = Detector::Point();
+            points.rat = DetectedPoint();
         }
 
         if (lastPoints.robot.size == -1 ||
@@ -197,7 +196,7 @@ void Experiment::processFrame(){
             lastPoints.robot = points.robot;
             robotTimer.start();
         } else {
-            points.robot = Detector::Point();
+            points.robot = DetectedPoint();
         }
     }
     lastKeypoints = points;
@@ -340,12 +339,12 @@ void Experiment::processFrame(){
                             break;
                         }
                     }
-					emit(counterUpdate(counters));
                     break;
                case Action::FEEDER:
                     if (triggerStates[trigger] != TriggerState::RISING) continue;
                     Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
                     mat->feed();
+					stats.feederCount++;
                     break;
                 }
             }
@@ -412,10 +411,17 @@ void Experiment::processFrame(){
         }
     }
 
-    experimentLogger->add(points.rat, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
-    experimentLogger->add(points.robot, found ? 1 : 0, shockState, shockState == SHOCKING ? currentShockLevel : 0, timestamp);
-
-	emit(counterUpdate(counters));
+	ExperimentState state;
+	state.ts = timestamp;
+	state.frame = frame;
+	state.rat = points.rat;
+	state.robot = points.robot;
+	state.stats = stats;
+	state.areas = areas;
+	state.counters = counters;
+	state.state = shockState;
+	state.shock = shockState == SHOCKING ? currentShockLevel : 0;
+	emit(update(state));
 
     if (synchOut) hardware->setSync(synchInv);
 }
@@ -441,24 +447,6 @@ void Experiment::outputShock(int level){
 	logger->log(QString("Outputting shock at %1 mA").arg(level));
 }
 
-Experiment::Update Experiment::getUpdate(){
-    Update update;
-
-    update.keypoints = lastKeypoints;
-    update.stats = stats;
-    update.frame = lastFrame;
-    update.areas = areas;
-
-    return update;
-}
-
-QString Experiment::getLog(bool rat){
-    Detector::CLASS_ID id;
-    if (rat){
-        id = Detector::RAT;
-    } else {
-        id = Detector::ROBOT;
-    }
-
-    return experimentLogger->get(id, finishedTime);
+QString Experiment::getLog(){
+    return experimentLogger->get(finishedTime);
 }

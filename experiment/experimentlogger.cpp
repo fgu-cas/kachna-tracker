@@ -1,90 +1,196 @@
 #include "experimentlogger.h"
 #include <QDateTime>
 
-ExperimentLogger::ExperimentLogger(Shock shock, Arena arena,  QObject *parent) : QObject(parent)
+ExperimentLogger::ExperimentLogger(Shock shock, Arena arena, QList<Area> areas, QList<Counter> counters, QList<Action> actions, QObject *parent) : QObject(parent)
 {
-    this->shock = shock;
-    this->arena = arena;
+	this->shock = shock;
+	this->arena = arena;
+	this->areas = areas;
+	this->counters = counters;
+	this->actions = actions;
 }
 
-void ExperimentLogger::setStart(qint64 timestamp){
-    this->startTime = timestamp;
+void ExperimentLogger::setStart(qint64 timestamp) {
+	this->startTime = timestamp;
 }
 
-void ExperimentLogger::add(Detector::Point point, int sectors, int state, int shock, qint64 timestamp){
-    Frame frame;
-    frame.point = point;
-    frame.sectors = sectors;
-    frame.state = state;
-    frame.shock = shock;
-    frame.timestamp = timestamp;
-    frames.append(frame);
+void ExperimentLogger::add(ExperimentState state) {
+	Frame frame;
+	frame.rat = state.rat;
+	frame.robot = state.robot;
+	frame.state = state.state;
+	frame.shock = state.shock;
+	frame.counters = state.counters;
+	frame.areas = state.areas;
+	frame.timestamp = state.ts;
+	frames.append(frame);
+
+	if (state.robot.valid) {
+		hasRobot = true;
+	}
+
+	if (state.rat.angle != -1) {
+		hasAngle = true;
+	}
 }
 
-QString ExperimentLogger::get(Detector::CLASS_ID id, qint64 elapsedTime){
-    QDateTime start;
-    start.setMSecsSinceEpoch(startTime);
+QString ExperimentLogger::get(qint64 elapsedTime) {
+	QDateTime start;
+	start.setMSecsSinceEpoch(startTime);
 
-    QString log;
-    log += "%%BEGIN_HEADER\r\n";
-    log += "        %%BEGIN DATABASE_INFORMATION\r\n";
-    log += "                %Date.0 ( "+start.toString("d.M.yyyy")+" )\r\n";
-    log += "                %Time.0 ( "+start.toString("h:mm")+" )\r\n";
-    log += "                %MilliTime.0 ( "+QString::number(startTime)+" )\r\n";
-    log += "        %%END DATABASE_INFORMATION\r\n";
-    log += "        %%BEGIN SETUP_INFORMATION\r\n";
-    log += "                %TrackerVersion.0 ( Kachna Tracker v1.0 release 04/2014 )\r\n";
-    log += "                %ElapsedTime_ms.0 ( "+QString::number(elapsedTime)+" )\r\n";
-    log += "                %Paradigm.0 ( RobotAvoidance )\r\n";
-    log += QString("                %ShockParameters.0 ( %1 %2 %3 %4 )\r\n").arg(QString::number(shock.delay),
-                                                                             QString::number(shock.length),
-                                                                             QString::number(shock.in_delay),
-                                                                             QString::number(shock.refractory));
-    log += "                        // %ShockParameters.0 ( EntranceLatency ShockDuration InterShockLatency OutsideRefractory )\r\n";
-    log += "                %ArenaDiameter_m.0 ( "+QString::number(arena.size)+" )\r\n";
-    log += "                %TrackerResolution_PixPerCM.0 ( "+QString::number((2*arena.radius)/(arena.size*100))+" )\r\n";
-    log += QString("                %ArenaCenterXY.0 ( %1 %2 )\r\n").arg(QString::number(arena.x), QString::number(arena.y));
-    log += "                %Frame.0 ( RoomFrame )\r\n";
-    /*log += QString("                %ReinforcedSector.0 ( %1 %2 %3 )\r\n").arg(QString::number(shock.radius),
-                                                                               QString::number(shock.distance),
-                                                                               QString::number(shock.angle));*/
-    log += "                        //%ReinforcedSector.0 ( Radius Distance Angle)\r\n";
-    log += "        %%END SETUP_INFORMATION\r\n";\
-    log += "        %%BEGIN RECORD_FORMAT\r\n";
-    log += "                %Sample.0 ( FrameCount 1msTimeStamp RoomX RoomY Sectors State CurrentLevel MotorState Flags FrameInfo Angle)\r\n";
-    log += "                        //Sectors indicate if the object is in a sector. Number is binary coded. Sectors = 0: no sector, Sectors = 1: room sector, Sectors: = 2 arena sector, Sectors: = 3 room and arena sector\r\n";
-    log += "                        //State indicates the Avoidance state: OutsideSector = 0, EntranceLatency = 1, Shock = 2, InterShockLatency = 3, OutsideRefractory = 4, BadSpot = 5\r\n";
-    log += "                        //MotorState indicates: NoMove = 0, MoveCW = positive, MoveCCW = negative\r\n";
-    log += "                        //ShockLevel indicates the level of shock current: NoShock = 0, CurrentLevel = other_values\r\n";
-    log += "                        //FrameInfo indicates succesfuly tracked spots: ReferencePoint * 2^0 + Spot0 * 2^(1+0) + Spot1 * 2^(1+1) + Spot2 * 2^(1+2) .... \r\n";
-    log += "        %%END RECORD_FORMAT\r\n";
-    log += "%%END_HEADER\r\n";
+	QString log;
+	log += QString("%%BEGIN_HEADER\r\n");
+	log += QString("// Date ( %1 )\r\n").arg(start.toString("d.M.yyyy"));
+	log += QString("// Time ( %1 )\r\n").arg(start.toString("h:mm"));
+	log += QString("  %MilliTime ( %1 )\r\n").arg(startTime);
+	log += QString("  %ElapsedTime_ms ( %1 )\r\n").arg(elapsedTime);
+	// log += QString("  %Paradigm ( %1 )\r\n").arg(paradigm);
+	log += QString("\r\n");
+	log += QString("  %ShockDelay ( %1 )\r\n").arg(shock.delay);
+	log += QString("  %ShockLength ( %1 )\r\n").arg(shock.length);
+	log += QString("  %ShockPause ( %1 )\r\n").arg(shock.in_delay);
+	log += QString("  %ShockRefractory ( %1 )\r\n").arg(shock.refractory);
+	log += QString("\r\n");
+	log += QString("  %ArenaDiameter_m ( %1 )\r\n").arg(arena.size);
+	log += QString("  %ArenaCenterXY ( %1 %2 )\r\n").arg(arena.x).arg(arena.y);
+	log += QString("  %TrackerResolution_PixPerCM.0 ( %1 )\r\n").arg((2 * arena.radius) / (arena.size * 100));
+	log += QString("\r\n");
 
-    int i = 1;
-    auto it = frames.begin();
-    while (it != frames.end()){
-        Frame frame = (*it);
-        if (frame.point.class_id == id){
-            log += QString::number(i);
-            log += "      ";
-            log += QString::number(frame.timestamp);
-            log += "      ";
-            log += QString::number(frame.point.pt.x);
-            log += "      ";
-            log += QString::number(frame.point.pt.y);
-            log += "      ";
-            log += QString::number(frame.sectors);
-            log += "      ";
-            log += QString::number(frame.state);
-            log += "      ";
-            log += QString::number(frame.shock);
-            log += "      *      *      *      ";
-            log += QString::number(frame.point.angle);
-            log += "\r\n";
-            i++;
-        }
-        it++;
-    }
+	int index = 0;
 
-    return log;
+	for (Area area : areas) {
+		if (area.type == area.CIRCULAR_AREA) {
+			log += QString("  %RobotZone ( %1 %2 %3 %4 %5 )\r\n").arg(index++).arg(area.enabled).arg(area.radius).arg(area.angle).arg(area.distance);
+		}
+		else {
+			log += QString("  %ArenaZone ( %1 %2 %3 %4 )\r\n").arg(index++).arg(area.enabled).arg(area.angle).arg(area.range);
+		}
+	}
+
+	for (Counter counter : counters) {
+		log += QString("  %Counter ( %1 %2 %3 %4 %5 )\r\n").arg(index++).arg(counter.active ? 1 : 0)
+			.arg(counter.singleShot ? 1 : 0).arg(counter.period).arg(counter.limit);
+	}
+
+	for (Counter counter : counters) {
+		log += QString("  %Counter ( %1 %2 %3 %4 %5 )\r\n").arg(index++).arg(counter.active ? 1 : 0)
+			.arg(counter.singleShot ? 1 : 0).arg(counter.period).arg(counter.limit);
+	}
+
+	for (Action action : actions) {
+		QString actionLine("  %Action ( %1 %2 %3 )\r\n");
+		actionLine = actionLine.arg(action.trigger);
+
+		switch (action.type)
+		{
+		case action.SHOCK:
+			actionLine = actionLine.arg("SHOCK");
+			break;
+		case action.ENABLE:
+			actionLine = actionLine.arg("ENABLE");
+			break;
+		case action.DISABLE:
+			actionLine = actionLine.arg("DISABLE");
+			break;
+		case action.COUNTER_INC:
+			actionLine = actionLine.arg("COUNTER_INC");
+			break;
+		case action.COUNTER_DEC:
+			actionLine = actionLine.arg("COUNTER_DEC");
+			break;
+		case action.COUNTER_SET:
+			actionLine = actionLine.arg("COUNTER_SET");
+			break;
+		case action.SOUND:
+			actionLine = actionLine.arg("SOUND");
+			break;
+		case action.LIGHT:
+			actionLine = actionLine.arg("LIGHT");
+			break;
+		case action.FEEDER:
+			actionLine = actionLine.arg("FEEDER");
+			break;
+		}
+		actionLine = actionLine.arg(action.arg);
+
+		log += actionLine;
+	}
+
+
+	QString rowLine("  %Row ( FrameCount 1msTimeStamp RatRoomX RatRoomY ");
+	if (hasAngle) {
+		rowLine += "RatAngle ";
+	}
+
+	if (hasRobot) {
+		rowLine += "RobotRoomX RobotRoomY ";
+		if (hasAngle) {
+			rowLine += "RobotAngle ";
+		}
+	}
+
+	rowLine += "State CurrentLevel ";
+
+	index = 0;
+
+	for (Area area : areas) {
+		rowLine += QString("%1_Enabled ").arg(index++);
+	}
+
+	for (Counter counter : counters) {
+		rowLine += QString("%1_Active %1_Value ").arg(index++);
+	}
+
+	rowLine += ")\r\n";
+
+	log += rowLine;
+	log += QString("  %TrackerVersion ( %1 )\r\n").arg(KACHNA_VERSION);
+	log += QString("%%END_HEADER\r\n");
+
+	int i = 1;
+	auto it = frames.begin();
+	while (it != frames.end()) {
+		Frame frame = (*it);
+		log += QString::number(i);
+		log += "    ";
+		log += QString::number(frame.timestamp);
+		log += "    ";
+		log += QString::number(frame.rat.pt.x);
+		log += "    ";
+		log += QString::number(frame.rat.pt.y);
+		log += "    ";
+		if (hasAngle) {
+			log += QString::number(frame.rat.angle);
+			log += "    ";
+		}
+		if (hasRobot) {
+			log += QString::number(frame.robot.pt.x);
+			log += "    ";
+			log += QString::number(frame.robot.pt.y);
+			log += "    ";
+			if (hasAngle) {
+				log += QString::number(frame.robot.angle);
+				log += "    ";
+			}
+		}
+		log += QString::number(frame.state);
+		log += "    ";
+		log += QString::number(frame.shock);
+		log += "    ";
+
+		for (Area area : frame.areas) {
+			log += QString("%1    ").arg(area.enabled ? 1 : 0);
+		}
+
+		for (Counter counter : frame.counters) {
+			log += QString("%1    %2    ").arg(counter.active ? 1 : 0, counter.value);
+		}
+
+		log += "\r\n";
+
+		i++;
+		it++;
+	}
+
+	return log;
 }

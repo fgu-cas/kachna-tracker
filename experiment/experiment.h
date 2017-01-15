@@ -24,27 +24,10 @@ public:
     explicit Experiment(QMap<QString, QVariant> *settings, Logger*, QObject *parent = 0);
     ~Experiment();
     bool isRunning();
-    QString getLog(bool rat);
-
-    struct Stats {
-        int goodFrames;
-        int badFrames;
-        int shockCount;
-        int entryCount;
-        qint64 initialShock;
-    };
-
-    struct Update {
-        Detector::pointPair keypoints;
-        Stats stats;
-        Mat frame;
-        QList<Area> areas;
-    };
-
-    Update getUpdate();
+    QString getLog();
 
 signals:
-	void counterUpdate(QList<Counter>);
+	void update(ExperimentState state);
 	void finished();
 
 private:
@@ -52,7 +35,7 @@ private:
     int arenaDirection = 0;
 
     // System
-    Stats stats;
+	ExperimentStats stats;
     std::unique_ptr<ExperimentLogger> experimentLogger;
 	Logger* logger;
 

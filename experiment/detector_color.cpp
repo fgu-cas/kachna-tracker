@@ -70,8 +70,8 @@ Mat DetectorColor::analyze(Mat *frame){
     return threshMask;
 }
 
-std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
-    std::vector<Detector::Point> result;
+std::vector<DetectedPoint> DetectorColor::detect(Mat *frame){
+    std::vector<DetectedPoint> result;
 
     if (frame->empty()) return result;
 
@@ -86,7 +86,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
     for (uint i = 0; i < contours.size();  i++){
         Moments moms = moments(Mat(contours[i]));
         if (moms.m00 == 0) continue;
-        Detector::Point point;
+        DetectedPoint point;
         point.pt.x = (moms.m10 / moms.m00) + maskRect.x;
         point.pt.y = (moms.m01 / moms.m00) + maskRect.y;
         point.size = std::sqrt(moms.m00/CV_PI);
@@ -124,7 +124,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                 distance = abs(ratFront.hue-average);
                 if (distance > 180) distance = 360 - distance;
                 if (distance < hue_tol){
-                    point.class_id = RAT_FRONT;
+                    point.class_id = DetectedPoint::RAT_FRONT;
                     result.push_back(point);
                     continue;
                 }
@@ -132,7 +132,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                 distance = abs(robotFront.hue-average);
                 if (distance > 180) distance = 360 - distance;
                 if (distance < hue_tol){
-                    point.class_id = ROBOT_FRONT;
+                    point.class_id = DetectedPoint::ROBOT_FRONT;
                     result.push_back(point);
                     continue;
                 }
@@ -141,7 +141,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     distance = abs(ratBack.hue-average);
                     if (distance > 180) distance = 360 - distance;
                     if (distance < hue_tol){
-                        point.class_id = RAT_BACK;
+                        point.class_id = DetectedPoint::RAT_BACK;
                         result.push_back(point);
                         continue;
                     }
@@ -149,7 +149,7 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
                     distance = abs(robotBack.hue-average);
                     if (distance > 180) distance = 360 - distance;
                     if (distance < hue_tol){
-                        point.class_id = ROBOT_BACK;
+                        point.class_id = DetectedPoint::ROBOT_BACK;
                         result.push_back(point);
                         continue;
                     }
@@ -166,15 +166,15 @@ std::vector<Detector::Point> DetectorColor::detect(Mat *frame){
 Detector::pointPair DetectorColor::find(Mat *frame){
     pointPair result;
 
-    std::vector<Detector::Point> points = detect(frame);
+    std::vector<DetectedPoint> points = detect(frame);
 
     if (!bothPoints){
-        for (Detector::Point point : points){
+        for (DetectedPoint point : points){
             switch (point.class_id){
-                case RAT_FRONT:
+                case DetectedPoint::RAT_FRONT:
                     result.rat = point;
                     break;
-               case ROBOT_FRONT:
+               case DetectedPoint::ROBOT_FRONT:
                     result.robot = point;
                     break;
                default:
@@ -184,23 +184,23 @@ Detector::pointPair DetectorColor::find(Mat *frame){
         return result;
     }
 
-    Detector::Point rat_front;
-    Detector::Point rat_back;
-    Detector::Point robot_front;
-    Detector::Point robot_back;
+    DetectedPoint rat_front;
+    DetectedPoint rat_back;
+    DetectedPoint robot_front;
+    DetectedPoint robot_back;
 
-    for (Detector::Point point : points){
+    for (DetectedPoint point : points){
         switch (point.class_id){
-            case RAT_FRONT:
+            case DetectedPoint::RAT_FRONT:
                 rat_front = point;
                 break;
-            case RAT_BACK:
+            case DetectedPoint::RAT_BACK:
                 rat_back = point;
                 break;
-           case ROBOT_FRONT:
+           case DetectedPoint::ROBOT_FRONT:
                 robot_front = point;
                 break;
-           case ROBOT_BACK:
+           case DetectedPoint::ROBOT_BACK:
                 robot_back = point;
                 break;
            default:
@@ -215,7 +215,7 @@ Detector::pointPair DetectorColor::find(Mat *frame){
                                              rat_back.pt.x - rat_front.pt.x));
         result.rat.angle = fmod(result.rat.angle + 270, 360);
         result.rat.size = 1;
-        result.rat.class_id = RAT;
+        result.rat.class_id = DetectedPoint::RAT;
     }
 
     if (robot_front.size > 0 && robot_back.size > 0){
@@ -225,7 +225,7 @@ Detector::pointPair DetectorColor::find(Mat *frame){
                                    robot_back.pt.x - robot_front.pt.x));
         result.robot.angle = fmod(result.robot.angle + 270, 360);
         result.robot.size = 1;
-        result.robot.class_id = ROBOT;
+        result.robot.class_id = DetectedPoint::ROBOT;
     }
 
     return result;
