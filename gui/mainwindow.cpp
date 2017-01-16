@@ -255,6 +255,13 @@ void kachnatracker::on_startButton_clicked() {
 
 void kachnatracker::receiveUpdate(ExperimentState state) {
 	lastUpdate = state;
+
+	ui->goodFramesLCD->display(state.stats.goodFrames);
+	ui->badFramesLCD->display(state.stats.badFrames);
+	ui->encounterLabel->setText(QString::number(state.stats.entryCount));
+	ui->shockLabel->setText(QString::number(state.stats.shockCount));
+	ui->feederLabel->setText(QString::number(state.stats.feederCount));
+	ui->firstShockLabel->setText(QString::number(state.stats.initialShock / 1000) + " s");
 }
 
 void kachnatracker::drawUpdate() {
@@ -364,13 +371,6 @@ void kachnatracker::drawUpdate() {
 
 	showPainter->end();
 	ui->displayLabel->setPixmap(showPixmap);
-
-
-	ui->goodFramesLCD->display(lastUpdate.stats.goodFrames);
-	ui->badFramesLCD->display(lastUpdate.stats.badFrames);
-	ui->encounterLabel->setText(QString::number(lastUpdate.stats.entryCount));
-	ui->shockLabel->setText(QString::number(lastUpdate.stats.shockCount));
-	ui->firstShockLabel->setText(QString::number(lastUpdate.stats.initialShock / 1000) + " s");
 }
 
 void kachnatracker::updateTick() {

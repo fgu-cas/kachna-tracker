@@ -342,8 +342,10 @@ void Experiment::processFrame(){
                     break;
                case Action::FEEDER:
                     if (triggerStates[trigger] != TriggerState::RISING) continue;
-                    Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
-                    mat->feed();
+					if (isLive) {
+						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+						mat->feed();
+					}
 					stats.feederCount++;
                     break;
                 }
