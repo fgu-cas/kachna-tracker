@@ -5,45 +5,45 @@
 
 
 ActionEnableDisableDialog::ActionEnableDisableDialog(QStringListModel &targets, int row, Action action, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::EnableDisableDialog)
+	QDialog(parent),
+	ui(new Ui::EnableDisableDialog)
 {
-    ui->setupUi(this);
-    ui->targetComboBox->setModel(&targets);
+	ui->setupUi(this);
+	ui->targetComboBox->setModel(&targets);
 
-    this->row = row;
+	this->row = row;
 
-    switch (action.type){
-    case Action::ENABLE:
-        ui->actionComboBox->setCurrentIndex(0);
-        break;
-    case Action::DISABLE:
-        ui->actionComboBox->setCurrentIndex(1);
-        break;
-    }
-    ui->targetComboBox->setCurrentText(action.target);
+	switch (action.type) {
+	case Action::ENABLE:
+		ui->actionComboBox->setCurrentIndex(0);
+		break;
+	case Action::DISABLE:
+		ui->actionComboBox->setCurrentIndex(1);
+		break;
+	}
+	ui->targetComboBox->setCurrentText(action.target);
 }
 
 ActionEnableDisableDialog::~ActionEnableDisableDialog()
 {
-    delete ui;
+	delete ui;
 }
 
-void ActionEnableDisableDialog::closeEvent(QCloseEvent *event){
-    Action action;
-    switch (ui->actionComboBox->currentIndex()){
-    case 0:
-        action.type = Action::ENABLE;
-        break;
-    case 1:
-        action.type = Action::DISABLE;
-        break;
-    default:
-        return;
-    }
+void ActionEnableDisableDialog::closeEvent(QCloseEvent *event) {
+	Action action;
+	switch (ui->actionComboBox->currentIndex()) {
+	case 0:
+		action.type = Action::ENABLE;
+		break;
+	case 1:
+		action.type = Action::DISABLE;
+		break;
+	default:
+		return;
+	}
 
-    action.target = ui->targetComboBox->currentText();
+	action.target = ui->targetComboBox->currentText();
 
-    emit(update(row, action));
-    event->accept();
+	emit(update(row, action));
+	event->accept();
 }

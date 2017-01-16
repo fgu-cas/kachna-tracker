@@ -284,9 +284,6 @@
     <ClInclude Include="build\GeneratedFiles\ui_counterwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="experiment\action.h">
-      <Filter>Sources\experiment</Filter>
-    </ClInclude>
     <ClInclude Include="experiment\detector.h">
       <Filter>Sources\detector</Filter>
     </ClInclude>

@@ -19,96 +19,96 @@ using namespace cv;
 
 class Experiment : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit Experiment(QMap<QString, QVariant> *settings, Logger*, QObject *parent = 0);
-    ~Experiment();
-    bool isRunning();
-    QString getLog();
+	explicit Experiment(QMap<QString, QVariant> *settings, Logger*, QObject *parent = 0);
+	~Experiment();
+	bool isRunning();
+	QString getLog();
 
 signals:
 	void update(ExperimentState state);
 	void finished();
 
 private:
-    int arenaPWM = 0;
-    int arenaDirection = 0;
+	int arenaPWM = 0;
+	int arenaDirection = 0;
 
-    // System
+	// System
 	ExperimentStats stats;
-    std::unique_ptr<ExperimentLogger> experimentLogger;
+	std::unique_ptr<ExperimentLogger> experimentLogger;
 	Logger* logger;
 
-    QTimer timer;
-    QElapsedTimer elapsedTimer;
-    qint64 finishedTime;
+	QTimer timer;
+	QElapsedTimer elapsedTimer;
+	qint64 finishedTime;
 
-    Detector::pointPair lastKeypoints;
+	Detector::pointPair lastKeypoints;
 
-    bool ratRobot;
+	bool ratRobot;
 
-    bool shockIsElectric;
-    bool shockOut;
-    bool synchOut;
-    bool synchInv;
+	bool shockIsElectric;
+	bool shockOut;
+	bool synchOut;
+	bool synchInv;
 
-    // Capture
-    VideoCapture capture;
-    bool isLive;
-    Mat lastFrame;
+	// Capture
+	VideoCapture capture;
+	bool isLive;
+	Mat lastFrame;
 
-    // Detection
-    std::unique_ptr<Detector> detector;
+	// Detection
+	std::unique_ptr<Detector> detector;
 
-    int multiple_reaction;
-    int skip_reaction;
-    int skip_distance;
-    int skip_timeout;
-    Detector::pointPair lastPoints;
-    QElapsedTimer ratTimer;
-    QElapsedTimer robotTimer;
+	int multiple_reaction;
+	int skip_reaction;
+	int skip_distance;
+	int skip_timeout;
+	Detector::pointPair lastPoints;
+	QElapsedTimer ratTimer;
+	QElapsedTimer robotTimer;
 
-    // Shock
-    enum shockStates {
-        OUTSIDE,
-        DELAYING,
-        SHOCKING,
-        PAUSE,
-        REFRACTORY
-    } shockState;
-    double shockLevel;
-    int currentShockLevel = 2;
-    void outputShock(int level);
+	// Shock
+	enum shockStates {
+		OUTSIDE,
+		DELAYING,
+		SHOCKING,
+		PAUSE,
+		REFRACTORY
+	} shockState;
+	double shockLevel;
+	int currentShockLevel = 2;
+	void outputShock(int level);
 
-    Shock shock;
+	Shock shock;
 
-    qint64 lastChange;
-    qint64 lastLight = 0;
+	qint64 lastChange;
+	qint64 lastLight = 0;
 
-    Arena arena;
+	Arena arena;
 
-    QList<Area> areas;
-    QList<Counter> counters;
-    QList<Action> actions;
+	QList<Area> areas;
+	QList<Counter> counters;
+	QList<Action> actions;
 
-    enum TriggerState {
-        OFF,
-        RISING,
-        ON
-    };
+	enum TriggerState {
+		OFF,
+		RISING,
+		ON
+	};
 
-    QMap<QString, TriggerState> triggerStates;
+	QMap<QString, TriggerState> triggerStates;
 
-    QString serialPort;
-    std::unique_ptr<AbstractHardware> hardware;
+	QString serialPort;
+	std::unique_ptr<AbstractHardware> hardware;
 
-public slots:
-    bool start();
-    void stop();
-    void setShockLevel(int level);
+	public slots:
+	bool start();
+	void stop();
+	void setShockLevel(int level);
 
-private slots:
-    void processFrame();
+	private slots:
+	void processFrame();
 
 };
 

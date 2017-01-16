@@ -343,7 +343,6 @@
     <ClInclude Include="build\GeneratedFiles\ui_debugwindow.h" />
     <ClInclude Include="build\GeneratedFiles\ui_logwindow.h" />
     <ClInclude Include="build\GeneratedFiles\ui_mainwindow.h" />
-    <ClInclude Include="experiment\action.h" />
     <CustomBuild Include="gui\actions_area_robot_dialog.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL  "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing actions_area_robot_dialog.h...</Message>

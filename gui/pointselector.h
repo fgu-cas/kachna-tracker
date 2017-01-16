@@ -9,35 +9,35 @@
 
 class PointDialog;
 
-class PointSelector: public QWidget
+class PointSelector : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit PointSelector(QWidget *parent = 0);
+	explicit PointSelector(QWidget *parent = 0);
 
-    void setTitle(QString title);
-    pointRange getColorRange();
+	void setTitle(QString title);
+	pointRange getColorRange();
 
 signals:
-    void showStateChanged(bool state);
-    void colorRangeChanged(pointRange range);
+	void showStateChanged(bool state);
+	void colorRangeChanged(pointRange range);
 
-public slots:
-    void onSetButtonPressed();
-    void rangeChanged(pointRange range);
-    void setRange(pointRange range);
-    void setEnabled(bool state);
-    void closeDialog();
+	public slots:
+	void onSetButtonPressed();
+	void rangeChanged(pointRange range);
+	void setRange(pointRange range);
+	void setEnabled(bool state);
+	void closeDialog();
 
 private:
-    QLabel* title;
-    QLabel* colorLabel;
-    QLabel* hsvLabel;
-    QPushButton* setButton;
+	QLabel* title;
+	QLabel* colorLabel;
+	QLabel* hsvLabel;
+	QPushButton* setButton;
 
-    PointDialog* colorDialog;
+	PointDialog* colorDialog;
 
-    pointRange range;
+	pointRange range;
 
 
 };

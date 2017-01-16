@@ -5,23 +5,23 @@
 
 class ShockRobotLabel : public QLabel
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit ShockRobotLabel(QWidget *parent = 0);
+	explicit ShockRobotLabel(QWidget *parent = 0);
 
-public slots:
-    void setDistance(int distance);
-    void setAngle(int angle);
-    void setRadius(int radius);
-    void setCentered(bool state);
+	public slots:
+	void setDistance(int distance);
+	void setAngle(int angle);
+	void setRadius(int radius);
+	void setCentered(bool state);
 
 private:
-    int distance = 0;
-    int angle = 0;
-    int radius = 0;
-    bool centered = false;
+	int distance = 0;
+	int angle = 0;
+	int radius = 0;
+	bool centered = false;
 
-    void update();
+	void update();
 };
 
 #endif // SHOCKLOCATIONWIDGET_H

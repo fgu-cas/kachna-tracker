@@ -19,6 +19,6 @@ private:
 	Ui::LogWindow ui;
 	Logger* logger;
 
-private slots:
+	private slots:
 	void setLevel(int level);
 };

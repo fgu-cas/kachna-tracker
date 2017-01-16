@@ -17,18 +17,18 @@ using namespace cv;
 class Detector
 {
 public:
-    Detector(const QMap<QString, QVariant> &settings, int h, int w);
+	Detector(const QMap<QString, QVariant> &settings, int h, int w);
 
-    struct pointPair {DetectedPoint rat; DetectedPoint robot;};
+	struct pointPair { DetectedPoint rat; DetectedPoint robot; };
 
-    virtual Mat process(Mat *frame) = 0;
-    virtual Mat analyze(Mat *frame) = 0;
-    virtual pointPair find(Mat *frame) = 0;
-    virtual std::vector<DetectedPoint> detect(Mat *frame) = 0;
+	virtual Mat process(Mat *frame) = 0;
+	virtual Mat analyze(Mat *frame) = 0;
+	virtual pointPair find(Mat *frame) = 0;
+	virtual std::vector<DetectedPoint> detect(Mat *frame) = 0;
 
 protected:
-    Mat mask;
-    cv::Rect maskRect;
+	Mat mask;
+	cv::Rect maskRect;
 };
 
 

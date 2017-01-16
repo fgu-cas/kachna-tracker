@@ -6,23 +6,23 @@
 #include "params.h"
 
 namespace Ui {
-class ActionModifyCounterDialog;
+	class ActionModifyCounterDialog;
 }
 
 class ActionModifyCounterDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit ActionModifyCounterDialog(QStringListModel &counters, int row, Action action, QWidget *parent);
-    ~ActionModifyCounterDialog();
+	explicit ActionModifyCounterDialog(QStringListModel &counters, int row, Action action, QWidget *parent);
+	~ActionModifyCounterDialog();
 signals:
-    void update(int, Action);
+	void update(int, Action);
 private:
-    Ui::ActionModifyCounterDialog *ui;
-    int row;
+	Ui::ActionModifyCounterDialog *ui;
+	int row;
 
-    void closeEvent(QCloseEvent*);
+	void closeEvent(QCloseEvent*);
 };
 
 #endif // ACTION_MODIFY_COUNTER_DIALOG_H

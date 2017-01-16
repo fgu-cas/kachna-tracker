@@ -7,18 +7,18 @@
 
 class AbstractHardware : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit AbstractHardware(Logger* logger);
+	explicit AbstractHardware(Logger* logger);
 
-    virtual bool check() = 0;
-    virtual void setShock(int level) = 0;
-    virtual void setSync(bool state) = 0;
-    virtual void shutdown() = 0;
+	virtual bool check() = 0;
+	virtual void setShock(int level) = 0;
+	virtual void setSync(bool state) = 0;
+	virtual void shutdown() = 0;
 
 signals:
 
-public slots:
+	public slots :
 
 protected:
 	Logger* logger;

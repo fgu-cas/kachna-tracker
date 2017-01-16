@@ -6,14 +6,14 @@
 
 class DummyHardware : public AbstractHardware
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    DummyHardware(Logger*);
+	DummyHardware(Logger*);
 
-    bool check();
-    void setShock(int level);
-    void setSync(bool state);
-    void shutdown();
+	bool check();
+	void setShock(int level);
+	void setSync(bool state);
+	void shutdown();
 private:
 	Logger* logger;
 };

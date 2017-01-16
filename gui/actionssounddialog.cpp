@@ -2,18 +2,18 @@
 #include "ui_actionssounddialog.h"
 
 ActionsSoundDialog::ActionsSoundDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ActionsSoundDialog)
+	QDialog(parent),
+	ui(new Ui::ActionsSoundDialog)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 }
 
 ActionsSoundDialog::~ActionsSoundDialog()
 {
-    delete ui;
+	delete ui;
 }
 
 void ActionsSoundDialog::on_comboBox_currentIndexChanged(int index)
 {
-   ui->durationSpinBox->setEnabled((index == 1));
+	ui->durationSpinBox->setEnabled((index == 1));
 }

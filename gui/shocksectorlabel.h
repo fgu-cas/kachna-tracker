@@ -5,20 +5,20 @@
 
 class ShockSectorLabel : public QLabel
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit ShockSectorLabel(QWidget *parent = 0);
+	explicit ShockSectorLabel(QWidget *parent = 0);
 
 signals:
 
-public slots:
-    void setAngle(double angle);
-    void setRange(double range);
+	public slots :
+		void setAngle(double angle);
+	void setRange(double range);
 private:
-    void update();
+	void update();
 
-    int angle = 90*16;
-    int range = 0;
+	int angle = 90 * 16;
+	int range = 0;
 };
 
 #endif // SHOCKSECTORLABEL_H

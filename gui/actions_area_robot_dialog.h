@@ -6,30 +6,30 @@
 #include "params.h"
 
 namespace Ui {
-class AreaRobotWidget;
+	class AreaRobotWidget;
 }
 
 class AreaRobotDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit AreaRobotDialog(QWidget *parent, configWindow *configWindow, int row, Area area);
-    ~AreaRobotDialog();
+	explicit AreaRobotDialog(QWidget *parent, configWindow *configWindow, int row, Area area);
+	~AreaRobotDialog();
 
 signals:
-    void update(int row, Area area);
+	void update(int row, Area area);
 
-public slots:
-    void on_distanceBox_valueChanged(int px);
-    void on_triggerBox_valueChanged(int px);
+	public slots:
+	void on_distanceBox_valueChanged(int px);
+	void on_triggerBox_valueChanged(int px);
 
 private:
-    Ui::AreaRobotWidget *ui;
-    int row;
-    configWindow* configWin;
+	Ui::AreaRobotWidget *ui;
+	int row;
+	configWindow* configWin;
 
-    void closeEvent(QCloseEvent*);
+	void closeEvent(QCloseEvent*);
 
 };
 

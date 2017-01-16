@@ -19,10 +19,11 @@ void CounterWindow::updateView(ExperimentState state) {
 				bar->setValue(counter.value);
 			}
 		}
-	} else {
+	}
+	else {
 		for (Counter counter : state.counters) {
 			QHBoxLayout* layout = new QHBoxLayout;
-			
+
 			QLabel* label = new QLabel();
 			label->setTextFormat(Qt::RichText);
 			/*if (counter.active) {
@@ -30,7 +31,7 @@ void CounterWindow::updateView(ExperimentState state) {
 			}
 			else {*/
 			label->setText(counter.id);
-			
+
 
 			QProgressBar* bar = new QProgressBar;
 			bar->setMaximum(counter.limit);
