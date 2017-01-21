@@ -20,3 +20,6 @@
 
 # Build directory
 build
+
+# Third party files
+cbw.h
