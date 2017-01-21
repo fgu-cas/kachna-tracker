@@ -99,7 +99,7 @@ private:
 
 	QMap<QString, TriggerState> triggerStates;
 
-	QString serialPort;
+	QString hardwareDevice;
 	std::unique_ptr<AbstractHardware> hardware;
 
 	public slots:

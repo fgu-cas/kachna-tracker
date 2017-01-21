@@ -1,5 +1,6 @@
 #include "configwindow.h"
 #include "arenomat.h"
+#include "dio24.h"
 #include <QtSerialPort/QtSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
@@ -14,6 +15,11 @@ void configWindow::on_browseButton_clicked()
 void configWindow::on_refreshPortButton_clicked()
 {
     ui->portComboBox->clear();
+
+	if (DIO24::isPresent()) {
+		ui->portComboBox->addItem("PCI-DIO24 - Measurement Computing");
+	}
+
     const auto infos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &info : infos) {
         ui->portComboBox->addItem(info.portName());
@@ -22,14 +28,20 @@ void configWindow::on_refreshPortButton_clicked()
 
 void configWindow::on_portComboBox_activated(const QString &arg1)
 {
-    Arenomat arenomat(logger, arg1);
-    ui->portStatusLabel->setText("STATUS: CHECKING...");
-    ui->portStatusLabel->repaint();
-    if (arenomat.check()){
-        ui->portStatusLabel->setText("STATUS: WORKING!");
-    } else {
-        ui->portStatusLabel->setText("STATUS: NOT WORKING");
-    }
+	if (ui->portComboBox->currentIndex() > 0) {
+		Arenomat arenomat(logger, arg1);
+		ui->portStatusLabel->setText("STATUS: CHECKING...");
+		ui->portStatusLabel->repaint();
+		if (arenomat.check()) {
+			ui->portStatusLabel->setText("STATUS: WORKING!");
+		}
+		else {
+			ui->portStatusLabel->setText("STATUS: NOT WORKING");
+		}
+	}
+	else {
+		ui->portStatusLabel->setText("STATUS: N/A");
+	}
 }
 
 void configWindow::on_modeComboBox_activated(int index)

@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include "arenomat.h"
 #include "dummyhardware.h"
+#include "dio24.h"
 
 #define LIGHT_LIMIT 500
 
@@ -88,7 +89,7 @@ Experiment::Experiment(QMap<QString, QVariant> *settings, Logger* logger, QObjec
 	experimentLogger.reset(new ExperimentLogger(shock, arena, areas, counters, actions));
 	connect(this, SIGNAL(update(ExperimentState)), experimentLogger.get(), SLOT(add(ExperimentState)));
 
-	serialPort = settings->value("hardware/serialPort").toString();
+	hardwareDevice = settings->value("hardware/device").toString();
 
 	for (Counter counter : counters) {
 		triggerStates[counter.id] = TriggerState::OFF;
@@ -109,7 +110,12 @@ bool Experiment::start() {
 	experimentLogger->setStart(QDateTime::currentMSecsSinceEpoch());
 
 	if (isLive) {
-		hardware.reset(new Arenomat(logger, serialPort));
+		if (hardwareDevice.startsWith("PCI-DIO24")) {
+			hardware.reset(new DIO24(logger));
+		}
+		else {
+			hardware.reset(new Arenomat(logger, hardwareDevice));
+		}
 	}
 	else {
 		hardware.reset(new DummyHardware(logger));

@@ -270,6 +270,9 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="experiment\dio24.cpp">
+      <Filter>Sources\hardware</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gui\actions_area_robot_dialog.h">
@@ -418,6 +421,9 @@
     </ClInclude>
     <ClInclude Include="build\GeneratedFiles\ui_logwindow.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="experiment\dio24.h">
+      <Filter>Sources\hardware</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

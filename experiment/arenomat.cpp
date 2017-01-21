@@ -24,12 +24,12 @@ Arenomat::Arenomat(Logger* logger, QString port) : AbstractHardware(logger)
 	connect(&serial, SIGNAL(readyRead()), this, SLOT(handleData()));
 	serial.setPortName(port);
 	serial.open(QIODevice::ReadWrite);
-	logger->log("Hardware connection initialized.");
+	logger->log("Arenomat connection initialized.");
 }
 
 Arenomat::~Arenomat() {
 	serial.close();
-	logger->log("Hardware connection terminated.");
+	logger->log("Arenomat connection terminated.");
 }
 
 void Arenomat::handleData() {
@@ -82,7 +82,6 @@ void Arenomat::setShock(int level) {
 
 void Arenomat::setSync(bool state) {
 	state = state;
-	// TODO
 }
 
 void Arenomat::shutdown() {

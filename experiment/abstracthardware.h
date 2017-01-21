@@ -16,10 +16,6 @@ public:
 	virtual void setSync(bool state) = 0;
 	virtual void shutdown() = 0;
 
-signals:
-
-	public slots :
-
 protected:
 	Logger* logger;
 };

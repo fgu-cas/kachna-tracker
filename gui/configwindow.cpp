@@ -165,7 +165,7 @@ void configWindow::load(Settings settings)
 
 	ui->updateBox->setValue(settings.value("system/updateInterval").toInt());
 
-	ui->portComboBox->setCurrentText(settings.value("hardware/serialPort").toString());
+	ui->portComboBox->setCurrentText(settings.value("hardware/device").toString());
 	on_portComboBox_activated(ui->portComboBox->currentText());
 
 	clearAllActions();
@@ -280,7 +280,7 @@ Settings configWindow::compileSettings()
 	settings.insert("shock/ShockDuration", ui->durationBox->value());
 	settings.insert("shock/OutsideRefractory", ui->refractoryBox->value());
 
-	settings.insert("hardware/serialPort", ui->portComboBox->currentText());
+	settings.insert("hardware/device", ui->portComboBox->currentText());
 
 	settings.insert("actions/areas", QVariant::fromValue(getAreasFromUI()));
 	settings.insert("actions/actions", QVariant::fromValue(getActionsFromUI()));
