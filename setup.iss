@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Kachna Tracker"
-#define MyAppVersion "3.3"
+#define MyAppVersion "4.0.1"
 #define MyAppPublisher "Tomáš Mládek"
 #define MyAppURL "https://github.com/fgu-cas/kachna-tracker"
 #define MyAppExeName "kachna-tracker.exe"
@@ -39,7 +39,8 @@ Source: "..\opencv\build\install\x64\vc14\bin\opencv_core2413.dll"; DestDir: "{a
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_features2d2413.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_highgui2413.dll"; DestDir: "{app}"; 
 Source: "..\opencv\build\install\x64\vc14\bin\opencv_imgproc2413.dll"; DestDir: "{app}";
-Source: "..\opencv\build\install\x64\vc14\bin\opencv_flann2413.dll"; DestDir: "{app}"; 
+Source: "..\opencv\build\install\x64\vc14\bin\opencv_flann2413.dll"; DestDir: "{app}";
+Source: "..\cbw64.dll"; DestDir: "{app}"; 
 Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Core.dll"; DestDir: "{app}"; 
 Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Gui.dll"; DestDir: "{app}"; 
 Source: "D:\Qt\5.7\msvc2015_64\bin\Qt5Widgets.dll"; DestDir: "{app}";
