@@ -217,6 +217,7 @@ Detector::pointPair DetectorColor::find(Mat *frame) {
 		result.rat.angle = fmod(result.rat.angle + 270, 360);
 		result.rat.size = 1;
 		result.rat.class_id = DetectedPoint::RAT;
+		result.rat.valid = true;
 	}
 
 	if (robot_front.size > 0 && robot_back.size > 0) {
@@ -227,6 +228,7 @@ Detector::pointPair DetectorColor::find(Mat *frame) {
 		result.robot.angle = fmod(result.robot.angle + 270, 360);
 		result.robot.size = 1;
 		result.robot.class_id = DetectedPoint::ROBOT;
+		result.robot.valid = true;
 	}
 
 	return result;

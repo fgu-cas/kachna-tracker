@@ -348,8 +348,8 @@ void kachnatracker::drawUpdate() {
 					showPainter->drawEllipse(robot, radius, radius);
 				}
 				else {
-					int distance = currentSettings.value("shock/offsetDistance").toInt();
-					int angle = currentSettings.value("shock/offsetAngle").toInt();
+					int distance = area.distance;
+					int angle = area.angle;
 					QPoint shockPoint;
 					shockPoint.setX(robot.x() + distance *
 						sin((angle + lastUpdate.robot.angle)*CV_PI / 180));

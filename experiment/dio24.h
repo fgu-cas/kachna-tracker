@@ -17,7 +17,6 @@ public:
 	static bool isPresent();
 
 private:
-	Logger* logger = 0;
 	int state = 0;
 };
 

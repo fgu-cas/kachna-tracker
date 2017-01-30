@@ -126,7 +126,7 @@ bool Experiment::start() {
 		return false;
 	}
 
-	if (isLive && arenaDirection > 0) {
+	if (isLive && arenaDirection > 0 && !hardwareDevice.startsWith("PCI-DIO24")) {
 		Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
 		mat->setTurntableDirection(arenaDirection);
 		mat->setTurntablePWM(arenaPWM);
