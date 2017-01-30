@@ -66,7 +66,7 @@ Experiment::Experiment(QMap<QString, QVariant> *settings, Logger* logger, QObjec
 	if (direction == "CW") {
 		arenaDirection = 1;
 	}
-	else if (direction == "CCw") {
+	else if (direction == "CCW") {
 		arenaDirection = 2;
 	}
 	else {
