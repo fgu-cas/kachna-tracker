@@ -19,6 +19,7 @@ public:
 	void setSync(bool state);
 	void shutdown();
 
+	void toggleLight();
 	void setLight(bool state);
 	void setTurntableDirection(int direction);
 	void setTurntableSpeed(int speed);
@@ -36,6 +37,7 @@ private:
 	QSerialPort serial;
 	QByteArray buffer;
 	void handleMessage(QByteArray command);
+	bool currentLight = false;
 
 	private slots:
 	void handleData();
