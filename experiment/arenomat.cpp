@@ -92,6 +92,17 @@ void Arenomat::shutdown() {
 	logger->log("{HW} Shutdown issued");
 }
 
+void Arenomat::toggleLight() {
+	QByteArray command(3, 0x00);
+	command[0] = LED;
+	command[1] = !currentLight;
+
+	serial.write(command);
+	logger->log(QString("{HW} Light set to %1").arg(!currentLight));
+
+	currentLight = !currentLight;
+}
+
 void Arenomat::setLight(bool state) {
 	QByteArray command(3, 0x00);
 	command[0] = LED;
@@ -99,6 +110,8 @@ void Arenomat::setLight(bool state) {
 
 	serial.write(command);
 	logger->log(QString("{HW} Light set to %1").arg(state));
+
+	currentLight = state;
 }
 
 void Arenomat::setTurntableDirection(int direction) {

@@ -363,6 +363,12 @@ void Experiment::processFrame() {
 						}
 					}
 					break;
+				case Action::LIGHT:
+					if (triggerStates[trigger] != TriggerState::RISING) continue;
+					if (isLive) {
+						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+						mat->toggleLight();
+					}
 				case Action::FEEDER:
 					if (triggerStates[trigger] != TriggerState::RISING) continue;
 					if (isLive) {
