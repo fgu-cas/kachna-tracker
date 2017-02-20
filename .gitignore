@@ -12,6 +12,11 @@
 *.la
 *.a
 
+# VS files
+.vs
+*.VC.db
+*.vcxproj.user
+
 # Qt Creator user files
 *.pro.user*
 
@@ -23,3 +28,4 @@ build
 
 # Third party files
 cbw.h
+cbw64.lib
