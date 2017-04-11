@@ -72,11 +72,6 @@ QString ExperimentLogger::get(qint64 elapsedTime) {
 			.arg(counter.singleShot ? 1 : 0).arg(counter.period).arg(counter.limit);
 	}
 
-	for (Counter counter : counters) {
-		log += QString("  %Counter ( %1 %2 %3 %4 %5 )\r\n").arg(index++).arg(counter.active ? 1 : 0)
-			.arg(counter.singleShot ? 1 : 0).arg(counter.period).arg(counter.limit);
-	}
-
 	for (Action action : actions) {
 		QString actionLine("  %Action ( %1 %2 %3 )\r\n");
 		actionLine = actionLine.arg(action.trigger);
