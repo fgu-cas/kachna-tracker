@@ -132,6 +132,28 @@ bool Experiment::start() {
 		mat->setTurntablePWM(arenaPWM);
 	}
 
+	logger->log("Running pre-experiment (light) triggers", Logger::INFO);
+	for (Action action : actions) {
+		if (action.trigger != "[START]") {
+			continue;
+		}
+		switch (action.type) {
+		case Action::LIGHT_ON:
+			if (isLive) {
+				Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+				mat->setLight(true);
+			}
+			break;
+		case Action::LIGHT_OFF:
+			if (isLive) {
+				Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+				mat->setLight(false);
+			}
+			break;
+		default:
+			logger->log("Unimplemented [START] action!", Logger::WARN);
+		}
+	}
 	logger->log("Experiment started", Logger::INFO);
 	return true;
 }
@@ -157,6 +179,8 @@ void Experiment::processFrame() {
 	// Output sync signal
 	if (synchOut) hardware->setSync(!synchInv);
 
+	QStringList activeTriggers;
+
 	// Process counters
 	for (int i = 0; i < counters.size(); i++) {
 		Counter& counter = counters[i];
@@ -166,6 +190,7 @@ void Experiment::processFrame() {
 			counter.value++;
 		}
 		if (counter.value > counter.limit) {
+			activeTriggers.append(counter.id);
 			counter.value = 0;
 			if (counter.singleShot) {
 				counter.active = false;
@@ -174,6 +199,15 @@ void Experiment::processFrame() {
 			else {
 				logger->log(QString("Counter \"%1\" hit limit, resetting").arg(counter.id));
 			}
+			if (triggerStates[counter.id] == TriggerState::OFF) {
+				triggerStates[counter.id] = TriggerState::RISING;
+			}
+			else if (triggerStates[counter.id] == TriggerState::RISING) {
+				triggerStates[counter.id] = TriggerState::ON;
+			}
+		}
+		else {
+			triggerStates[counter.id] = TriggerState::OFF;
 		}
 	}
 
@@ -217,7 +251,6 @@ void Experiment::processFrame() {
 	lastKeypoints = points;
 
 	// Find active triggers
-	QStringList activeTriggers;
 	bool found;
 	if (badFrame) {
 		stats.badFrames++;
@@ -231,22 +264,6 @@ void Experiment::processFrame() {
 	}
 	else {
 		stats.goodFrames++;
-
-		for (int i = 0; i < counters.size(); i++) {
-			Counter counter = counters.at(i);
-			if (counter.value >= counter.limit) {
-				activeTriggers.append(counter.id);
-				if (triggerStates[counter.id] == TriggerState::OFF) {
-					triggerStates[counter.id] = TriggerState::RISING;
-				}
-				else if (triggerStates[counter.id] == TriggerState::RISING) {
-					triggerStates[counter.id] = TriggerState::ON;
-				}
-			}
-			else {
-				triggerStates[counter.id] = TriggerState::OFF;
-			}
-		}
 
 		for (int i = 0; i < areas.size(); i++) {
 			Area area = areas.at(i);
@@ -308,6 +325,7 @@ void Experiment::processFrame() {
 				case Action::ENABLE:
 				case Action::DISABLE:
 				{
+					if (triggerStates[trigger] != TriggerState::RISING) continue;
 					bool found = false;
 					for (int k = 0; k < areas.size(); k++) {
 						Area& area = areas[k];
@@ -370,12 +388,14 @@ void Experiment::processFrame() {
 						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
 						mat->setLight(true);
 					}
+					break;
 				case Action::LIGHT_OFF:
 					if (triggerStates[trigger] != TriggerState::RISING) continue;
 					if (isLive) {
 						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
 						mat->setLight(false);
 					}
+					break;
 				case Action::FEEDER:
 					if (triggerStates[trigger] != TriggerState::RISING) continue;
 					if (isLive) {
