@@ -99,8 +99,11 @@ QString ExperimentLogger::get(qint64 elapsedTime) {
 		case action.SOUND:
 			actionLine = actionLine.arg("SOUND");
 			break;
-		case action.LIGHT:
-			actionLine = actionLine.arg("LIGHT");
+		case action.LIGHT_ON:
+			actionLine = actionLine.arg("LIGHT_ON");
+			break;
+		case action.LIGHT_OFF:
+			actionLine = actionLine.arg("LIGHT_OFF");
 			break;
 		case action.FEEDER:
 			actionLine = actionLine.arg("FEEDER");

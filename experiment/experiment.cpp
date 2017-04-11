@@ -131,6 +131,7 @@ bool Experiment::start() {
 		mat->setTurntableDirection(arenaDirection);
 		mat->setTurntablePWM(arenaPWM);
 	}
+
 	logger->log("Experiment started", Logger::INFO);
 	return true;
 }
@@ -363,11 +364,17 @@ void Experiment::processFrame() {
 						}
 					}
 					break;
-				case Action::LIGHT:
+				case Action::LIGHT_ON:
 					if (triggerStates[trigger] != TriggerState::RISING) continue;
 					if (isLive) {
 						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
-						mat->toggleLight();
+						mat->setLight(true);
+					}
+				case Action::LIGHT_OFF:
+					if (triggerStates[trigger] != TriggerState::RISING) continue;
+					if (isLive) {
+						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+						mat->setLight(false);
 					}
 				case Action::FEEDER:
 					if (triggerStates[trigger] != TriggerState::RISING) continue;

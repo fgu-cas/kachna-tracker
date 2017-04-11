@@ -66,7 +66,8 @@ struct Action {
 		COUNTER_DEC,
 		COUNTER_SET,
 		SOUND,
-		LIGHT,
+		LIGHT_ON,
+		LIGHT_OFF,
 		FEEDER
 	} type;
 	QString target;
