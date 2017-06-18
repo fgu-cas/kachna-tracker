@@ -122,7 +122,7 @@ private:
 	void showEvent(QShowEvent *);
 	QString videoFilename;
 
-	QStringListModel actionTriggers;
+	QStringListModel triggerNames;
 
 	QMap<int, Action> partialActions;
 	QMap<int, Area> partialAreas;
@@ -130,6 +130,10 @@ private:
 	QList<Action> getActionsFromUI();
 	QList<Area> getAreasFromUI();
 	QList<Counter> getCountersFromUI();
+
+	QList<int> triggerIndexes;
+	void saveTriggers();
+	void restoreTriggers();
 };
 
 #endif // CONFIGWINDOW_H

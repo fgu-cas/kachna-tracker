@@ -11,13 +11,13 @@
 
 void configWindow::addAction(){
     Action action;
-    action.target = actionTriggers.stringList().at(0);
+    action.target = triggerNames.stringList().at(0);
     addAction(action);
 }
 
 void configWindow::addAction(Action action){
     QComboBox* triggerComboBox = new QComboBox(this);
-    triggerComboBox->setModel(&actionTriggers);
+    triggerComboBox->setModel(&triggerNames);
     triggerComboBox->setCurrentText(action.trigger);
     QComboBox* actionType = new QComboBox(this);
     actionType->addItem("Shock");
@@ -76,9 +76,11 @@ void configWindow::addArea(){
 }
 
 void configWindow::addArea(Area area){
-    QStringList list = actionTriggers.stringList();
+	saveTriggers();
+    QStringList list = triggerNames.stringList();
     list.append(area.id);
-    actionTriggers.setStringList(list);
+    triggerNames.setStringList(list);
+	restoreTriggers();
 
     QLineEdit* titleEdit = new QLineEdit(area.id, this);
     connect(titleEdit, SIGNAL(textEdited(QString)), this, SLOT(triggersChanged(QString)));
@@ -113,9 +115,11 @@ void configWindow::addCounter(){
 }
 
 void configWindow::addCounter(Counter counter){
-    QStringList list = actionTriggers.stringList();
+	saveTriggers();
+    QStringList list = triggerNames.stringList();
     list.append(counter.id);
-    actionTriggers.setStringList(list);
+    triggerNames.setStringList(list);
+	restoreTriggers();
 
     QLineEdit* titleEdit = new QLineEdit(counter.id, this);
     connect(titleEdit, SIGNAL(textEdited(QString)), this, SLOT(triggersChanged(QString)));
@@ -165,11 +169,11 @@ void configWindow::actionActionSetPressed(){
     ui->actionLayout->getItemPosition(index, &row, &x, &x, &x);
     QComboBox* box = qobject_cast<QComboBox*>(ui->actionLayout->itemAtPosition(row, 1)->widget());
     if (box->currentIndex() == 1){
-        ActionEnableDisableDialog dialog(actionTriggers, row, partialActions[row], this);
+        ActionEnableDisableDialog dialog(triggerNames, row, partialActions[row], this);
         connect(&dialog, SIGNAL(update(int,Action)), this, SLOT(actionUpdate(int,Action)));
         dialog.exec();
     } else if (box->currentIndex() == 2){
-        ActionModifyCounterDialog dialog(actionTriggers, row, partialActions[row], this);
+        ActionModifyCounterDialog dialog(triggerNames, row, partialActions[row], this);
         connect(&dialog, SIGNAL(update(int,Action)), this, SLOT(actionUpdate(int,Action)));
         dialog.exec();
     } else if (box->currentIndex() == 4){
@@ -204,9 +208,11 @@ void configWindow::removeThisCounterRow(){
         QLayoutItem* item = ui->counterLayout->itemAtPosition(row, i);
         delete item->widget();
     }
-    QStringList list = actionTriggers.stringList();
+	saveTriggers();
+    QStringList list = triggerNames.stringList();
     list.removeOne(id);
-    actionTriggers.setStringList(list);
+    triggerNames.setStringList(list);
+	restoreTriggers();
 }
 
 void configWindow::removeThisAreaRow(){
@@ -219,10 +225,11 @@ void configWindow::removeThisAreaRow(){
         QLayoutItem* item = ui->areaLayout->itemAtPosition(row, i);
         delete item->widget();
     }
-    QStringList list = actionTriggers.stringList();
+	saveTriggers();
+    QStringList list = triggerNames.stringList();
     list.removeOne(id);
-    actionTriggers.setStringList(list);
-
+    triggerNames.setStringList(list);
+	restoreTriggers();
     partialAreas.remove(row);
 }
 
@@ -266,16 +273,16 @@ void configWindow::triggersChanged(QString id){
         partialAreas[row].id = id;
     }
 
+    //// TODO: fix so that all fields get updated
+    //if (oldList.contains(id)){
+    //    sender->setStyleSheet("QLineEdit { color: red; }");
+    //} else {
+    //    sender->setStyleSheet("QLineEdit { color: black; }");
+    //}
 
-    QStringList oldList = actionTriggers.stringList();
+	saveTriggers();
 
-    // TODO: fix so that all fields get updated
-    if (oldList.contains(id)){
-        sender->setStyleSheet("QLineEdit { color: red; }");
-    } else {
-        sender->setStyleSheet("QLineEdit { color: black; }");
-    }
-
+	QStringList oldList = triggerNames.stringList();
     QStringList newList;
     newList.append("[START]");
     newList.append("[END]");
@@ -298,7 +305,9 @@ void configWindow::triggersChanged(QString id){
         }
     }
 
-    actionTriggers.setStringList(newList);
+    triggerNames.setStringList(newList);
+
+	restoreTriggers();
 }
 
 void configWindow::areaUpdate(int row, Area area){
@@ -307,6 +316,30 @@ void configWindow::areaUpdate(int row, Area area){
 
 void configWindow::actionUpdate(int row, Action action){
     partialActions[row] = action;
+}
+
+void configWindow::saveTriggers(){
+	triggerIndexes.clear();
+	for (int i = ui->actionLayout->columnCount(); i < ui->actionLayout->count(); i++) {
+		int col, x;
+		ui->actionLayout->getItemPosition(i, &x, &col, &x, &x);
+		if (col == 0) {
+			QComboBox* box = qobject_cast<QComboBox*>(ui->actionLayout->itemAt(i)->widget());
+			triggerIndexes.append(box->currentIndex());
+		}
+	}
+}
+
+void configWindow::restoreTriggers(){
+	int triggerIndex = 0;
+	for (int i = ui->actionLayout->columnCount(); i < ui->actionLayout->count(); i++) {
+		int col, x;
+		ui->actionLayout->getItemPosition(i, &x, &col, &x, &x);
+		if (col == 0) {
+			QComboBox* box = qobject_cast<QComboBox*>(ui->actionLayout->itemAt(i)->widget());
+			box->setCurrentIndex(triggerIndexes.at(triggerIndex++));
+		}
+	}
 }
 
 QList<Action> configWindow::getActionsFromUI(){

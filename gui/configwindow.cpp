@@ -52,7 +52,7 @@ configWindow::configWindow(Logger* logger, QWidget *parent) :
 	QStringList list;
 	list.append("[START]");
 	list.append("[END]");
-	actionTriggers.setStringList(list);
+	triggerNames.setStringList(list);
 
 	ui->ratBackSelector->setVisible(false);
 	ui->robotBackSelector->setVisible(false);
