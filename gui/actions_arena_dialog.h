@@ -1,8 +1,7 @@
-#ifndef ACTION_ARENA_DIALOG_H
-#define ACTION_ARENA_DIALOG_H
+#ifndef ACTIONARENADIALOG_H
+#define ACTIONARENADIALOG_H
 
 #include <QDialog>
-#include <QStringListModel>
 #include "params.h"
 
 namespace Ui {
@@ -14,7 +13,7 @@ class ActionArenaDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ActionArenaDialog(int row, Action action, QWidget *parent);
+	explicit ActionArenaDialog(int row, Action action, QWidget *parent = 0);
 	~ActionArenaDialog();
 signals:
 	void update(int, Action);
@@ -25,4 +24,4 @@ private:
 	void closeEvent(QCloseEvent*);
 };
 
-#endif // ACTION_MODIFY_COUNTER_DIALOG_H
+#endif // ACTIONARENADIALOG_H

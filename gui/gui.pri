@@ -16,7 +16,7 @@ SOURCES += $$PWD/configwindow.cpp \
     $$PWD/shocksectorlabel.cpp \
     $$PWD/actions_modifycounter_dialog.cpp \
     $$PWD/actions_enabledisabledialog.cpp \
-    $$PWD/actionssounddialog.cpp \
+	$$PWD/actions_arena_dialog.cpp \
     $$PWD/debugwindow.cpp
 
 HEADERS  += $$PWD/configwindow.h \
@@ -30,7 +30,7 @@ HEADERS  += $$PWD/configwindow.h \
     $$PWD/shocksectorlabel.h \
     $$PWD/actions_modifycounter_dialog.h \
     $$PWD/actions_enabledisabledialog.h \
-    $$PWD/actionssounddialog.h \
+	$$PWD/actions_arena_dialog.h \
     $$PWD/debugwindow.h
 
 FORMS    += $$PWD/configwindow.ui \
@@ -39,7 +39,7 @@ FORMS    += $$PWD/configwindow.ui \
     $$PWD/actions_area_sector_dialog.ui \
     $$PWD/actions_modifycounter_dialog.ui \
     $$PWD/actions_enabledisabledialog.ui \
-    $$PWD/actionssounddialog.ui \
+	$$PWD/actions_arena_dialog.ui \
     $$PWD/debugwindow.ui
 
 RESOURCES += \

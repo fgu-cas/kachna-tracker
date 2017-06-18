@@ -6,7 +6,7 @@
 #include "actions_area_robot_dialog.h"
 #include "actions_modifycounter_dialog.h"
 #include "actions_enabledisabledialog.h"
-#include "actionssounddialog.h"
+#include "actions_arena_dialog.h"
 #include "actions_arena_dialog.h"
 
 void configWindow::addAction(){
@@ -177,7 +177,7 @@ void configWindow::actionActionSetPressed(){
         //dialog.exec();
 	}
 	else if (box->currentIndex() == 6) {
-		ActionsSoundDialog dialog(row, partialActions[row], this);
+		ActionArenaDialog dialog(row, partialActions[row], this);
 		connect(&dialog, SIGNAL(update(int, Action)), this, SLOT(actionUpdate(int, Action)));
 		dialog.exec();
 	}

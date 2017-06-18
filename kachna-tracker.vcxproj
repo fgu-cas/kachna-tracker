@@ -142,13 +142,16 @@
     <ClCompile Include="build\x64\Debug\moc_abstracthardware.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="build\x64\Debug\moc_actionssounddialog.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="build\x64\Debug\moc_actions_area_robot_dialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="build\x64\Debug\moc_actions_area_sector_dialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="build\x64\Debug\moc_actions_arena_dialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="build\x64\Debug\moc_actions_counterwidget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="build\x64\Debug\moc_actions_enabledisabledialog.cpp">
@@ -205,13 +208,16 @@
     <ClCompile Include="build\x64\Release\moc_abstracthardware.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="build\x64\Release\moc_actionssounddialog.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="build\x64\Release\moc_actions_area_robot_dialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="build\x64\Release\moc_actions_area_sector_dialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="build\x64\Release\moc_actions_arena_dialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="build\x64\Release\moc_actions_counterwidget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="build\x64\Release\moc_actions_enabledisabledialog.cpp">
@@ -269,9 +275,10 @@
     <ClCompile Include="experiment\dio24.cpp" />
     <ClCompile Include="gui\actions_area_robot_dialog.cpp" />
     <ClCompile Include="gui\actions_area_sector_dialog.cpp" />
+    <ClCompile Include="gui\actions_arena_dialog.cpp" />
+    <ClCompile Include="gui\actions_counterwidget.cpp" />
     <ClCompile Include="gui\actions_enabledisabledialog.cpp" />
     <ClCompile Include="gui\actions_modifycounter_dialog.cpp" />
-    <ClCompile Include="gui\actionssounddialog.cpp" />
     <ClCompile Include="experiment\arenomat.cpp" />
     <ClCompile Include="gui\configwindow.cpp" />
     <ClCompile Include="gui\counterwindow.cpp" />
@@ -294,6 +301,26 @@
     <ClCompile Include="gui\shocksectorlabel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="gui\actions_counterwidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing actions_counterwidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL -D_UNICODE "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing actions_counterwidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
+    </CustomBuild>
+    <CustomBuild Include="gui\actions_arena_dialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing actions_arena_dialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL -D_UNICODE "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing actions_arena_dialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
+    </CustomBuild>
     <CustomBuild Include="Logger.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing Logger.h...</Message>
@@ -334,7 +361,6 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
-    <ClInclude Include="build\GeneratedFiles\ui_actionssounddialog.h" />
     <ClInclude Include="build\GeneratedFiles\ui_actions_area_robot_dialog.h" />
     <ClInclude Include="build\GeneratedFiles\ui_actions_area_sector_dialog.h" />
     <ClInclude Include="build\GeneratedFiles\ui_actions_arena_dialog.h" />
@@ -380,16 +406,6 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing actions_modifycounter_dialog.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL -D_UNICODE  "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing actions_modifycounter_dialog.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-    </CustomBuild>
-    <CustomBuild Include="gui\actionssounddialog.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DNDEBUG -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL  "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing actionssounddialog.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_DLL -D_UNICODE  "-I." "-I.\gui" "-I.\experiment" "-I.\..\opencv\build\include" "-I.\..\..\Qt\5.7\msvc2015_64\include" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtGui" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtSerialPort" "-I.\..\..\Qt\5.7\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\5.7\msvc2015_64\mkspecs\win32-msvc2015" "-I.\build\$(PlatformName)\$(ConfigurationName)\." "-I.\build\GeneratedFiles" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtSerialPort"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing actionssounddialog.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\build\$(PlatformName)\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -556,17 +572,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="gui\actions_modifycounter_dialog.ui">
-      <FileType>Document</FileType>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\build\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\build\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\build\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\build\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="gui\actionssounddialog.ui">
       <FileType>Document</FileType>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\build\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>

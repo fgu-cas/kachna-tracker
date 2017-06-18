@@ -159,12 +159,6 @@
     <ClCompile Include="build\x64\Release\moc_actions_area_robot_dialog.cpp">
       <Filter>Generated Files\Release_x64</Filter>
     </ClCompile>
-    <ClCompile Include="build\x64\Debug\moc_actionssounddialog.cpp">
-      <Filter>Generated Files\Debug_x64</Filter>
-    </ClCompile>
-    <ClCompile Include="build\x64\Release\moc_actionssounddialog.cpp">
-      <Filter>Generated Files\Release_x64</Filter>
-    </ClCompile>
     <ClCompile Include="build\x64\Debug\moc_abstracthardware.cpp">
       <Filter>Generated Files\Debug_x64</Filter>
     </ClCompile>
@@ -197,9 +191,6 @@
     </ClCompile>
     <ClCompile Include="experiment\abstracthardware.cpp">
       <Filter>Sources\hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\actionssounddialog.cpp">
-      <Filter>Sources\gui\actions</Filter>
     </ClCompile>
     <ClCompile Include="experiment\arenomat.cpp">
       <Filter>Sources\hardware</Filter>
@@ -273,6 +264,24 @@
     <ClCompile Include="experiment\dio24.cpp">
       <Filter>Sources\hardware</Filter>
     </ClCompile>
+    <ClCompile Include="gui\actions_arena_dialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Debug\moc_actions_arena_dialog.cpp">
+      <Filter>Generated Files\Debug_x64</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Release\moc_actions_arena_dialog.cpp">
+      <Filter>Generated Files\Release_x64</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\actions_counterwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Debug\moc_actions_counterwidget.cpp">
+      <Filter>Generated Files\Debug_x64</Filter>
+    </ClCompile>
+    <ClCompile Include="build\x64\Release\moc_actions_counterwidget.cpp">
+      <Filter>Generated Files\Release_x64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gui\actions_area_robot_dialog.h">
@@ -329,6 +338,12 @@
     <CustomBuild Include="gui\actions_arena_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="gui\actions_arena_dialog.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="gui\actions_counterwidget.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gui\actions_area_robot_dialog.ui">
@@ -341,9 +356,6 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="gui\actions_modifycounter_dialog.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="gui\actionssounddialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="gui\configwindow.ui">
@@ -368,9 +380,6 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="gui\actions_modifycounter_dialog.h">
-      <Filter>Sources\gui\actions</Filter>
-    </CustomBuild>
-    <CustomBuild Include="gui\actionssounddialog.h">
       <Filter>Sources\gui\actions</Filter>
     </CustomBuild>
     <CustomBuild Include="gui\counterwindow.hpp">
@@ -402,9 +411,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="build\GeneratedFiles\ui_actions_modifycounter_dialog.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="build\GeneratedFiles\ui_actionssounddialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="build\GeneratedFiles\ui_configwindow.h">
