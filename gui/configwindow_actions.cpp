@@ -7,6 +7,7 @@
 #include "actions_modifycounter_dialog.h"
 #include "actions_enabledisabledialog.h"
 #include "actionssounddialog.h"
+#include "actions_arena_dialog.h"
 
 void configWindow::addAction(){
     Action action;
@@ -26,6 +27,7 @@ void configWindow::addAction(Action action){
 	actionType->addItem("Light OFF");
     //actionType->addItem("Sound");
     actionType->addItem("Feeder");
+	actionType->addItem("Arena");
     switch (action.type) {
         case Action::SHOCK:
             actionType->setCurrentIndex(0);
@@ -50,6 +52,9 @@ void configWindow::addAction(Action action){
 			break;
         case Action::FEEDER:
             actionType->setCurrentIndex(5);
+			break;
+		case Action::ARENA:
+			actionType->setCurrentIndex(6);
     }
     QPushButton* setButton = new QPushButton("Set...", this);
     connect(setButton, SIGNAL(clicked(bool)), this, SLOT(actionActionSetPressed()));
@@ -168,9 +173,14 @@ void configWindow::actionActionSetPressed(){
         connect(&dialog, SIGNAL(update(int,Action)), this, SLOT(actionUpdate(int,Action)));
         dialog.exec();
     } else if (box->currentIndex() == 4){
-        ActionsSoundDialog dialog(this);
-        dialog.exec();
-    }
+        //ActionsSoundDialog dialog(this);
+        //dialog.exec();
+	}
+	else if (box->currentIndex() == 6) {
+		ActionsSoundDialog dialog(row, partialActions[row], this);
+		connect(&dialog, SIGNAL(update(int, Action)), this, SLOT(actionUpdate(int, Action)));
+		dialog.exec();
+	}
 }
 
 void configWindow::removeThisActionRow(){
@@ -321,11 +331,14 @@ QList<Action> configWindow::getActionsFromUI(){
 			case 5:
 				action.type = Action::FEEDER;
 				break;
+			case 6:
+				action.type = Action::ARENA;
             default:
                 action.type = partialActions[row].type;
                 break;
             }
             action.target = partialActions[row].target;
+			action.arg = partialActions[row].arg;
             result.append(action);
         }
     }

@@ -2,6 +2,7 @@
 #define ACTIONSSOUNDDIALOG_H
 
 #include <QDialog>
+#include "params.h"
 
 namespace Ui {
 	class ActionsSoundDialog;
@@ -12,14 +13,15 @@ class ActionsSoundDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ActionsSoundDialog(QWidget *parent = 0);
+	explicit ActionsSoundDialog(int row, Action action, QWidget *parent = 0);
 	~ActionsSoundDialog();
-
-	private slots:
-	void on_comboBox_currentIndexChanged(int index);
-
+signals:
+	void update(int, Action);
 private:
 	Ui::ActionsSoundDialog *ui;
+	int row;
+
+	void closeEvent(QCloseEvent*);
 };
 
 #endif // ACTIONSSOUNDDIALOG_H

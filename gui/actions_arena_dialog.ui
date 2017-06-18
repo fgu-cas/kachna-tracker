@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ActionsSoundDialog</class>
- <widget class="QDialog" name="ActionsSoundDialog">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>113</height>
+    <width>244</width>
+    <height>73</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Sound</string>
+   <string>Dialog</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Arena speed:</string>
+      <string>Arena speed</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QSpinBox" name="argSpinBox">
+    <widget class="QSpinBox" name="spinBox">
      <property name="maximum">
       <number>255</number>
      </property>

@@ -404,6 +404,12 @@ void Experiment::processFrame() {
 					}
 					stats.feederCount++;
 					break;
+				case Action::ARENA:
+					if (triggerStates[trigger] != TriggerState::RISING) continue;
+					if (isLive) {
+						Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+						mat->setTurntablePWM(action.arg);
+					}
 				}
 			}
 		}

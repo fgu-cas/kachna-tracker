@@ -326,6 +326,9 @@
     <CustomBuild Include="Logger.h">
       <Filter>Sources</Filter>
     </CustomBuild>
+    <CustomBuild Include="gui\actions_arena_dialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gui\actions_area_robot_dialog.ui">
@@ -424,6 +427,9 @@
     </ClInclude>
     <ClInclude Include="experiment\dio24.h">
       <Filter>Sources\hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="build\GeneratedFiles\ui_actions_arena_dialog.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

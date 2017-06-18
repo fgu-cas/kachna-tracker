@@ -68,7 +68,8 @@ struct Action {
 		SOUND,
 		LIGHT_ON,
 		LIGHT_OFF,
-		FEEDER
+		FEEDER,
+		ARENA
 	} type;
 	QString target;
 	int arg = 0;
