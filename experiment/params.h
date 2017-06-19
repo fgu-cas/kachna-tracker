@@ -1,7 +1,7 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#define KACHNA_VERSION "Kachna Tracker v5.0.0 (2017/01)"
+#define KACHNA_VERSION "Kachna Tracker v5.0.1 (2017/06)"
 #define MAJOR_VERSION 5
 
 #include <QString>

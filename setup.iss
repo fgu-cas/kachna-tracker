@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Kachna Tracker"
-#define MyAppVersion "4.0.1"
+#define MyAppVersion "5.0.0"
 #define MyAppPublisher "Tomáš Mládek"
 #define MyAppURL "https://github.com/fgu-cas/kachna-tracker"
 #define MyAppExeName "kachna-tracker.exe"
