@@ -137,6 +137,11 @@ void DebugWindow::on_pulseButton_clicked()
 	}
 }
 
+void DebugWindow::on_positionButton_clicked()
+{
+	ui->positionLabel->setText(QString::number(arenomat->position()));
+}
+
 void DebugWindow::updateShock()
 {
 	if (arenomat == 0) return;

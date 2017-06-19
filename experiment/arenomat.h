@@ -40,7 +40,7 @@ private:
 	QByteArray buffer;
 	void handleMessage(QByteArray command);
 	bool currentLight = false;
-	int result;
+	int result = -2;
 
 	private slots:
 	void handleData();

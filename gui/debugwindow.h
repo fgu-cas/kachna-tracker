@@ -49,6 +49,8 @@ public:
 
 	void on_pulseButton_clicked();
 
+	void on_positionButton_clicked();
+
 	void closeEvent(QCloseEvent*);
 
 	void showEvent(QShowEvent*);

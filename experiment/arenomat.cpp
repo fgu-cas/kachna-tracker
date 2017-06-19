@@ -46,12 +46,18 @@ void Arenomat::handleMessage(QByteArray message) {
 	emit messageReceived(message);
 	if (message == "OK.") {
 		emit checkOkay();
-	}
-	if (message.at(2) == '!') {
+	} else if (message == "YA."){
+		// command alright
+	} else if (message.at(2) == '!') {
 		emit(error());
 	}
-	result = message[0] | message[1] << 8;
-	emit numberReceived();
+	else {
+		unsigned char l = message[0];
+		unsigned char h = message[1];
+		unsigned tmp = l | (h << 8);
+		result = static_cast<int>(tmp);
+		emit numberReceived();
+	}
 }
 
 bool Arenomat::check() {
@@ -177,8 +183,7 @@ void Arenomat::feed() {
 	logger->log("{HW} Feeder release issued");
 }
 
-int Arenomat::position()
-{
+int Arenomat::position(){
 	QTimer timeout;
 	timeout.setSingleShot(true);
 
@@ -189,13 +194,12 @@ int Arenomat::position()
 	QByteArray command(3, 0x00);
 	command[0] = POSITION;
 	serial.write(command);
-	timeout.start(500);
+	timeout.start(1000);
 	loop.exec();
 
-	if (timeout.isActive()) {
+	if (!timeout.isActive()) {
 		return -2;
-	}
-	else {
+	} else {
 		return result;
 	}
 }
