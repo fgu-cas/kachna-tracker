@@ -121,6 +121,7 @@ struct ExperimentState {
 	QList<Counter>counters;
 	int state;
 	int shock;
+	int position;
 };
 
 #endif // PARAMS_H

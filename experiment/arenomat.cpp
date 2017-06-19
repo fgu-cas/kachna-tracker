@@ -12,7 +12,8 @@ enum COMMANDS {
 	UPDATE_I = 43,
 	UPDATE_D = 44,
 	SET_PWM = 45,
-	FEED = 50
+	FEED = 50,
+	POSITION = 60
 };
 
 Arenomat::Arenomat(Logger* logger) : AbstractHardware(logger) {
@@ -49,6 +50,8 @@ void Arenomat::handleMessage(QByteArray message) {
 	if (message.at(2) == '!') {
 		emit(error());
 	}
+	result = message[0] | message[1] << 8;
+	emit numberReceived();
 }
 
 bool Arenomat::check() {
@@ -172,4 +175,27 @@ void Arenomat::feed() {
 
 	serial.write(command);
 	logger->log("{HW} Feeder release issued");
+}
+
+int Arenomat::position()
+{
+	QTimer timeout;
+	timeout.setSingleShot(true);
+
+	QEventLoop loop;
+	loop.connect(this, SIGNAL(numberReceived()), SLOT(quit()));
+	loop.connect(&timeout, SIGNAL(timeout()), SLOT(quit()));
+
+	QByteArray command(3, 0x00);
+	command[0] = POSITION;
+	serial.write(command);
+	timeout.start(500);
+	loop.exec();
+
+	if (timeout.isActive()) {
+		return -2;
+	}
+	else {
+		return result;
+	}
 }

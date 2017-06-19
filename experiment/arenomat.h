@@ -26,10 +26,12 @@ public:
 	void setPIDValue(int constant, double value);
 	void setTurntablePWM(uint8_t pwm);
 	void feed();
+	int position();
 
 signals:
 	void messageReceived(QByteArray message);
 	void checkOkay();
+	void numberReceived();
 	void error();
 	void communicationFail();
 
@@ -38,6 +40,7 @@ private:
 	QByteArray buffer;
 	void handleMessage(QByteArray command);
 	bool currentLight = false;
+	int result;
 
 	private slots:
 	void handleData();

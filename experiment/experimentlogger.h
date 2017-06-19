@@ -37,6 +37,7 @@ private:
 		int shock;
 		QList<Counter> counters;
 		QList<Area> areas;
+		int position;
 	};
 
 	QLinkedList<Frame> frames;

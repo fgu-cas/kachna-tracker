@@ -23,6 +23,7 @@ void ExperimentLogger::add(ExperimentState state) {
 	frame.counters = state.counters;
 	frame.areas = state.areas;
 	frame.timestamp = state.ts;
+	frame.position = state.position;
 	frames.append(frame);
 
 	if (state.robot.valid) {
@@ -127,7 +128,7 @@ QString ExperimentLogger::get(qint64 elapsedTime) {
 		}
 	}
 
-	rowLine += "State CurrentLevel ";
+	rowLine += "State CurrentLevel Position";
 
 	index = 0;
 
@@ -175,13 +176,15 @@ QString ExperimentLogger::get(qint64 elapsedTime) {
 		log += "    ";
 		log += QString::number(frame.shock);
 		log += "    ";
+		log += QString::number(frame.position);
+		log += "    ";
 
 		for (Area area : frame.areas) {
 			log += QString("%1    ").arg(area.enabled ? 1 : 0);
 		}
 
 		for (Counter counter : frame.counters) {
-			log += QString("%1    %2    ").arg(counter.active ? 1 : 0, counter.value);
+			log += QString("%1    %2    ").arg(counter.active ? 1 : 0).arg(counter.value);
 		}
 
 		log += "\r\n";

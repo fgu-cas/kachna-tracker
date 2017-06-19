@@ -43,6 +43,8 @@ private:
 	QElapsedTimer elapsedTimer;
 	qint64 finishedTime;
 
+	QElapsedTimer positionTimer;
+
 	Detector::pointPair lastKeypoints;
 
 	bool ratRobot;
@@ -101,6 +103,7 @@ private:
 
 	QString hardwareDevice;
 	std::unique_ptr<AbstractHardware> hardware;
+	bool isArenomat;
 
 	public slots:
 	bool start();

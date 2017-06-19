@@ -90,6 +90,7 @@ Experiment::Experiment(QMap<QString, QVariant> *settings, Logger* logger, QObjec
 	connect(this, SIGNAL(update(ExperimentState)), experimentLogger.get(), SLOT(add(ExperimentState)));
 
 	hardwareDevice = settings->value("hardware/device").toString();
+	isArenomat = !hardwareDevice.startsWith("PCI-DIO24");
 
 	for (Counter counter : counters) {
 		triggerStates[counter.id] = TriggerState::OFF;
@@ -107,10 +108,11 @@ Experiment::~Experiment() {
 bool Experiment::start() {
 	timer.start();
 	elapsedTimer.start();
+	positionTimer.invalidate();
 	experimentLogger->setStart(QDateTime::currentMSecsSinceEpoch());
 
 	if (isLive) {
-		if (hardwareDevice.startsWith("PCI-DIO24")) {
+		if (!isArenomat) {
 			hardware.reset(new DIO24(logger));
 		}
 		else {
@@ -126,7 +128,7 @@ bool Experiment::start() {
 		return false;
 	}
 
-	if (isLive && arenaDirection > 0 && !hardwareDevice.startsWith("PCI-DIO24")) {
+	if (isLive && arenaDirection > 0 && isArenomat) {
 		Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
 		mat->setTurntableDirection(arenaDirection);
 		mat->setTurntablePWM(arenaPWM);
@@ -478,6 +480,14 @@ void Experiment::processFrame() {
 		}
 	}
 
+	int position = -1;
+	// Position handling
+	if (isLive && isArenomat && (!positionTimer.isValid() || positionTimer.elapsed() > 2000)) {
+		Arenomat* mat = dynamic_cast<Arenomat*>(hardware.get());
+		position = mat->position();
+		positionTimer.start();
+	}
+
 	ExperimentState state;
 	state.ts = timestamp;
 	state.frame = frame;
@@ -488,6 +498,7 @@ void Experiment::processFrame() {
 	state.counters = counters;
 	state.state = shockState;
 	state.shock = shockState == SHOCKING ? currentShockLevel : 0;
+	state.position = position;
 	emit(update(state));
 
 	if (synchOut) hardware->setSync(synchInv);
